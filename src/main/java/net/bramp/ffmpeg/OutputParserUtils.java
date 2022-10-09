@@ -30,8 +30,7 @@ public class OutputParserUtils {
     List<T> results = new ArrayList<>();
 
     Process p = runFunc.run(ImmutableList.of(path, flag));
-    try {
-      BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream(), StandardCharsets.UTF_8));
+    try (BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream(), StandardCharsets.UTF_8))) {
       String line;
       while ((line = r.readLine()) != null) {
         parsingFunction.apply(line).ifPresent(results::add);
