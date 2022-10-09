@@ -13,8 +13,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -39,7 +37,7 @@ public class OutputParserUtils {
         parsingFunction.apply(line).ifPresent(results::add);
       }
 
-      throwOnError(path, p);
+      ProcessUtils.throwOnError(path, p);
       return ImmutableList.copyOf(results);
     } finally {
       p.destroy();
@@ -81,17 +79,5 @@ public class OutputParserUtils {
         Integer.parseInt(m.group(3)),
         Integer.parseInt(m.group(4)),
         m.group(1)));
-  }
-
-  protected static void throwOnError(String path, Process p) throws IOException {
-    try {
-      // TODO In java 8 use waitFor(long timeout, TimeUnit unit)
-      if (ProcessUtils.waitForWithTimeout(p, 1, TimeUnit.SECONDS) != 0) {
-        // TODO Parse the error
-        throw new IOException(path + " returned non-zero exit status. Check stdout.");
-      }
-    } catch (TimeoutException e) {
-      throw new IOException("Timed out waiting for " + path + " to finish.");
-    }
   }
 }

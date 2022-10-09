@@ -1,31 +1,38 @@
 package net.bramp.ffmpeg;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.io.CharStreams;
+import net.bramp.ffmpeg.io.ProcessUtils;
+
+import javax.annotation.Nonnull;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-import javax.annotation.Nonnull;
-import net.bramp.ffmpeg.io.ProcessUtils;
 
-/** Private class to contain common methods for both FFmpeg and FFprobe. */
+import static com.google.common.base.Preconditions.checkNotNull;
+
+/**
+ * Private class to contain common methods for both FFmpeg and FFprobe.
+ */
 abstract class FFcommon {
 
-  /** Path to the binary (e.g. /usr/bin/ffmpeg) */
+  /**
+   * Path to the binary (e.g. /usr/bin/ffmpeg)
+   */
   final String path;
 
-  /** Function to run FFmpeg. We define it like this so we can swap it out (during testing) */
+  /**
+   * Function to run FFmpeg. We define it like this so we can swap it out (during testing)
+   */
   final ProcessFunction runFunc;
 
-  /** Version string */
+  /**
+   * Version string
+   */
   String version = null;
 
   public FFcommon(@Nonnull String path) {
@@ -43,15 +50,7 @@ abstract class FFcommon {
   }
 
   protected void throwOnError(Process p) throws IOException {
-    try {
-      // TODO In java 8 use waitFor(long timeout, TimeUnit unit)
-      if (ProcessUtils.waitForWithTimeout(p, 1, TimeUnit.SECONDS) != 0) {
-        // TODO Parse the error
-        throw new IOException(path + " returned non-zero exit status. Check stdout.");
-      }
-    } catch (TimeoutException e) {
-      throw new IOException("Timed out waiting for " + path + " to finish.");
-    }
+    ProcessUtils.throwOnError(path, p);
   }
 
   /**

@@ -1,5 +1,6 @@
 package net.bramp.ffmpeg.io;
 
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -67,5 +68,17 @@ public final class ProcessUtils {
     }
 
     return t.exitValue();
+  }
+
+  public static void throwOnError(String path, Process p) throws IOException {
+    try {
+      // TODO: In java 8 use waitFor(long timeout, TimeUnit unit)
+      if (waitForWithTimeout(p, 1, TimeUnit.SECONDS) != 0) {
+        // TODO: Parse the error
+        throw new IOException(path + " returned non-zero exit status. Check stdout.");
+      }
+    } catch (TimeoutException e) {
+      throw new IOException("Timed out waiting for " + path + " to finish.");
+    }
   }
 }
