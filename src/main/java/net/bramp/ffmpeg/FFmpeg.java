@@ -1,6 +1,5 @@
 package net.bramp.ffmpeg;
 
-import com.google.common.collect.ImmutableList;
 import net.bramp.ffmpeg.builder.FFmpegBuilder;
 import net.bramp.ffmpeg.info.Codec;
 import net.bramp.ffmpeg.info.Format;
@@ -13,13 +12,9 @@ import org.apache.commons.lang3.math.Fraction;
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static com.google.common.base.MoreObjects.firstNonNull;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -68,8 +63,6 @@ public class FFmpeg extends FFcommon {
   public static final int AUDIO_SAMPLE_44100 = 44100;
   public static final int AUDIO_SAMPLE_48000 = 48000;
   public static final int AUDIO_SAMPLE_96000 = 96000;
-
-  static final Pattern PIXEL_FORMATS_REGEX = Pattern.compile("^([.I][.O][.H][.P][.B]) (\\S{2,})\\s+(\\d+)\\s+(\\d+)$");
 
   /**
    * Supported codecs
@@ -151,30 +144,7 @@ public class FFmpeg extends FFcommon {
     checkIfFFmpeg();
 
     if (this.pixelFormats == null) {
-      pixelFormats = new ArrayList<>();
-
-      Process p = runFunc.run(ImmutableList.of(path, "-pix_fmts"));
-      try {
-        BufferedReader r = wrapInReader(p);
-        String line;
-        while ((line = r.readLine()) != null) {
-          Matcher m = PIXEL_FORMATS_REGEX.matcher(line);
-          if (!m.matches())
-            continue;
-          String flags = m.group(1);
-
-          pixelFormats.add(new PixelFormat(
-              m.group(2),
-              Integer.parseInt(m.group(3)),
-              Integer.parseInt(m.group(4)),
-              flags));
-        }
-
-        throwOnError(p);
-        this.pixelFormats = ImmutableList.copyOf(pixelFormats);
-      } finally {
-        p.destroy();
-      }
+      this.pixelFormats = OutputParserUtils.parsePixelFormats(runFunc, path);
     }
 
     return pixelFormats;
