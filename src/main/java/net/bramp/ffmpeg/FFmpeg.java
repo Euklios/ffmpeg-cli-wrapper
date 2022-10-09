@@ -69,7 +69,6 @@ public class FFmpeg extends FFcommon {
   public static final int AUDIO_SAMPLE_48000 = 48000;
   public static final int AUDIO_SAMPLE_96000 = 96000;
 
-  static final Pattern FORMATS_REGEX = Pattern.compile("^ ([ D][ E]) (\\S+)\\s+(.*)$");
   static final Pattern PIXEL_FORMATS_REGEX = Pattern.compile("^([.I][.O][.H][.P][.B]) (\\S{2,})\\s+(\\d+)\\s+(\\d+)$");
 
   /**
@@ -142,26 +141,10 @@ public class FFmpeg extends FFcommon {
     checkIfFFmpeg();
 
     if (this.formats == null) {
-      formats = new ArrayList<>();
-
-      Process p = runFunc.run(ImmutableList.of(path, "-formats"));
-      try {
-        BufferedReader r = wrapInReader(p);
-        String line;
-        while ((line = r.readLine()) != null) {
-          Matcher m = FORMATS_REGEX.matcher(line);
-          if (!m.matches()) continue;
-
-          formats.add(new Format(m.group(2), m.group(3), m.group(1)));
-        }
-
-        throwOnError(p);
-        this.formats = ImmutableList.copyOf(formats);
-      } finally {
-        p.destroy();
-      }
+      this.formats = OutputParserUtils.parseFormats(runFunc, path);
     }
-    return formats;
+
+    return this.formats;
   }
 
   public synchronized List<PixelFormat> pixelFormats() throws IOException {

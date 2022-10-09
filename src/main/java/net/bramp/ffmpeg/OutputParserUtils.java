@@ -2,6 +2,7 @@ package net.bramp.ffmpeg;
 
 import com.google.common.collect.ImmutableList;
 import net.bramp.ffmpeg.info.Codec;
+import net.bramp.ffmpeg.info.Format;
 import net.bramp.ffmpeg.io.ProcessUtils;
 
 import java.io.BufferedReader;
@@ -19,6 +20,7 @@ import java.util.regex.Pattern;
 
 public class OutputParserUtils {
   static final Pattern CODECS_REGEX = Pattern.compile("^ ([.D][.E][VASD][.I][.L][.S]) (\\S{2,})\\s+(.*)$");
+  static final Pattern FORMATS_REGEX = Pattern.compile("^ ([ D][ E]) (\\S+)\\s+(.*)$");
 
   OutputParserUtils() {
     throw new AssertionError("No instances for you!");
@@ -51,6 +53,17 @@ public class OutputParserUtils {
     if (!m.matches()) return Optional.empty();
 
     return Optional.of(new Codec(m.group(2), m.group(3), m.group(1)));
+  }
+
+  public static List<Format> parseFormats(ProcessFunction runFunc, String path) throws IOException {
+    return parseInformationOutput(runFunc, path, "-formats", OutputParserUtils::parseFormat);
+  }
+
+  private static Optional<Format> parseFormat(String line) {
+    Matcher m = FORMATS_REGEX.matcher(line);
+    if (!m.matches()) return Optional.empty();
+
+    return Optional.of(new Format(m.group(2), m.group(3), m.group(1)));
   }
 
   protected static void throwOnError(String path, Process p) throws IOException {
