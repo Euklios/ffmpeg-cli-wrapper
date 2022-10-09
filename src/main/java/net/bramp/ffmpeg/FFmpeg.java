@@ -1,19 +1,6 @@
 package net.bramp.ffmpeg;
 
-import static com.google.common.base.MoreObjects.firstNonNull;
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import com.google.common.collect.ImmutableList;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import net.bramp.ffmpeg.builder.FFmpegBuilder;
 import net.bramp.ffmpeg.info.Codec;
 import net.bramp.ffmpeg.info.Format;
@@ -22,6 +9,20 @@ import net.bramp.ffmpeg.progress.ProgressListener;
 import net.bramp.ffmpeg.progress.ProgressParser;
 import net.bramp.ffmpeg.progress.TcpProgressParser;
 import org.apache.commons.lang3.math.Fraction;
+
+import javax.annotation.CheckReturnValue;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static com.google.common.base.MoreObjects.firstNonNull;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Wrapper around FFmpeg
@@ -47,11 +48,16 @@ public class FFmpeg extends FFcommon {
   public static final String AUDIO_FORMAT_FLT = "flt"; // 32
   public static final String AUDIO_FORMAT_DBL = "dbl"; // 64
 
-  @Deprecated public static final String AUDIO_DEPTH_U8 = AUDIO_FORMAT_U8;
-  @Deprecated public static final String AUDIO_DEPTH_S16 = AUDIO_FORMAT_S16;
-  @Deprecated public static final String AUDIO_DEPTH_S32 = AUDIO_FORMAT_S32;
-  @Deprecated public static final String AUDIO_DEPTH_FLT = AUDIO_FORMAT_FLT;
-  @Deprecated public static final String AUDIO_DEPTH_DBL = AUDIO_FORMAT_DBL;
+  @Deprecated
+  public static final String AUDIO_DEPTH_U8 = AUDIO_FORMAT_U8;
+  @Deprecated
+  public static final String AUDIO_DEPTH_S16 = AUDIO_FORMAT_S16;
+  @Deprecated
+  public static final String AUDIO_DEPTH_S32 = AUDIO_FORMAT_S32;
+  @Deprecated
+  public static final String AUDIO_DEPTH_FLT = AUDIO_FORMAT_FLT;
+  @Deprecated
+  public static final String AUDIO_DEPTH_DBL = AUDIO_FORMAT_DBL;
 
   public static final int AUDIO_SAMPLE_8000 = 8000;
   public static final int AUDIO_SAMPLE_11025 = 11025;
@@ -63,17 +69,22 @@ public class FFmpeg extends FFcommon {
   public static final int AUDIO_SAMPLE_48000 = 48000;
   public static final int AUDIO_SAMPLE_96000 = 96000;
 
-  static final Pattern CODECS_REGEX = Pattern.compile("^ ([.D][.E][VASD][.I][.L][.S]) (\\S{2,})\\s+(.*)$");
   static final Pattern FORMATS_REGEX = Pattern.compile("^ ([ D][ E]) (\\S+)\\s+(.*)$");
   static final Pattern PIXEL_FORMATS_REGEX = Pattern.compile("^([.I][.O][.H][.P][.B]) (\\S{2,})\\s+(\\d+)\\s+(\\d+)$");
 
-  /** Supported codecs */
+  /**
+   * Supported codecs
+   */
   List<Codec> codecs = null;
 
-  /** Supported formats */
+  /**
+   * Supported formats
+   */
   List<Format> formats = null;
 
-  /** Supported pixel formats */
+  /**
+   * Supported pixel formats
+   */
   private List<PixelFormat> pixelFormats = null;
 
   public FFmpeg() throws IOException {
@@ -108,7 +119,7 @@ public class FFmpeg extends FFcommon {
    * Throws an exception if this is an unsupported version of ffmpeg.
    *
    * @throws IllegalArgumentException if this is not the official ffmpeg binary.
-   * @throws IOException If a I/O error occurs while executing ffmpeg.
+   * @throws IOException              If a I/O error occurs while executing ffmpeg.
    */
   private void checkIfFFmpeg() throws IllegalArgumentException, IOException {
     if (!isFFmpeg()) {
@@ -121,27 +132,10 @@ public class FFmpeg extends FFcommon {
     checkIfFFmpeg();
 
     if (this.codecs == null) {
-      codecs = new ArrayList<>();
-
-      Process p = runFunc.run(ImmutableList.of(path, "-codecs"));
-      try {
-        BufferedReader r = wrapInReader(p);
-        String line;
-        while ((line = r.readLine()) != null) {
-          Matcher m = CODECS_REGEX.matcher(line);
-          if (!m.matches()) continue;
-
-          codecs.add(new Codec(m.group(2), m.group(3), m.group(1)));
-        }
-
-        throwOnError(p);
-        this.codecs = ImmutableList.copyOf(codecs);
-      } finally {
-        p.destroy();
-      }
+      this.codecs = OutputParserUtils.parseCodecs(runFunc, path);
     }
 
-    return codecs;
+    return this.codecs;
   }
 
   public synchronized @Nonnull List<Format> formats() throws IOException {
