@@ -10,6 +10,8 @@ import java.util.List;
 import net.bramp.ffmpeg.fixtures.Codecs;
 import net.bramp.ffmpeg.fixtures.Formats;
 import net.bramp.ffmpeg.fixtures.PixelFormats;
+import net.bramp.ffmpeg.fixtures.Protocols;
+import net.bramp.ffmpeg.info.Protocol;
 import net.bramp.ffmpeg.lang.NewProcessAnswer;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,6 +34,7 @@ public class FFmpegTest {
         .thenAnswer(new NewProcessAnswer("ffmpeg-formats"));
     when(runFunc.run(argThatHasItem("-codecs"))).thenAnswer(new NewProcessAnswer("ffmpeg-codecs"));
     when(runFunc.run(argThatHasItem("-pix_fmts"))).thenAnswer(new NewProcessAnswer("ffmpeg-pix_fmts"));
+    when(runFunc.run(argThatHasItem("-protocols"))).thenAnswer(new NewProcessAnswer("ffmpeg-protocols"));
 
     ffmpeg = new FFmpeg(runFunc);
   }
@@ -74,5 +77,14 @@ public class FFmpegTest {
     assertEquals(PixelFormats.PIXEL_FORMATS, ffmpeg.pixelFormats());
 
     verify(runFunc, times(1)).run(argThatHasItem("-pix_fmts"));
+  }
+
+  @Test
+  public void testProtocols() throws IOException {
+    // Run twice, the second should be cached
+    assertEquals(Protocols.PROTOCOLS, ffmpeg.protocols());
+    assertEquals(Protocols.PROTOCOLS, ffmpeg.protocols());
+
+    verify(runFunc, times(1)).run(argThatHasItem("-protocols"));
   }
 }

@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import net.bramp.ffmpeg.info.Codec;
 import net.bramp.ffmpeg.info.Format;
 import net.bramp.ffmpeg.info.PixelFormat;
+import net.bramp.ffmpeg.info.Protocol;
 import net.bramp.ffmpeg.io.ProcessUtils;
 
 import java.io.BufferedReader;
@@ -13,6 +14,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -78,5 +80,28 @@ public class OutputParserUtils {
         Integer.parseInt(m.group(3)),
         Integer.parseInt(m.group(4)),
         m.group(1)));
+  }
+
+  public static List<Protocol> parseProtocols(ProcessFunction runFunc, String path) throws IOException {
+    final AtomicReference<Protocol.ProtocolDirection> currentParsingSection = new AtomicReference<>();
+    return parseInformationOutput(runFunc, path, "-protocols", s -> parseProtocol(s, currentParsingSection));
+  }
+
+  private static Optional<Protocol> parseProtocol(String line, AtomicReference<Protocol.ProtocolDirection> currentParsingSection) {
+    line = line.trim();
+
+    if (line.equals("Input:")) {
+      currentParsingSection.set(Protocol.ProtocolDirection.INPUT);
+      return Optional.empty();
+    } else if (line.equals("Output:")) {
+      currentParsingSection.set(Protocol.ProtocolDirection.OUTPUT);
+      return Optional.empty();
+    } else if (line.endsWith(":")) {
+      return Optional.empty();
+    } else if (currentParsingSection.get() == null) {
+      return Optional.empty();
+    }
+
+    return Optional.of(new Protocol(line, currentParsingSection.get()));
   }
 }

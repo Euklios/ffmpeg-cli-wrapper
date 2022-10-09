@@ -4,6 +4,7 @@ import net.bramp.ffmpeg.builder.FFmpegBuilder;
 import net.bramp.ffmpeg.info.Codec;
 import net.bramp.ffmpeg.info.Format;
 import net.bramp.ffmpeg.info.PixelFormat;
+import net.bramp.ffmpeg.info.Protocol;
 import net.bramp.ffmpeg.progress.ProgressListener;
 import net.bramp.ffmpeg.progress.ProgressParser;
 import net.bramp.ffmpeg.progress.TcpProgressParser;
@@ -79,6 +80,11 @@ public class FFmpeg extends FFcommon {
    */
   private List<PixelFormat> pixelFormats = null;
 
+  /**
+   * Supported file protocols
+   */
+  private List<Protocol> protocols = null;
+
   public FFmpeg() throws IOException {
     this(DEFAULT_PATH, new RunProcessFunction());
   }
@@ -147,7 +153,17 @@ public class FFmpeg extends FFcommon {
       this.pixelFormats = OutputParserUtils.parsePixelFormats(runFunc, path);
     }
 
-    return pixelFormats;
+    return this.pixelFormats;
+  }
+
+  public synchronized List<Protocol> protocols() throws IOException {
+    checkIfFFmpeg();
+
+    if (this.protocols == null) {
+      this.protocols = OutputParserUtils.parseProtocols(runFunc, path);
+    }
+
+    return this.protocols;
   }
 
   protected ProgressParser createProgressParser(ProgressListener listener) throws IOException {
