@@ -7,10 +7,8 @@ import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 
 import java.io.IOException;
 import java.util.List;
-import net.bramp.ffmpeg.fixtures.Codecs;
-import net.bramp.ffmpeg.fixtures.Formats;
-import net.bramp.ffmpeg.fixtures.PixelFormats;
-import net.bramp.ffmpeg.fixtures.Protocols;
+
+import net.bramp.ffmpeg.fixtures.*;
 import net.bramp.ffmpeg.info.Protocol;
 import net.bramp.ffmpeg.lang.NewProcessAnswer;
 import org.junit.Before;
@@ -35,6 +33,7 @@ public class FFmpegTest {
     when(runFunc.run(argThatHasItem("-codecs"))).thenAnswer(new NewProcessAnswer("ffmpeg-codecs"));
     when(runFunc.run(argThatHasItem("-pix_fmts"))).thenAnswer(new NewProcessAnswer("ffmpeg-pix_fmts"));
     when(runFunc.run(argThatHasItem("-protocols"))).thenAnswer(new NewProcessAnswer("ffmpeg-protocols"));
+    when(runFunc.run(argThatHasItem("-hwaccels"))).thenAnswer(new NewProcessAnswer("ffmpeg-hwaccels"));
 
     ffmpeg = new FFmpeg(runFunc);
   }
@@ -86,5 +85,14 @@ public class FFmpegTest {
     assertEquals(Protocols.PROTOCOLS, ffmpeg.protocols());
 
     verify(runFunc, times(1)).run(argThatHasItem("-protocols"));
+  }
+
+  @Test
+  public void testHardwareAccelerationModels() throws IOException {
+    // Run twice, the second should be cached
+    assertEquals(HardwareAccelerationModels.HARDWARE_ACCELERATION_MODELS, ffmpeg.hardwareAccelerationModels());
+    assertEquals(HardwareAccelerationModels.HARDWARE_ACCELERATION_MODELS, ffmpeg.hardwareAccelerationModels());
+
+    verify(runFunc, times(1)).run(argThatHasItem("-hwaccels"));
   }
 }

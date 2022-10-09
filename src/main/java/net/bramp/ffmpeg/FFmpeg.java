@@ -1,10 +1,7 @@
 package net.bramp.ffmpeg;
 
 import net.bramp.ffmpeg.builder.FFmpegBuilder;
-import net.bramp.ffmpeg.info.Codec;
-import net.bramp.ffmpeg.info.Format;
-import net.bramp.ffmpeg.info.PixelFormat;
-import net.bramp.ffmpeg.info.Protocol;
+import net.bramp.ffmpeg.info.*;
 import net.bramp.ffmpeg.progress.ProgressListener;
 import net.bramp.ffmpeg.progress.ProgressParser;
 import net.bramp.ffmpeg.progress.TcpProgressParser;
@@ -85,6 +82,11 @@ public class FFmpeg extends FFcommon {
    */
   private List<Protocol> protocols = null;
 
+  /**
+   * Supported hardware acceleration methods
+   */
+  private List<HardwareAccelerationModel> hardwareAccelerationModels = null;
+
   public FFmpeg() throws IOException {
     this(DEFAULT_PATH, new RunProcessFunction());
   }
@@ -164,6 +166,16 @@ public class FFmpeg extends FFcommon {
     }
 
     return this.protocols;
+  }
+
+  public synchronized List<HardwareAccelerationModel> hardwareAccelerationModels() throws IOException {
+    checkIfFFmpeg();
+
+    if (this.hardwareAccelerationModels == null) {
+      this.hardwareAccelerationModels = OutputParserUtils.parseHardwareAccelerationModel(runFunc, path);
+    }
+
+    return this.hardwareAccelerationModels;
   }
 
   protected ProgressParser createProgressParser(ProgressListener listener) throws IOException {

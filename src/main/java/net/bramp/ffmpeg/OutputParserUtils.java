@@ -1,10 +1,7 @@
 package net.bramp.ffmpeg;
 
 import com.google.common.collect.ImmutableList;
-import net.bramp.ffmpeg.info.Codec;
-import net.bramp.ffmpeg.info.Format;
-import net.bramp.ffmpeg.info.PixelFormat;
-import net.bramp.ffmpeg.info.Protocol;
+import net.bramp.ffmpeg.info.*;
 import net.bramp.ffmpeg.io.ProcessUtils;
 
 import java.io.BufferedReader;
@@ -23,6 +20,7 @@ public class OutputParserUtils {
   static final Pattern CODECS_REGEX = Pattern.compile("^ ([.D][.E][VASD][.I][.L][.S]) (\\S{2,})\\s+(.*)$");
   static final Pattern FORMATS_REGEX = Pattern.compile("^ ([ D][ E]) (\\S+)\\s+(.*)$");
   static final Pattern PIXEL_FORMATS_REGEX = Pattern.compile("^([.I][.O][.H][.P][.B]) (\\S{2,})\\s+(\\d+)\\s+(\\d+)$");
+  static final Pattern HARDWARE_ACCELERATION_REGEX = Pattern.compile("^\\w+$");
 
   OutputParserUtils() {
     throw new AssertionError("No instances for you!");
@@ -103,5 +101,16 @@ public class OutputParserUtils {
     }
 
     return Optional.of(new Protocol(line, currentParsingSection.get()));
+  }
+
+  public static List<HardwareAccelerationModel> parseHardwareAccelerationModel(ProcessFunction runFunc, String path) throws IOException {
+    return parseInformationOutput(runFunc, path, "-hwaccels", OutputParserUtils::parseHardwareAccelerationModel);
+  }
+
+  private static Optional<HardwareAccelerationModel> parseHardwareAccelerationModel(String line) {
+    Matcher m = HARDWARE_ACCELERATION_REGEX.matcher(line);
+    if (!m.matches()) return Optional.empty();
+
+    return Optional.of(new HardwareAccelerationModel(line));
   }
 }
