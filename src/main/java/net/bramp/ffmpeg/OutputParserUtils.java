@@ -18,7 +18,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class OutputParserUtils {
-  static final Pattern CODECS_REGEX = Pattern.compile("^ ([.D][.E][VASD][.I][.L][.S]) (\\S{2,})\\s+(.*)$");
+  static final Pattern CODECS_REGEX = Pattern.compile("^ ([.D])([.E])([VASD])([.I])([.L])([.S]) (\\S{2,})\\s+(.*)$");
   static final Pattern FORMATS_REGEX = Pattern.compile("^ ([ D][ E]) (\\S+)\\s+(.*)$");
   static final Pattern PIXEL_FORMATS_REGEX = Pattern.compile("^([.I][.O][.H][.P][.B]) (\\S{2,})\\s+(\\d+)\\s+(\\d+)$");
   static final Pattern HARDWARE_ACCELERATION_REGEX = Pattern.compile("^\\w+$");
@@ -49,11 +49,56 @@ public class OutputParserUtils {
     return parseInformationOutput(runFunc, path, "-codecs", OutputParserUtils::parseCodec);
   }
 
+  /**
+   * @param line line describing a single codec in the following format:
+   * <p>
+   * {flags} {name}    {longName}
+   * <p>
+   * Where flags follows this encoding format:
+   * <pre>
+   * D..... = Decoding supported
+   * .E.... = Encoding supported
+   * ..V... = Video codec
+   * ..A... = Audio codec
+   * ..S... = Subtitle codec
+   * ...I.. = Intra frame-only codec
+   * ....L. = Lossy compression
+   * .....S = Lossless compression
+   * </pre>
+   */
   private static Optional<Codec> parseCodec(String line) {
     Matcher m = CODECS_REGEX.matcher(line);
     if (!m.matches()) return Optional.empty();
 
-    return Optional.of(new Codec(m.group(2), m.group(3), m.group(1)));
+    Codec.Type codecType;
+
+    switch (m.group(3)) {
+      case "V":
+        codecType = Codec.Type.VIDEO;
+        break;
+      case "A":
+        codecType = Codec.Type.AUDIO;
+        break;
+      case "S":
+        codecType = Codec.Type.SUBTITLE;
+        break;
+      case "D":
+        codecType = Codec.Type.DATA;
+        break;
+      default:
+        throw new IllegalArgumentException("Invalid codec type '" + m.group(3) + "'");
+    }
+
+    return Optional.of(new Codec(
+            m.group(7),
+            m.group(8),
+            m.group(1).equals("D"),
+            m.group(2).equals("E"),
+            codecType,
+            m.group(4).equals("I"),
+            m.group(5).equals("L"),
+            m.group(6).equals("S")
+    ));
   }
 
   public static List<Format> parseFormats(ProcessFunction runFunc, String path) throws IOException {
