@@ -87,6 +87,11 @@ public class FFmpeg extends FFcommon {
    */
   private List<HardwareAccelerationModel> hardwareAccelerationModels = null;
 
+  /**
+   * Supported color descriptors
+   */
+  private List<ColorDescriptor> colors = null;
+
   public FFmpeg() throws IOException {
     this(DEFAULT_PATH, new RunProcessFunction());
   }
@@ -176,6 +181,16 @@ public class FFmpeg extends FFcommon {
     }
 
     return this.hardwareAccelerationModels;
+  }
+
+  public synchronized List<ColorDescriptor> colors() throws IOException {
+    checkIfFFmpeg();
+
+    if (this.colors == null) {
+      this.colors = OutputParserUtils.parseColors(runFunc, path);
+    }
+
+    return this.colors;
   }
 
   protected ProgressParser createProgressParser(ProgressListener listener) throws IOException {

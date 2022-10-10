@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import net.bramp.ffmpeg.info.*;
 import net.bramp.ffmpeg.io.ProcessUtils;
 
+import java.awt.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -21,6 +22,7 @@ public class OutputParserUtils {
   static final Pattern FORMATS_REGEX = Pattern.compile("^ ([ D][ E]) (\\S+)\\s+(.*)$");
   static final Pattern PIXEL_FORMATS_REGEX = Pattern.compile("^([.I][.O][.H][.P][.B]) (\\S{2,})\\s+(\\d+)\\s+(\\d+)$");
   static final Pattern HARDWARE_ACCELERATION_REGEX = Pattern.compile("^\\w+$");
+  static final Pattern COLOR_REGEX = Pattern.compile("^(\\w+)\\s+#([0-9a-fA-F]{6})$");
 
   OutputParserUtils() {
     throw new AssertionError("No instances for you!");
@@ -112,5 +114,16 @@ public class OutputParserUtils {
     if (!m.matches()) return Optional.empty();
 
     return Optional.of(new HardwareAccelerationModel(line));
+  }
+
+  public static List<ColorDescriptor> parseColors(ProcessFunction runFunc, String path) throws IOException {
+    return parseInformationOutput(runFunc, path, "-colors", OutputParserUtils::parseColor);
+  }
+
+  private static Optional<ColorDescriptor> parseColor(String line) {
+    Matcher m = COLOR_REGEX.matcher(line);
+    if (!m.matches()) return Optional.empty();
+
+    return Optional.of(new ColorDescriptor(m.group(1), new Color(Integer.parseInt(m.group(2), 16))));
   }
 }

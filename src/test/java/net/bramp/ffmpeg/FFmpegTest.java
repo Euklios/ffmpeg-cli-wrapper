@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.util.List;
 
 import net.bramp.ffmpeg.fixtures.*;
-import net.bramp.ffmpeg.info.Protocol;
 import net.bramp.ffmpeg.lang.NewProcessAnswer;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,6 +33,7 @@ public class FFmpegTest {
     when(runFunc.run(argThatHasItem("-pix_fmts"))).thenAnswer(new NewProcessAnswer("ffmpeg-pix_fmts"));
     when(runFunc.run(argThatHasItem("-protocols"))).thenAnswer(new NewProcessAnswer("ffmpeg-protocols"));
     when(runFunc.run(argThatHasItem("-hwaccels"))).thenAnswer(new NewProcessAnswer("ffmpeg-hwaccels"));
+    when(runFunc.run(argThatHasItem("-colors"))).thenAnswer(new NewProcessAnswer("ffmpeg-colors"));
 
     ffmpeg = new FFmpeg(runFunc);
   }
@@ -94,5 +94,14 @@ public class FFmpegTest {
     assertEquals(HardwareAccelerationModels.HARDWARE_ACCELERATION_MODELS, ffmpeg.hardwareAccelerationModels());
 
     verify(runFunc, times(1)).run(argThatHasItem("-hwaccels"));
+  }
+
+  @Test
+  public void testColors() throws IOException {
+    // Run twice, the second should be cached
+    assertEquals(ColorDescriptors.COLORS, ffmpeg.colors());
+    assertEquals(ColorDescriptors.COLORS, ffmpeg.colors());
+
+    verify(runFunc, times(1)).run(argThatHasItem("-colors"));
   }
 }
