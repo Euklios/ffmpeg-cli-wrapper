@@ -13,8 +13,11 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 
 import com.google.common.collect.ImmutableList;
+
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import net.bramp.ffmpeg.options.AudioEncodingOptions;
@@ -386,6 +389,50 @@ public class FFmpegBuilderTest {
 
     assertEquals(
         args, ImmutableList.of("-y", "-v", "error", "-i", "input1", "-i", "input2", "output"));
+  }
+
+  @Test
+  public void testURIInput() {
+    List<String> args = new FFmpegBuilder()
+        .addInput(URI.create("https://example.com/video/index.m3u8"))
+        .addOutput("output")
+        .done()
+        .build();
+
+    assertEquals(args, ImmutableList.of("-y", "-v", "error", "-i", "https://example.com/video/index.m3u8", "output"));
+  }
+
+  @Test
+  public void testWindowsFileInput() {
+    List<String> args = new FFmpegBuilder()
+        .addInput(new File("C:\\input.mp4"))
+        .addOutput("output")
+        .done()
+        .build();
+
+    assertEquals(args, ImmutableList.of("-y", "-v", "error", "-i", "C:\\input.mp4", "output"));
+  }
+
+  @Test
+  public void testNixFileInput() {
+    List<String> args = new FFmpegBuilder()
+        .addInput(new File("/input.mp4"))
+        .addOutput("output")
+        .done()
+        .build();
+
+    assertEquals(args, ImmutableList.of("-y", "-v", "error", "-i", File.separator + "input.mp4", "output"));
+  }
+
+  @Test
+  public void testRegularFilePath() {
+    List<String> args = new FFmpegBuilder()
+        .addInput(Paths.get("/input.mp4"))
+        .addOutput("output")
+        .done()
+        .build();
+
+    assertEquals(args, ImmutableList.of("-y", "-v", "error", "-i", File.separator + "input.mp4", "output"));
   }
 
   @Test

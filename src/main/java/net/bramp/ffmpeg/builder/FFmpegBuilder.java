@@ -7,7 +7,10 @@ import static net.bramp.ffmpeg.Preconditions.checkNotEmpty;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
+
+import java.io.File;
 import java.net.URI;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -133,6 +136,26 @@ public class FFmpegBuilder {
     checkNotNull(filename);
     inputs.add(filename);
     return this;
+  }
+
+  public FFmpegBuilder addInput(File file) {
+    checkNotNull(file);
+    return addInput(file.toString());
+  }
+
+  public FFmpegBuilder addInput(Path path) {
+    checkNotNull(path);
+
+    if (path.toUri().getScheme().equals("file")) {
+      return addInput(path.toString());
+    }
+
+    return addInput(path.toUri());
+  }
+
+  public FFmpegBuilder addInput(URI uri) {
+    checkNotNull(uri);
+    return this.addInput(uri.toString());
   }
 
   protected void clearInputs() {
