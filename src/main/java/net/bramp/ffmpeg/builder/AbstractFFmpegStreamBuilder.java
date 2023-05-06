@@ -111,28 +111,13 @@ public abstract class AbstractFFmpegStreamBuilder<T extends AbstractFFmpegStream
 
   protected abstract T getThis();
 
-  public T useOptions(EncodingOptions opts) {
-    Mapper.map(opts, this);
-    return getThis();
-  }
-
-  public T useOptions(MainEncodingOptions opts) {
-    Mapper.map(opts, this);
-    return getThis();
-  }
-
-  public T useOptions(AudioEncodingOptions opts) {
-    Mapper.map(opts, this);
-    return getThis();
-  }
-
-  public T useOptions(VideoEncodingOptions opts) {
-    Mapper.map(opts, this);
-    return getThis();
-  }
-
   public T disableVideo() {
     this.videoEnabled = false;
+    return getThis();
+  }
+
+  public T enableVideo() {
+    this.videoEnabled = true;
     return getThis();
   }
 
@@ -141,8 +126,18 @@ public abstract class AbstractFFmpegStreamBuilder<T extends AbstractFFmpegStream
     return getThis();
   }
 
+  public T enableAudio() {
+    this.audioEnabled = true;
+    return getThis();
+  }
+
   public T disableSubtitle() {
     this.subtitleEnabled = false;
+    return getThis();
+  }
+
+  public T enableSubtitle() {
+    this.subtitleEnabled = true;
     return getThis();
   }
 
@@ -196,19 +191,19 @@ public abstract class AbstractFFmpegStreamBuilder<T extends AbstractFFmpegStream
   }
 
   public T setVideoCodec(String codec) {
-    this.videoEnabled = true;
+    this.enableVideo();
     this.videoCodec = checkNotEmpty(codec, "codec must not be empty");
     return getThis();
   }
 
   public T setVideoCopyInkf(boolean copyinkf) {
-    this.videoEnabled = true;
+    this.enableVideo();
     this.videoCopyinkf = copyinkf;
     return getThis();
   }
 
   public T setVideoMovFlags(String movflags) {
-    this.videoEnabled = true;
+    this.enableVideo();
     this.videoMovflags = checkNotEmpty(movflags, "movflags must not be empty");
     return getThis();
   }
@@ -224,7 +219,7 @@ public abstract class AbstractFFmpegStreamBuilder<T extends AbstractFFmpegStream
    * @see net.bramp.ffmpeg.FFmpeg#FPS_23_976
    */
   public T setVideoFrameRate(Fraction frameRate) {
-    this.videoEnabled = true;
+    this.enableVideo();
     this.videoFrameRate = checkNotNull(frameRate);
     return getThis();
   }
@@ -252,7 +247,7 @@ public abstract class AbstractFFmpegStreamBuilder<T extends AbstractFFmpegStream
    * @return this
    */
   public T setFrames(int frames) {
-    this.videoEnabled = true;
+    this.enableVideo();
     this.videoFrames = frames;
     return getThis();
   }
@@ -264,7 +259,7 @@ public abstract class AbstractFFmpegStreamBuilder<T extends AbstractFFmpegStream
   public T setVideoWidth(int width) {
     checkArgument(isValidSize(width), "Width must be -1 or greater than zero");
 
-    this.videoEnabled = true;
+    this.enableVideo();
     this.videoWidth = width;
     return getThis();
   }
@@ -272,7 +267,7 @@ public abstract class AbstractFFmpegStreamBuilder<T extends AbstractFFmpegStream
   public T setVideoHeight(int height) {
     checkArgument(isValidSize(height), "Height must be -1 or greater than zero");
 
-    this.videoEnabled = true;
+    this.enableVideo();
     this.videoHeight = height;
     return getThis();
   }
@@ -282,7 +277,7 @@ public abstract class AbstractFFmpegStreamBuilder<T extends AbstractFFmpegStream
         isValidSize(width) && isValidSize(height),
         "Both width and height must be -1 or greater than zero");
 
-    this.videoEnabled = true;
+    this.enableVideo();
     this.videoWidth = width;
     this.videoHeight = height;
     return getThis();
@@ -297,13 +292,13 @@ public abstract class AbstractFFmpegStreamBuilder<T extends AbstractFFmpegStream
    * @return this
    */
   public T setVideoResolution(String abbreviation) {
-    this.videoEnabled = true;
+    this.enableVideo();
     this.videoSize = checkNotEmpty(abbreviation, "video abbreviation must not be empty");
     return getThis();
   }
 
   public T setVideoPixelFormat(String format) {
-    this.videoEnabled = true;
+    this.enableVideo();
     this.videoPixelFormat = checkNotEmpty(format, "format must not be empty");
     return getThis();
   }
@@ -357,13 +352,13 @@ public abstract class AbstractFFmpegStreamBuilder<T extends AbstractFFmpegStream
   }
 
   public T setAudioCodec(String codec) {
-    this.audioEnabled = true;
+    this.enableAudio();
     this.audioCodec = checkNotEmpty(codec, "codec must not be empty");
     return getThis();
   }
 
   public T setSubtitleCodec(String codec) {
-    this.subtitleEnabled = true;
+    this.enableSubtitle();
     this.subtitleCodec = checkNotEmpty(codec, "codec must not be empty");
     return getThis();
   }
@@ -378,7 +373,7 @@ public abstract class AbstractFFmpegStreamBuilder<T extends AbstractFFmpegStream
    */
   public T setAudioChannels(int channels) {
     checkArgument(channels > 0, "channels must be positive");
-    this.audioEnabled = true;
+    this.enableAudio();
     this.audioChannels = channels;
     return getThis();
   }
@@ -400,7 +395,7 @@ public abstract class AbstractFFmpegStreamBuilder<T extends AbstractFFmpegStream
    */
   public T setAudioSampleRate(int sampleRate) {
     checkArgument(sampleRate > 0, "sample rate must be positive");
-    this.audioEnabled = true;
+    this.enableAudio();
     this.audioSampleRate = sampleRate;
     return getThis();
   }
@@ -473,7 +468,7 @@ public abstract class AbstractFFmpegStreamBuilder<T extends AbstractFFmpegStream
    * @return this
    */
   public T setAudioPreset(String preset) {
-    this.audioEnabled = true;
+    this.enableAudio();
     this.audioPreset = checkNotEmpty(preset, "audio preset must not be empty");
     return getThis();
   }
@@ -487,7 +482,7 @@ public abstract class AbstractFFmpegStreamBuilder<T extends AbstractFFmpegStream
    * @return this
    */
   public T setSubtitlePreset(String preset) {
-    this.subtitleEnabled = true;
+    this.enableSubtitle();
     this.subtitlePreset = checkNotEmpty(preset, "subtitle preset must not be empty");
     return getThis();
   }
@@ -625,5 +620,117 @@ public abstract class AbstractFFmpegStreamBuilder<T extends AbstractFFmpegStream
     // TODO What if width is set but heigh isn't. We don't seem to do anything
 
     args.addArgIf(videoFrameRate != null, "-r", () -> videoFrameRate.toString());
+  }
+
+  public String getFormat() {
+    return format;
+  }
+
+  public Long getStartOffset() {
+    return startOffset;
+  }
+
+  public Long getDuration() {
+    return duration;
+  }
+
+  public List<String> getMetaTags() {
+    return List.copyOf(metaTags);
+  }
+
+  public boolean isAudioEnabled() {
+    return audioEnabled;
+  }
+
+  public String getAudioCodec() {
+    return audioCodec;
+  }
+
+  public int getAudioChannels() {
+    return audioChannels;
+  }
+
+  public int getAudioSampleRate() {
+    return audioSampleRate;
+  }
+
+  public String getAudioPreset() {
+    return audioPreset;
+  }
+
+  public boolean isVideoEnabled() {
+    return videoEnabled;
+  }
+
+  public String getVideoCodec() {
+    return videoCodec;
+  }
+
+  public boolean isVideoCopyinkf() {
+    return videoCopyinkf;
+  }
+
+  public Fraction getVideoFrameRate() {
+    return videoFrameRate;
+  }
+
+  public int getVideoWidth() {
+    return videoWidth;
+  }
+
+  public int getVideoHeight() {
+    return videoHeight;
+  }
+
+  public String getVideoSize() {
+    return videoSize;
+  }
+
+  public String getVideoMovflags() {
+    return videoMovflags;
+  }
+
+  public Integer getVideoFrames() {
+    return videoFrames;
+  }
+
+  public String getVideoPixelFormat() {
+    return videoPixelFormat;
+  }
+
+  public boolean isSubtitleEnabled() {
+    return subtitleEnabled;
+  }
+
+  public String getSubtitlePreset() {
+    return subtitlePreset;
+  }
+
+  public String getSubtitleCodec() {
+    return subtitleCodec;
+  }
+
+  public String getPreset() {
+    return preset;
+  }
+
+  public String getPresetFilename() {
+    return presetFilename;
+  }
+
+  public Strict getStrict() {
+    return strict;
+  }
+
+  public long getTargetSize() {
+    return targetSize;
+  }
+
+  public long getPassPaddingBitrate() {
+    return passPaddingBitrate;
+  }
+
+  public boolean isThrowWarnings() {
+    return throwWarnings;
   }
 }

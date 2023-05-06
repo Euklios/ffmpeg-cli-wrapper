@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 import javax.annotation.CheckReturnValue;
 import net.bramp.ffmpeg.helper.ImmutableListBuilder;
+import net.bramp.ffmpeg.modelmapper.Mapper;
 import net.bramp.ffmpeg.options.AudioEncodingOptions;
 import net.bramp.ffmpeg.options.EncodingOptions;
 import net.bramp.ffmpeg.options.MainEncodingOptions;
@@ -53,6 +54,26 @@ public class FFmpegOutputBuilder extends AbstractFFmpegStreamBuilder<FFmpegOutpu
 
   protected FFmpegOutputBuilder(FFmpegBuilder parent, URI uri) {
     super(parent, uri);
+  }
+
+  public FFmpegOutputBuilder useOptions(EncodingOptions opts) {
+    Mapper.map(opts, this);
+    return this;
+  }
+
+  public FFmpegOutputBuilder useOptions(MainEncodingOptions opts) {
+    Mapper.map(opts, this);
+    return this;
+  }
+
+  public FFmpegOutputBuilder useOptions(AudioEncodingOptions opts) {
+    Mapper.map(opts, this);
+    return this;
+  }
+
+  public FFmpegOutputBuilder useOptions(VideoEncodingOptions opts) {
+    Mapper.map(opts, this);
+    return this;
   }
 
   public FFmpegOutputBuilder setConstantRateFactor(double factor) {
@@ -219,29 +240,7 @@ public class FFmpegOutputBuilder extends AbstractFFmpegStreamBuilder<FFmpegOutpu
   @CheckReturnValue
   @Override
   public EncodingOptions buildOptions() {
-    // TODO When/if modelmapper supports @ConstructorProperties, we map this
-    // object, instead of doing new XXX(...)
-    // https://github.com/jhalterman/modelmapper/issues/44
-    return new EncodingOptions(
-        new MainEncodingOptions(format, startOffset, duration),
-        new AudioEncodingOptions(
-            audioEnabled,
-            audioCodec,
-            audioChannels,
-            audioSampleRate,
-            audioSampleFormat,
-            audioBitRate,
-            audioQuality),
-        new VideoEncodingOptions(
-            videoEnabled,
-            videoCodec,
-            videoFrameRate,
-            videoWidth,
-            videoHeight,
-            videoBitRate,
-            videoFrames,
-            videoFilter,
-            videoPreset));
+    return Mapper.toOptions(this);
   }
 
   @CheckReturnValue
@@ -404,5 +403,65 @@ public class FFmpegOutputBuilder extends AbstractFFmpegStreamBuilder<FFmpegOutpu
   @Override
   protected FFmpegOutputBuilder getThis() {
     return this;
+  }
+
+  public Double getConstantRateFactor() {
+    return constantRateFactor;
+  }
+
+  public String getAudioSampleFormat() {
+    return audioSampleFormat;
+  }
+
+  public long getAudioBitRate() {
+    return audioBitRate;
+  }
+
+  public Double getAudioQuality() {
+    return audioQuality;
+  }
+
+  public String getAudioBitStreamFilter() {
+    return audioBitStreamFilter;
+  }
+
+  public long getVideoBitRate() {
+    return videoBitRate;
+  }
+
+  public Double getVideoQuality() {
+    return videoQuality;
+  }
+
+  public String getVideoPreset() {
+    return videoPreset;
+  }
+
+  public String getVideoBitStreamFilter() {
+    return videoBitStreamFilter;
+  }
+
+  public String getAudioFilter() {
+    return audioFilter;
+  }
+
+  public String getVideoFilter() {
+    return videoFilter;
+  }
+
+  public String getComplexFilter() {
+    return complexFilter;
+  }
+
+  public int getPass() {
+    return pass;
+  }
+
+  public String getPassDirectory() {
+    return passDirectory;
+  }
+
+  public String getPassPrefix() {
+    return passPrefix;
   }
 }
