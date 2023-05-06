@@ -1,9 +1,7 @@
 package net.bramp.ffmpeg.probe;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.gson.annotations.JsonAdapter;
 import java.util.Map;
-import net.bramp.ffmpeg.gson.ImmutableMapAdapter;
 
 /**
  * @param filename
@@ -30,4 +28,4 @@ public record FFmpegFormat(
     long size,
     @JsonProperty("bit_rate") long bitRate,
     @JsonProperty("probe_score") int probeScore,
-    @JsonAdapter(value = ImmutableMapAdapter.class, nullSafe = false) Map<String, String> tags) {}
+    Map<String, String> tags) {}
