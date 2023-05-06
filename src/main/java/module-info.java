@@ -1,7 +1,6 @@
 module ffmpeg_cli_wrapper {
   requires org.slf4j;
   requires com.google.gson;
-  requires modelmapper;
   requires jsr305;
   requires com.google.errorprone.annotations;
   requires com.github.spotbugs.annotations;
@@ -24,8 +23,6 @@ module ffmpeg_cli_wrapper {
 
   opens net.bramp.ffmpeg.info to
       org.apache.commons.lang3;
-  opens net.bramp.ffmpeg.modelmapper to
-      modelmapper;
   opens net.bramp.ffmpeg.gson to
       org.apache.commons.lang3;
   opens net.bramp.ffmpeg.options to

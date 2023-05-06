@@ -84,11 +84,6 @@
                 <artifactId>gson</artifactId>
                 <version>2.10</version>
             </dependency>
-            <dependency>
-                <groupId>org.modelmapper</groupId>
-                <artifactId>modelmapper</artifactId>
-                <version>3.1.1</version>
-            </dependency>
 
             <!-- Test Scope -->
             <dependency>
@@ -172,10 +167,6 @@
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.modelmapper</groupId>
-            <artifactId>modelmapper</artifactId>
         </dependency>
 
         <!-- Test Scope -->
@@ -421,7 +412,6 @@
                     <links>
                         <link>https://javadoc.io/doc/com.google.code.gson/gson/</link>
                         <link>https://commons.apache.org/proper/commons-lang/javadocs/api-release/</link>
-                        <link>http://modelmapper.org/javadoc/</link>
                         <link>http://findbugs.sourceforge.net/api/</link>
                     </links>
                 </configuration>
