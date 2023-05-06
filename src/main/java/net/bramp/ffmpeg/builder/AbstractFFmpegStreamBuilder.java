@@ -10,11 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import net.bramp.ffmpeg.helper.ImmutableListBuilder;
-import net.bramp.ffmpeg.modelmapper.Mapper;
-import net.bramp.ffmpeg.options.AudioEncodingOptions;
 import net.bramp.ffmpeg.options.EncodingOptions;
-import net.bramp.ffmpeg.options.MainEncodingOptions;
-import net.bramp.ffmpeg.options.VideoEncodingOptions;
 import org.apache.commons.lang3.math.Fraction;
 
 /**
@@ -49,51 +45,51 @@ import org.apache.commons.lang3.math.Fraction;
  * @param <T> A concrete class that extends from the AbstractFFmpegStreamBuilder
  */
 public abstract class AbstractFFmpegStreamBuilder<T extends AbstractFFmpegStreamBuilder<T>> {
-  final FFmpegBuilder parent;
+  protected final FFmpegBuilder parent;
 
   /** Output filename or uri. Only one may be set */
-  public String filename;
+  protected String filename;
 
-  public URI uri;
+  protected URI uri;
 
-  public String format;
+  protected String format;
 
-  public Long startOffset; // in milliseconds
-  public Long duration; // in milliseconds
+  protected Long startOffset; // in milliseconds
+  protected Long duration; // in milliseconds
 
-  public final List<String> metaTags = new ArrayList<>();
+  protected final List<String> metaTags = new ArrayList<>();
 
-  public boolean audioEnabled = true;
-  public String audioCodec;
-  public int audioChannels;
-  public int audioSampleRate;
-  public String audioPreset;
+  protected boolean audioEnabled = true;
+  protected String audioCodec;
+  protected int audioChannels;
+  protected int audioSampleRate;
+  protected String audioPreset;
 
-  public boolean videoEnabled = true;
-  public String videoCodec;
-  public boolean videoCopyinkf;
-  public Fraction videoFrameRate;
-  public int videoWidth;
-  public int videoHeight;
-  public String videoSize;
-  public String videoMovflags;
-  public Integer videoFrames;
-  public String videoPixelFormat;
+  protected boolean videoEnabled = true;
+  protected String videoCodec;
+  protected boolean videoCopyinkf;
+  protected Fraction videoFrameRate;
+  protected int videoWidth;
+  protected int videoHeight;
+  protected String videoSize;
+  protected String videoMovflags;
+  protected Integer videoFrames;
+  protected String videoPixelFormat;
 
-  public boolean subtitleEnabled = true;
-  public String subtitlePreset;
-  private String subtitleCodec;
+  protected boolean subtitleEnabled = true;
+  protected String subtitlePreset;
+  protected String subtitleCodec;
 
-  public String preset;
-  public String presetFilename;
-  public final List<String> extraArgs = new ArrayList<>();
+  protected String preset;
+  protected String presetFilename;
+  protected final List<String> extraArgs = new ArrayList<>();
 
-  public Strict strict = Strict.NORMAL;
+  protected Strict strict = Strict.NORMAL;
 
-  public long targetSize = 0; // in bytes
-  public long passPaddingBitrate = 1024; // in bits per second
+  protected long targetSize = 0; // in bytes
+  protected long passPaddingBitrate = 1024; // in bits per second
 
-  public boolean throwWarnings = true; // TODO Either delete this, or apply it consistently
+  protected boolean throwWarnings = true; // TODO Either delete this, or apply it consistently
 
   protected AbstractFFmpegStreamBuilder() {
     this.parent = null;
