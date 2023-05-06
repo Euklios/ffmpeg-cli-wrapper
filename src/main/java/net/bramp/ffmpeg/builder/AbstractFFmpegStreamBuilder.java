@@ -550,11 +550,7 @@ public abstract class AbstractFFmpegStreamBuilder<T extends AbstractFFmpegStream
    */
   protected List<String> build(FFmpegBuilder parent, int pass) {
     checkNotNull(parent);
-
-    if (pass > 0) {
-      // TODO Write a test for this:
-      checkArgument(format != null, "Format must be specified when using two-pass");
-    }
+    checkBuildPreconditions(parent, pass);
 
     ImmutableList.Builder<String> args = new ImmutableList.Builder<>();
 
@@ -589,18 +585,25 @@ public abstract class AbstractFFmpegStreamBuilder<T extends AbstractFFmpegStream
       throw new IllegalStateException("Only one of filename and uri can be set");
     }
 
-    // Output
-    if (pass == 1) {
-      args.add(DEVNULL);
-    } else if (filename != null) {
-      args.add(filename);
-    } else if (uri != null) {
-      args.add(uri.toString());
-    } else {
-      assert (false);
-    }
+    args.addAll(buildFileNameArgument(pass));
 
     return args.build();
+  }
+
+  protected void checkBuildPreconditions(FFmpegBuilder parent, int pass) {
+  }
+
+  protected Iterable<String> buildFileNameArgument(int pass) {
+    if (pass == 1) {
+      return List.of(DEVNULL);
+    } else if (filename != null) {
+      return List.of(filename);
+    } else if (uri != null) {
+      return List.of(uri.toString());
+    } else {
+      assert (false);
+      return List.of();
+    }
   }
 
   protected void addGlobalFlags(FFmpegBuilder parent, ImmutableList.Builder<String> args) {

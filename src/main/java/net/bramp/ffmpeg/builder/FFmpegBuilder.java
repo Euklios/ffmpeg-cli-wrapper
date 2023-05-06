@@ -69,7 +69,7 @@ public class FFmpegBuilder {
   String format;
   Long startOffset; // in millis
   boolean read_at_native_frame_rate = false;
-  final List<String> inputs = new ArrayList<>();
+  final List<FFmpegInputBuilder> inputs = new ArrayList<>();
   final Map<String, FFmpegProbeResult> inputProbes = new TreeMap<>();
 
   final List<String> extra_args = new ArrayList<>();
@@ -122,17 +122,20 @@ public class FFmpegBuilder {
     return this;
   }
 
-  public FFmpegBuilder addInput(FFmpegProbeResult result) {
+  public FFmpegInputBuilder addInput(FFmpegProbeResult result) {
     checkNotNull(result);
     String filename = checkNotNull(result.format).filename;
     inputProbes.put(filename, result);
     return addInput(filename);
   }
 
-  public FFmpegBuilder addInput(String filename) {
+  public FFmpegInputBuilder addInput(String filename) {
+    FFmpegInputBuilder inputBuilder = new FFmpegInputBuilder(this, filename);
+    inputBuilder.setFilename(filename);
+
     checkNotNull(filename);
-    inputs.add(filename);
-    return this;
+    inputs.add(inputBuilder);
+    return inputBuilder;
   }
 
   protected void clearInputs() {
@@ -140,12 +143,12 @@ public class FFmpegBuilder {
     inputProbes.clear();
   }
 
-  public FFmpegBuilder setInput(FFmpegProbeResult result) {
+  public FFmpegInputBuilder setInput(FFmpegProbeResult result) {
     clearInputs();
     return addInput(result);
   }
 
-  public FFmpegBuilder setInput(String filename) {
+  public FFmpegInputBuilder setInput(String filename) {
     clearInputs();
     return addInput(filename);
   }
@@ -303,8 +306,8 @@ public class FFmpegBuilder {
 
     args.addAll(extra_args);
 
-    for (String input : inputs) {
-      args.add("-i", input);
+    for (FFmpegInputBuilder input : inputs) {
+      args.addAll(input.build(this, pass));
     }
 
     if (pass > 0) {

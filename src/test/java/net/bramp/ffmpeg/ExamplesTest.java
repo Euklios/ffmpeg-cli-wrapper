@@ -50,6 +50,7 @@ public class ExamplesTest {
             .setFormat("dshow")
             .setInput(
                 "video=\"Microsoft Camera Rear\":audio=\"Microphone Array (Realtek High Definition Audio(SST))\"")
+            .done()
             .addOutput("rtmp://a.rtmp.youtube.com/live2/1234-5678")
             .setFormat("flv")
             .addExtraArgs("-bufsize", "4000k")
@@ -88,6 +89,7 @@ public class ExamplesTest {
     FFmpegBuilder builder =
         new FFmpegBuilder()
             .setInput("input.mkv")
+            .done()
             .addOutput("output.ogv")
             .setVideoCodec("libtheora")
             .addExtraArgs("-qscale:v", "7")
@@ -113,6 +115,7 @@ public class ExamplesTest {
     FFmpegBuilder builder =
         new FFmpegBuilder()
             .setInput("sample.avi")
+            .done()
             .addOutput("thumbnail.png")
             .setFrames(1)
             .setVideoFilter("select='gte(n\\,10)',scale=200:-1")
@@ -134,6 +137,7 @@ public class ExamplesTest {
     FFmpegBuilder builder =
         new FFmpegBuilder()
             .setInput("rtsp://192.168.1.1:1234/")
+            .done()
             .addOutput("img%03d.jpg")
             .setFormat("image2")
             .done();
@@ -154,7 +158,7 @@ public class ExamplesTest {
     FFmpeg ffmpeg = new FFmpeg("/path/to/ffmpeg", func);
     FFprobe ffprobe = new FFprobe("/path/to/ffprobe", func);
 
-    FFmpegBuilder builder = new FFmpegBuilder().setInput("input").addOutput("output.mp4").done();
+    FFmpegBuilder builder = new FFmpegBuilder().setInput("input").done().addOutput("output.mp4").done();
 
     FFmpegExecutor executor = new FFmpegExecutor(ffmpeg, ffprobe);
 
@@ -168,6 +172,7 @@ public class ExamplesTest {
     FFmpegBuilder builder =
         new FFmpegBuilder()
             .addInput("image%03d.png")
+            .done()
             .addOutput("output.mp4")
             .setVideoFrameRate(FFmpeg.FPS_24)
             .done();
@@ -183,7 +188,9 @@ public class ExamplesTest {
     FFmpegBuilder builder =
         new FFmpegBuilder()
             .addInput("original.mp4")
+            .done()
             .addInput("spot.mp4")
+            .done()
             .setComplexFilter(
                 "[1:v]scale=368:207,setpts=PTS-STARTPTS+5/TB [ov]; "
                     + "[0:v][ov] overlay=x=(main_w-overlay_w)/2:y=(main_h-overlay_h)/2:enable='between(t,5,15)' [v]")
@@ -221,6 +228,7 @@ public class ExamplesTest {
     FFmpegBuilder builder =
         new FFmpegBuilder()
             .addInput("original.mp4")
+            .done()
             .setVideoFilter("select='gte(n\\,10)',scale=200:-1")
             .addOutput("hevc-video.mp4")
             .addExtraArgs("-tag:v", "hvc1")
@@ -246,6 +254,7 @@ public class ExamplesTest {
         new FFmpegBuilder()
             .setVerbosity(FFmpegBuilder.Verbosity.DEBUG)
             .setInput("input.mp3")
+            .done()
             .overrideOutputFiles(true) // Override the output if it exists
             .addOutput("left.mp3")
             .addExtraArgs("-map_channel", "0.0.0")
@@ -271,8 +280,11 @@ public class ExamplesTest {
         "ffmpeg -y -v error"
             + " -f webm_dash_manifest"
             + " -i audio.webm"
+            + " -f webm_dash_manifest"
             + " -i video_1.webm"
+            + " -f webm_dash_manifest"
             + " -i video_2.webm"
+            + " -f webm_dash_manifest"
             + " -i video_3.webm"
             + " -vcodec copy -acodec copy"
             + " -map 0 -map 1 -map 2 -map 3"
@@ -313,7 +325,7 @@ public class ExamplesTest {
   @Test
   @Ignore("because this test will invoke /path/to/ffmpeg.")
   public void testExample11() throws IOException, InterruptedException {
-    FFmpegBuilder builder = new FFmpegBuilder().setInput("input").addOutput("output.mp4").done();
+    FFmpegBuilder builder = new FFmpegBuilder().setInput("input").done().addOutput("output.mp4").done();
 
     List<String> args = new ArrayList<>();
     args.add("/path/to/ffmpeg");
@@ -335,6 +347,7 @@ public class ExamplesTest {
         new FFmpegBuilder()
             .setInput("input.mp4")
             .setStartOffset(1, TimeUnit.MINUTES)
+            .done()
             .addOutput("output.mp4")
             .setDuration(1, TimeUnit.MINUTES)
             .setVideoCodec("copy")

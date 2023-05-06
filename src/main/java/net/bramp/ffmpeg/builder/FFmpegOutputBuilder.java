@@ -217,6 +217,14 @@ public class FFmpegOutputBuilder extends AbstractFFmpegStreamBuilder<FFmpegOutpu
     return build(parent, pass);
   }
 
+  @Override
+  protected void checkBuildPreconditions(FFmpegBuilder parent, int pass) {
+    if (pass > 0) {
+      // TODO Write a test for this:
+      checkArgument(format != null, "Format must be specified when using two-pass");
+    }
+  }
+
   /**
    * Builds the arguments
    *
@@ -239,8 +247,8 @@ public class FFmpegOutputBuilder extends AbstractFFmpegStreamBuilder<FFmpegOutpu
       checkArgument(
           constantRateFactor == null, "Target size can not be used with constantRateFactor");
 
-      String firstInput = parent.inputs.iterator().next();
-      FFmpegProbeResult input = parent.inputProbes.get(firstInput);
+      FFmpegInputBuilder firstInput = parent.inputs.iterator().next();
+      FFmpegProbeResult input = parent.inputProbes.get(firstInput.getFilename());
 
       checkState(input != null, "Target size must be used with setInput(FFmpegProbeResult)");
 

@@ -84,6 +84,7 @@ public class FFmpegExecutorTest {
             .setUserAgent(
                 "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.82 Safari/537.36")
             .setInput(getWebserverRoot() + Samples.base_big_buck_bunny_720p_1mb)
+            .done()
             .addExtraArgs("-probesize", "1000000")
             // .setStartOffset(1500, TimeUnit.MILLISECONDS)
             .overrideOutputFiles(true)
@@ -121,6 +122,7 @@ public class FFmpegExecutorTest {
     FFmpegBuilder builder =
         new FFmpegBuilder()
             .setInput(in)
+            .done()
             .overrideOutputFiles(true)
             .addOutput(Samples.output_mp4)
             .setFormat("mp4")
@@ -143,6 +145,7 @@ public class FFmpegExecutorTest {
     FFmpegBuilder builder =
         new FFmpegBuilder()
             .setInput(Samples.big_buck_bunny_720p_1mb)
+            .done()
             .overrideOutputFiles(true)
             .addOutput(Samples.output_mp4)
             .setFormat("mp4")
@@ -163,6 +166,7 @@ public class FFmpegExecutorTest {
     FFmpegBuilder builder =
         new FFmpegBuilder()
             .setInput(Samples.big_buck_bunny_720p_1mb)
+            .done()
             .overrideOutputFiles(true)
             .addOutput(Samples.output_mp4)
             .setFormat("mp4")
@@ -182,15 +186,15 @@ public class FFmpegExecutorTest {
    * Test if addStdoutOutput() actually works, and the output can be correctly captured.
    *
    * @throws InterruptedException
-   * @throws ExecutionException
    * @throws IOException
    */
   @Test
-  public void testStdout() throws InterruptedException, ExecutionException, IOException {
+  public void testStdout() throws InterruptedException, IOException {
 
     FFmpegBuilder builder =
         new FFmpegBuilder()
             .setInput(Samples.big_buck_bunny_720p_1mb)
+            .done()
             .addStdoutOutput()
             .setFormat("s8")
             .setAudioChannels(1)
@@ -221,6 +225,7 @@ public class FFmpegExecutorTest {
         new FFmpegBuilder()
             .readAtNativeFrameRate() // Slows the test down
             .setInput(in)
+            .done()
             .overrideOutputFiles(true)
             .addOutput(Samples.output_mp4)
             .done();
@@ -245,7 +250,9 @@ public class FFmpegExecutorTest {
     FFmpegBuilder builder =
         new FFmpegBuilder()
             .setInput(Samples.testscreen_jpg)
+            .done()
             .addInput(Samples.test_mp3)
+            .done()
             .addExtraArgs("-loop", "1")
             .overrideOutputFiles(true)
             .addOutput(Samples.output_mp4)
