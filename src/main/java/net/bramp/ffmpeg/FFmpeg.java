@@ -124,7 +124,8 @@ public class FFmpeg extends FFcommon {
     if (this.codecs == null) {
       codecs = new ArrayList<>();
 
-      Process p = runFunc.run(ImmutableList.of(path, "-codecs"), new ProcessOptions());
+      ProcessOptions processOptions = new ProcessOptions();
+      Process p = runFunc.run(ImmutableList.of(path, "-codecs"), processOptions);
       try {
         BufferedReader r = wrapInReader(p);
         String line;
@@ -135,7 +136,7 @@ public class FFmpeg extends FFcommon {
           codecs.add(new Codec(m.group(2), m.group(3), m.group(1)));
         }
 
-        throwOnError(p);
+        throwOnError(p, processOptions);
         this.codecs = ImmutableList.copyOf(codecs);
       } finally {
         p.destroy();
@@ -151,7 +152,8 @@ public class FFmpeg extends FFcommon {
     if (this.formats == null) {
       formats = new ArrayList<>();
 
-      Process p = runFunc.run(ImmutableList.of(path, "-formats"), new ProcessOptions());
+      ProcessOptions processOptions = new ProcessOptions();
+      Process p = runFunc.run(ImmutableList.of(path, "-formats"), processOptions);
       try {
         BufferedReader r = wrapInReader(p);
         String line;
@@ -162,7 +164,7 @@ public class FFmpeg extends FFcommon {
           formats.add(new Format(m.group(2), m.group(3), m.group(1)));
         }
 
-        throwOnError(p);
+        throwOnError(p, processOptions);
         this.formats = ImmutableList.copyOf(formats);
       } finally {
         p.destroy();
@@ -177,7 +179,8 @@ public class FFmpeg extends FFcommon {
     if (this.pixelFormats == null) {
       pixelFormats = new ArrayList<>();
 
-      Process p = runFunc.run(ImmutableList.of(path, "-pix_fmts"), new ProcessOptions());
+      ProcessOptions processOptions = new ProcessOptions();
+      Process p = runFunc.run(ImmutableList.of(path, "-pix_fmts"), processOptions);
       try {
         BufferedReader r = wrapInReader(p);
         String line;
@@ -194,7 +197,7 @@ public class FFmpeg extends FFcommon {
               flags));
         }
 
-        throwOnError(p);
+        throwOnError(p, processOptions);
         this.pixelFormats = ImmutableList.copyOf(pixelFormats);
       } finally {
         p.destroy();

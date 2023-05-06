@@ -12,13 +12,11 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import javax.annotation.Nonnull;
 
+import net.bramp.error.handler.ExceptionParser;
 import net.bramp.ffmpeg.builder.ProcessOptions;
-import net.bramp.ffmpeg.io.ProcessUtils;
 
 /** Private class to contain common methods for both FFmpeg and FFprobe. */
 abstract class FFcommon {
@@ -46,15 +44,15 @@ abstract class FFcommon {
     return new BufferedReader(new InputStreamReader(p.getInputStream(), StandardCharsets.UTF_8));
   }
 
-  protected void throwOnError(Process p) throws IOException {
+  protected void throwOnError(Process process, ProcessOptions processOptions) throws IOException {
     try {
-      // TODO In java 8 use waitFor(long timeout, TimeUnit unit)
-      if (ProcessUtils.waitForWithTimeout(p, 1, TimeUnit.SECONDS) != 0) {
-        // TODO Parse the error
-        throw new IOException(path + " returned non-zero exit status. Check stdout.");
-      }
-    } catch (TimeoutException e) {
-      throw new IOException("Timed out waiting for " + path + " to finish.");
+      process.waitFor(1, TimeUnit.SECONDS);
+    } catch (InterruptedException e) {
+      throw new IOException("Interrupted while waiting for " + path + " to finish");
+    }
+
+    if (process.exitValue() != 0) {
+      throw ExceptionParser.loadException(process.info().command().orElse(""), processOptions);
     }
   }
 
@@ -66,13 +64,14 @@ abstract class FFcommon {
    */
   public synchronized @Nonnull String version() throws IOException {
     if (this.version == null) {
-      Process p = runFunc.run(ImmutableList.of(path, "-version"), new ProcessOptions());
+      ProcessOptions processOptions = new ProcessOptions();
+      Process p = runFunc.run(ImmutableList.of(path, "-version"), processOptions);
       try {
         BufferedReader r = wrapInReader(p);
         this.version = r.readLine();
         CharStreams.copy(r, CharStreams.nullWriter()); // Throw away rest of the output
 
-        throwOnError(p);
+        throwOnError(p, processOptions);
       } finally {
         p.destroy();
       }
@@ -116,7 +115,7 @@ abstract class FFcommon {
 
     try {
       process.waitFor();
-      throwOnError(process);
+      throwOnError(process, processOptions);
     } catch (InterruptedException e) {
       // TODO: This should probably be thrown as a checked exception
       throw new RuntimeException(e);

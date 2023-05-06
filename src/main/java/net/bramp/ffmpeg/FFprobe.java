@@ -102,7 +102,8 @@ public class FFprobe extends FFcommon {
         .add("-show_chapters")
         .add(mediaPath);
 
-    Process p = runFunc.run(args.build(), new ProcessOptions());
+    ProcessOptions processOptions = new ProcessOptions();
+    Process p = runFunc.run(args.build(), processOptions);
     try {
       Reader reader = wrapInReader(p);
       if (LOG.isDebugEnabled()) {
@@ -111,7 +112,7 @@ public class FFprobe extends FFcommon {
 
       FFmpegProbeResult result = gson.fromJson(reader, FFmpegProbeResult.class);
 
-      throwOnError(p);
+      throwOnError(p, processOptions);
 
       if (result == null) {
         throw new IllegalStateException("Gson returned null, which shouldn't happen :(");
