@@ -3,9 +3,8 @@ package net.bramp.ffmpeg.builder;
 import static net.bramp.ffmpeg.Preconditions.checkArgument;
 import static net.bramp.ffmpeg.Preconditions.checkNotNull;
 import static net.bramp.ffmpeg.Preconditions.checkNotEmpty;
+import static net.bramp.ffmpeg.helper.Expressions.isNotNullOrEmpty;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -325,13 +324,13 @@ public class FFmpegBuilder {
     }
 
     // TODO: -af is an output option and shouldn't be set here
-    args.addArgIf(!Strings.isNullOrEmpty(audioFilter), "-af", audioFilter);
+    args.addArgIf(isNotNullOrEmpty(audioFilter), "-af", audioFilter);
 
     // TODO: -vf is an output option and shouldn't be set here
-    args.addArgIf(!Strings.isNullOrEmpty(videoFilter), "-vf", videoFilter);
+    args.addArgIf(isNotNullOrEmpty(videoFilter), "-vf", videoFilter);
 
     // TODO: -filter_complex is an output option and shouldn't be set here
-    args.addArgIf(!Strings.isNullOrEmpty(complexFilter), "-filter_complex", complexFilter);
+    args.addArgIf(isNotNullOrEmpty(complexFilter), "-filter_complex", complexFilter);
 
     for (FFmpegOutputBuilder output : this.outputs) {
       args.addAll(output.build(this, pass));

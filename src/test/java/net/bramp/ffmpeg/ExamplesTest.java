@@ -5,7 +5,6 @@ import static net.bramp.ffmpeg.FFmpegTest.argThatIsInstanceOf;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
-import com.google.common.base.Joiner;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -79,7 +78,7 @@ public class ExamplesTest {
             + " -profile:v baseline -deinterlace -preset medium -g 30"
             + " rtmp://a.rtmp.youtube.com/live2/1234-5678";
 
-    String actual = Joiner.on(" ").join(ffmpeg.path(builder.build()));
+    String actual = String.join(" ", ffmpeg.path(builder.build()));
 
     assertEquals(expected, actual);
   }
@@ -106,7 +105,7 @@ public class ExamplesTest {
             + " -qscale:a 5"
             + " output.ogv";
 
-    String actual = Joiner.on(" ").join(ffmpeg.path(builder.build()));
+    String actual = String.join(" ", ffmpeg.path(builder.build()));
     assertEquals(expected, actual);
   }
 
@@ -127,7 +126,7 @@ public class ExamplesTest {
             + " -vframes 1 -vf select='gte(n\\,10)',scale=200:-1"
             + " thumbnail.png";
 
-    String actual = Joiner.on(" ").join(ffmpeg.path(builder.build()));
+    String actual = String.join(" ", ffmpeg.path(builder.build()));
     assertEquals(expected, actual);
   }
 
@@ -144,7 +143,7 @@ public class ExamplesTest {
 
     String expected = "ffmpeg -y -v error -i rtsp://192.168.1.1:1234/ -f image2 img%03d.jpg";
 
-    String actual = Joiner.on(" ").join(ffmpeg.path(builder.build()));
+    String actual = String.join(" ", ffmpeg.path(builder.build()));
     assertEquals(expected, actual);
   }
 
@@ -179,7 +178,7 @@ public class ExamplesTest {
 
     String expected = "ffmpeg -y -v error -i image%03d.png -r 24/1 output.mp4";
 
-    String actual = Joiner.on(" ").join(ffmpeg.path(builder.build()));
+    String actual = String.join(" ", ffmpeg.path(builder.build()));
     assertEquals(expected, actual);
   }
 
@@ -218,7 +217,7 @@ public class ExamplesTest {
             + " -shortest"
             + " with-video.mp4";
 
-    String actual = Joiner.on(" ").join(ffmpeg.path(builder.build()));
+    String actual = String.join(" ", ffmpeg.path(builder.build()));
     assertEquals(expected, actual);
   }
 
@@ -243,7 +242,7 @@ public class ExamplesTest {
             + " -tag:v hvc1"
             + " hevc-video.mp4";
 
-    String actual = Joiner.on(" ").join(ffmpeg.path(builder.build()));
+    String actual = String.join(" ", ffmpeg.path(builder.build()));
     assertEquals(expected, actual);
   }
 
@@ -269,7 +268,7 @@ public class ExamplesTest {
             + "-map_channel 0.0.0 left.mp3 "
             + "-map_channel 0.0.1 right.mp3";
 
-    String actual = Joiner.on(" ").join(ffmpeg.path(builder.build()));
+    String actual = String.join(" ", ffmpeg.path(builder.build()));
     assertEquals(expected, actual);
   }
 
@@ -314,10 +313,10 @@ public class ExamplesTest {
 
     out.addExtraArgs(
             "-adaptation_sets",
-            String.format("\"id=0,streams=0 id=1,streams=%s\"", Joiner.on(",").join(streams)))
+            String.format("\"id=0,streams=0 id=1,streams=%s\"", String.join(",", streams)))
         .done();
 
-    String actual = Joiner.on(" ").join(ffmpeg.path(builder.build()));
+    String actual = String.join(" ", ffmpeg.path(builder.build()));
     assertEquals(expected, actual);
   }
 
@@ -356,7 +355,7 @@ public class ExamplesTest {
 
     String expected =
         "ffmpeg -y -v error -ss 00:01:00 -i input.mp4 -t 00:01:00 -vcodec copy -acodec copy output.mp4";
-    String actual = Joiner.on(" ").join(ffmpeg.path(builder.build()));
+    String actual = String.join(" ", ffmpeg.path(builder.build()));
     assertEquals(expected, actual);
   }
 }

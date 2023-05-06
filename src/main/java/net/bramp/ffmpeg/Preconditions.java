@@ -27,6 +27,18 @@ public final class Preconditions {
   }
 
   /**
+   * Ensures the argument is not null, empty string, or just whitespace.
+   *
+   * @param arg The argument
+   * @return The passed in argument if it is not blank
+   */
+  public static String checkNotEmpty(String arg) {
+    checkArgument(!(arg == null || arg.isBlank()));
+
+    return arg;
+  }
+
+  /**
    * Ensures that an object passed as a parameter is not null.
    *
    * @param arg The argument

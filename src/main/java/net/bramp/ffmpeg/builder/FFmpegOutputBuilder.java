@@ -1,8 +1,8 @@
 package net.bramp.ffmpeg.builder;
 
 import static net.bramp.ffmpeg.Preconditions.*;
+import static net.bramp.ffmpeg.helper.Expressions.isNotNullOrEmpty;
 
-import com.google.common.base.Strings;
 import java.net.URI;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -300,23 +300,23 @@ public class FFmpegOutputBuilder extends AbstractFFmpegStreamBuilder<FFmpegOutpu
 
     args.addArgIf(videoBitRate > 0, "-b:v", String.valueOf(videoBitRate));
     args.addArgIf(videoQuality != null, "-qscale:v", () -> formatDecimalInteger(videoQuality));
-    args.addArgIf(!Strings.isNullOrEmpty(videoPreset), "-vpre", videoPreset);
+    args.addArgIf(isNotNullOrEmpty(videoPreset), "-vpre", videoPreset);
 
-    if (!Strings.isNullOrEmpty(videoFilter)) {
+    if (isNotNullOrEmpty(videoFilter)) {
       checkState(
           parent.inputs.size() == 1,
           "Video filter only works with one input, instead use setComplexVideoFilter(..)");
       args.add("-vf", videoFilter);
     }
 
-    args.addArgIf(!Strings.isNullOrEmpty(videoBitStreamFilter), "-bsf:v", videoBitStreamFilter);
+    args.addArgIf(isNotNullOrEmpty(videoBitStreamFilter), "-bsf:v", videoBitStreamFilter);
   }
 
   @Override
   protected void addAudioFlags(ImmutableListBuilder<String> args) {
     super.addAudioFlags(args);
 
-    args.addArgIf(!Strings.isNullOrEmpty(audioSampleFormat), "-sample_fmt", audioSampleFormat);
+    args.addArgIf(isNotNullOrEmpty(audioSampleFormat), "-sample_fmt", audioSampleFormat);
 
     if (audioBitRate > 0 && audioQuality != null && throwWarnings) {
       // I'm not sure, but it seems audioQuality overrides audioBitRate, so don't allow both
@@ -325,8 +325,8 @@ public class FFmpegOutputBuilder extends AbstractFFmpegStreamBuilder<FFmpegOutpu
 
     args.addArgIf(audioBitRate > 0, "-b:a", String.valueOf(audioBitRate));
     args.addArgIf(audioQuality != null, "-qscale:a", () -> formatDecimalInteger(audioQuality));
-    args.addArgIf(!Strings.isNullOrEmpty(audioBitStreamFilter), "-bsf:a", audioBitStreamFilter);
-    args.addArgIf(!Strings.isNullOrEmpty(audioFilter), "-af", audioFilter);
+    args.addArgIf(isNotNullOrEmpty(audioBitStreamFilter), "-bsf:a", audioBitStreamFilter);
+    args.addArgIf(isNotNullOrEmpty(audioFilter), "-af", audioFilter);
   }
 
   @CheckReturnValue

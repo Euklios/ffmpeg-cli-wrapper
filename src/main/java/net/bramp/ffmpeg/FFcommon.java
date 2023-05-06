@@ -1,6 +1,5 @@
 package net.bramp.ffmpeg;
 
-import com.google.common.base.Strings;
 import com.google.common.io.CharStreams;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -15,8 +14,7 @@ import net.bramp.error.handler.ExceptionParser;
 import net.bramp.ffmpeg.builder.ProcessOptions;
 import net.bramp.ffmpeg.helper.ImmutableListBuilder;
 
-import static net.bramp.ffmpeg.Preconditions.checkArgument;
-import static net.bramp.ffmpeg.Preconditions.checkNotNull;
+import static net.bramp.ffmpeg.Preconditions.*;
 
 /** Private class to contain common methods for both FFmpeg and FFprobe. */
 abstract class FFcommon {
@@ -35,7 +33,7 @@ abstract class FFcommon {
   }
 
   protected FFcommon(@Nonnull String path, @Nonnull ProcessFunction runFunction) {
-    checkArgument(!Strings.isNullOrEmpty(path));
+    checkNotEmpty(path);
     this.runFunc = checkNotNull(runFunction);
     this.path = path;
   }

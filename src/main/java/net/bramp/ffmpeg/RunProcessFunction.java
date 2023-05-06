@@ -1,6 +1,5 @@
 package net.bramp.ffmpeg;
 
-import com.google.common.base.Joiner;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -30,7 +29,7 @@ public class RunProcessFunction implements ProcessFunction {
     checkArgument(!args.isEmpty(), "No arguments specified");
 
     if (LOG.isInfoEnabled()) {
-      LOG.info("{}", Joiner.on(" ").join(args));
+      LOG.info("{}", String.join(" ", args));
     }
 
     ProcessBuilder builder = new ProcessBuilder(args);

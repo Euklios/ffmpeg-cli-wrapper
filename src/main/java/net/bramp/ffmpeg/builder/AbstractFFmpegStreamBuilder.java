@@ -3,8 +3,8 @@ package net.bramp.ffmpeg.builder;
 import static net.bramp.ffmpeg.FFmpegUtils.toTimecode;
 import static net.bramp.ffmpeg.Preconditions.*;
 import static net.bramp.ffmpeg.builder.MetadataSpecifier.checkValidKey;
+import static net.bramp.ffmpeg.helper.Expressions.isNotNullOrEmpty;
 
-import com.google.common.base.Strings;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -576,8 +576,8 @@ public abstract class AbstractFFmpegStreamBuilder<T extends AbstractFFmpegStream
 
 
     if (subtitleEnabled) {
-      args.addArgIf(!Strings.isNullOrEmpty(subtitleCodec), "-scodec", subtitleCodec);
-      args.addArgIf(!Strings.isNullOrEmpty(subtitlePreset), "-spre", subtitlePreset);
+      args.addArgIf(isNotNullOrEmpty(subtitleCodec), "-scodec", subtitleCodec);
+      args.addArgIf(isNotNullOrEmpty(subtitlePreset), "-spre", subtitlePreset);
     } else {
       args.add("-sn");
     }
@@ -609,9 +609,9 @@ public abstract class AbstractFFmpegStreamBuilder<T extends AbstractFFmpegStream
 
   protected void addGlobalFlags(FFmpegBuilder parent, ImmutableListBuilder<String> args) {
     args.addArgIf(strict != FFmpegBuilder.Strict.NORMAL, "-strict", strict.toString());
-    args.addArgIf(!Strings.isNullOrEmpty(format), "-f", format);
-    args.addArgIf(!Strings.isNullOrEmpty(preset), "-preset", preset);
-    args.addArgIf(!Strings.isNullOrEmpty(presetFilename), "-fpre", presetFilename);
+    args.addArgIf(isNotNullOrEmpty(format), "-f", format);
+    args.addArgIf(isNotNullOrEmpty(preset), "-preset", preset);
+    args.addArgIf(isNotNullOrEmpty(presetFilename), "-fpre", presetFilename);
     args.addArgIf(startOffset != null, "-ss", () -> toTimecode(startOffset, TimeUnit.MILLISECONDS));
     args.addArgIf(duration != null, "-t", () -> toTimecode(duration, TimeUnit.MILLISECONDS));
 
@@ -619,18 +619,18 @@ public abstract class AbstractFFmpegStreamBuilder<T extends AbstractFFmpegStream
   }
 
   protected void addAudioFlags(ImmutableListBuilder<String> args) {
-    args.addArgIf(!Strings.isNullOrEmpty(audioCodec), "-acodec", audioCodec);
+    args.addArgIf(isNotNullOrEmpty(audioCodec), "-acodec", audioCodec);
     args.addArgIf(audioChannels > 0, "-ac", String.valueOf(audioChannels));
     args.addArgIf(audioSampleRate > 0, "-ar", String.valueOf(audioSampleRate));
-    args.addArgIf(!Strings.isNullOrEmpty(audioPreset), "-apre", audioPreset);
+    args.addArgIf(isNotNullOrEmpty(audioPreset), "-apre", audioPreset);
   }
 
   protected void addVideoFlags(FFmpegBuilder parent, ImmutableListBuilder<String> args) {
     args.addArgIf(videoFrames != null, "-vframes", () -> videoFrames.toString());
-    args.addArgIf(!Strings.isNullOrEmpty(videoCodec), "-vcodec", videoCodec);
-    args.addArgIf(!Strings.isNullOrEmpty(videoPixelFormat), "-pix_fmt", videoPixelFormat);
+    args.addArgIf(isNotNullOrEmpty(videoCodec), "-vcodec", videoCodec);
+    args.addArgIf(isNotNullOrEmpty(videoPixelFormat), "-pix_fmt", videoPixelFormat);
     args.addFlagIf(videoCopyinkf, "-copyinkf");
-    args.addArgIf(!Strings.isNullOrEmpty(videoMovflags), "-movflags", videoMovflags);
+    args.addArgIf(isNotNullOrEmpty(videoMovflags), "-movflags", videoMovflags);
 
     if (videoSize != null) {
       checkArgument(
