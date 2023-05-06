@@ -1,5 +1,8 @@
 package net.bramp.ffmpeg.info;
 
+import static net.bramp.ffmpeg.Preconditions.checkArgument;
+import static net.bramp.ffmpeg.Preconditions.checkNotNull;
+
 public class PixelFormatFactory {
   private PixelFormatFactory() {
     throw new AssertionError("No instances for you!");
@@ -7,6 +10,9 @@ public class PixelFormatFactory {
 
   public static PixelFormat create(
       String name, int numberOfComponents, int bitsPerPixel, String flags) {
+    checkArgument(flags.length() == 5, "PixelFormat flags is invalid '%s'".formatted(flags));
+    checkNotNull(name);
+
     boolean canDecode = flags.charAt(0) == 'I';
     boolean canEncode = flags.charAt(1) == 'O';
     boolean hardwareAccelerated = flags.charAt(2) == 'H';
