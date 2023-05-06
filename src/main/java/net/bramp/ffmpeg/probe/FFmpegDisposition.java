@@ -1,36 +1,41 @@
 package net.bramp.ffmpeg.probe;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
+import com.google.gson.annotations.JsonAdapter;
+import com.google.gson.annotations.SerializedName;
+import net.bramp.ffmpeg.gson.BitsetFieldAdapter;
 
 /** Represents the AV_DISPOSITION_* fields */
-@SuppressFBWarnings(
-    value = {"UUF_UNUSED_PUBLIC_OR_PROTECTED_FIELD"},
-    justification = "POJO objects where the fields are populated by gson")
-public final class FFmpegDisposition {
-  public boolean _default;
-  public boolean dub;
-  public boolean original;
-  public boolean comment;
-  public boolean lyrics;
-  public boolean karaoke;
-  public boolean forced;
-  public boolean hearing_impaired;
-  public boolean visual_impaired;
-  public boolean clean_effects;
-  public boolean attached_pic;
-  public boolean captions;
-  public boolean descriptions;
-  public boolean metadata;
-
-  @Override
-  public boolean equals(Object obj) {
-    return EqualsBuilder.reflectionEquals(this, obj);
-  }
-
-  @Override
-  public int hashCode() {
-    return HashCodeBuilder.reflectionHashCode(this);
-  }
+public record FFmpegDisposition(
+  @JsonAdapter(BitsetFieldAdapter.class)
+  boolean _default,
+  @JsonAdapter(BitsetFieldAdapter.class)
+  boolean dub,
+  @JsonAdapter(BitsetFieldAdapter.class)
+  boolean original,
+  @JsonAdapter(BitsetFieldAdapter.class)
+  boolean comment,
+  @JsonAdapter(BitsetFieldAdapter.class)
+  boolean lyrics,
+  @JsonAdapter(BitsetFieldAdapter.class)
+  boolean karaoke,
+  @JsonAdapter(BitsetFieldAdapter.class)
+  boolean forced,
+  @SerializedName("hearing_impaired")
+  @JsonAdapter(BitsetFieldAdapter.class)
+  boolean hearingImpaired,
+  @SerializedName("visual_impaired")
+  @JsonAdapter(BitsetFieldAdapter.class)
+  boolean visualImpaired,
+  @SerializedName("clean_effects")
+  @JsonAdapter(BitsetFieldAdapter.class)
+  boolean cleanEffects,
+  @SerializedName("attached_pic")
+  @JsonAdapter(BitsetFieldAdapter.class)
+  boolean attachedPic,
+  @JsonAdapter(BitsetFieldAdapter.class)
+  boolean captions,
+  @JsonAdapter(BitsetFieldAdapter.class)
+  boolean descriptions,
+  @JsonAdapter(BitsetFieldAdapter.class)
+  boolean metadata){
 }

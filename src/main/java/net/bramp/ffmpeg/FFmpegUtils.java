@@ -117,8 +117,6 @@ public final class FFmpegUtils {
 
     builder.registerTypeAdapterFactory(new LowercaseEnumTypeAdapterFactory());
     builder.registerTypeAdapter(Fraction.class, new FractionAdapter());
-    builder.registerTypeAdapter(
-        FFmpegDisposition.class, new NamedBitsetAdapter<>(FFmpegDisposition.class));
 
     return builder.create();
   }

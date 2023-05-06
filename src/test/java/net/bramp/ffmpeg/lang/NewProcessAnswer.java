@@ -12,7 +12,7 @@ public class NewProcessAnswer implements Answer<Process> {
   }
 
   @Override
-  public Process answer(InvocationOnMock invocationOnMock) throws Throwable {
+  public Process answer(InvocationOnMock invocationOnMock) {
     return new MockProcess(Helper.loadResource(resource));
   }
 }

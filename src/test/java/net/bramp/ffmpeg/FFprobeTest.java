@@ -3,21 +3,17 @@ package net.bramp.ffmpeg;
 import static net.bramp.ffmpeg.FFmpegTest.argThatHasItem;
 import static net.bramp.ffmpeg.FFmpegTest.argThatIsInstanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
-
-import com.google.gson.Gson;
 
 import java.io.IOException;
 
 import net.bramp.ffmpeg.builder.ProcessOptions;
 import net.bramp.ffmpeg.fixtures.Samples;
 import net.bramp.ffmpeg.lang.NewProcessAnswer;
-import net.bramp.ffmpeg.probe.FFmpegChapter;
-import net.bramp.ffmpeg.probe.FFmpegProbeResult;
-import net.bramp.ffmpeg.probe.FFmpegStream;
+import net.bramp.ffmpeg.probe.*;
 import org.apache.commons.lang3.math.Fraction;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,8 +28,6 @@ public class FFprobeTest {
   ProcessFunction runFunc;
 
   FFprobe ffprobe;
-
-  static final Gson gson = FFmpegUtils.getGson();
 
   @Before
   public void before() throws IOException {
@@ -78,11 +72,11 @@ public class FFprobeTest {
 
     // Only a quick sanity check until we do something better
     assertThat(info.getStreams(), hasSize(2));
-    assertThat(info.getStreams().get(0).codec_type, is(FFmpegStream.CodecType.VIDEO));
-    assertThat(info.getStreams().get(1).codec_type, is(FFmpegStream.CodecType.AUDIO));
+    assertThat(info.getStreams().get(0).codecType(), is(FFmpegStreamCodecType.VIDEO));
+    assertThat(info.getStreams().get(1).codecType(), is(FFmpegStreamCodecType.AUDIO));
 
-    assertThat(info.getStreams().get(1).channels, is(6));
-    assertThat(info.getStreams().get(1).sample_rate, is(48_000));
+    assertThat(info.getStreams().get(1).channels(), is(6));
+    assertThat(info.getStreams().get(1).sampleRate(), is(48_000));
 
     assertThat(info.getChapters().isEmpty(), is(true));
     // System.out.println(FFmpegUtils.getGson().toJson(info));
@@ -95,20 +89,20 @@ public class FFprobeTest {
     assertThat(info.getChapters().size(), is(24));
 
     FFmpegChapter firstChapter = info.getChapters().get(0);
-    assertThat(firstChapter.time_base, is("1/44100"));
-    assertThat(firstChapter.start, is(0L));
-    assertThat(firstChapter.start_time, is("0.000000"));
-    assertThat(firstChapter.end, is(11951309L));
-    assertThat(firstChapter.end_time, is("271.004739"));
-    assertThat(firstChapter.tags.title, is("01 - Sammy Jay Makes a Fuss"));
+    assertThat(firstChapter.timeBase(), is("1/44100"));
+    assertThat(firstChapter.start(), is(0L));
+    assertThat(firstChapter.startTime(), is("0.000000"));
+    assertThat(firstChapter.end(), is(11951309L));
+    assertThat(firstChapter.endTime(), is("271.004739"));
+    assertThat(firstChapter.tags().title(), is("01 - Sammy Jay Makes a Fuss"));
 
     FFmpegChapter lastChapter = info.getChapters().get(info.getChapters().size() - 1);
-    assertThat(lastChapter.time_base, is("1/44100"));
-    assertThat(lastChapter.start, is(237875790L));
-    assertThat(lastChapter.start_time, is("5394.008844"));
-    assertThat(lastChapter.end, is(248628224L));
-    assertThat(lastChapter.end_time, is("5637.828209"));
-    assertThat(lastChapter.tags.title, is("24 - Chatterer Has His Turn to Laugh"));
+    assertThat(lastChapter.timeBase(), is("1/44100"));
+    assertThat(lastChapter.start(), is(237875790L));
+    assertThat(lastChapter.startTime(), is("5394.008844"));
+    assertThat(lastChapter.end(), is(248628224L));
+    assertThat(lastChapter.endTime(), is("5637.828209"));
+    assertThat(lastChapter.tags().title(), is("24 - Chatterer Has His Turn to Laugh"));
   }
 
   @Test
@@ -118,15 +112,15 @@ public class FFprobeTest {
 
     // Only a quick sanity check until we do something better
     assertThat(info.getStreams(), hasSize(2));
-    assertThat(info.getStreams().get(0).codec_type, is(FFmpegStream.CodecType.VIDEO));
-    assertThat(info.getStreams().get(1).codec_type, is(FFmpegStream.CodecType.AUDIO));
+    assertThat(info.getStreams().get(0).codecType(), is(FFmpegStreamCodecType.VIDEO));
+    assertThat(info.getStreams().get(1).codecType(), is(FFmpegStreamCodecType.AUDIO));
 
-    assertThat(info.getStreams().get(1).channels, is(2));
-    assertThat(info.getStreams().get(1).sample_rate, is(48_000));
+    assertThat(info.getStreams().get(1).channels(), is(2));
+    assertThat(info.getStreams().get(1).sampleRate(), is(48_000));
 
     // Test a UTF-8 name
     assertThat(
-        info.getFormat().filename,
+        info.getFormat().filename(),
         is("c:\\Users\\Bob\\Always On My Mind [Program Only] - Adelén.mp4"));
 
     // System.out.println(FFmpegUtils.getGson().toJson(info));
@@ -138,7 +132,7 @@ public class FFprobeTest {
     assertFalse(info.hasError());
 
     // Check edge case with a time larger than an integer
-    assertThat(info.getStreams().get(0).start_pts, is(8570867078L));
+    assertThat(info.getStreams().get(0).startPts(), is(8570867078L));
   }
 
   @Test
@@ -147,7 +141,7 @@ public class FFprobeTest {
     FFmpegProbeResult info = ffprobe.probe(Samples.divide_by_zero);
     assertFalse(info.hasError());
 
-    assertThat(info.getStreams().get(1).codec_time_base, is(Fraction.ZERO));
+    assertThat(info.getStreams().get(1).codecTimeBase(), is(Fraction.ZERO));
 
     // System.out.println(FFmpegUtils.getGson().toJson(info));
   }
@@ -157,12 +151,47 @@ public class FFprobeTest {
     FFmpegProbeResult info = ffprobe.probe(Samples.side_data_list);
 
     // Check edge case with a time larger than an integer
-    assertThat(info.getStreams().get(0).side_data_list.length, is(1));
-    assertThat(info.getStreams().get(0).side_data_list[0].side_data_type, is("Display Matrix"));
+    assertThat(info.getStreams().get(0).sideData().size(), is(1));
+    assertThat(info.getStreams().get(0).sideData().get(0).sideDataType(), is("Display Matrix"));
     assertThat(
-        info.getStreams().get(0).side_data_list[0].displaymatrix,
+        info.getStreams().get(0).sideData().get(0).displaymatrix(),
         is(
             "\n00000000:            0      -65536           0\n00000001:        65536           0           0\n00000002:            0           0  1073741824\n"));
-    assertThat(info.getStreams().get(0).side_data_list[0].rotation, is(90));
+    assertThat(info.getStreams().get(0).sideData().get(0).rotation(), is(90));
+  }
+
+  @Test
+  public void chaptersCannotBeNull() {
+    FFmpegProbeResult result = FFmpegUtils.getGson().fromJson("{}", FFmpegProbeResult.class);
+
+    assertThat(result.chapters(), is(not(nullValue())));
+  }
+
+  @Test
+  public void streamsCannotBeNull() {
+    FFmpegProbeResult result = FFmpegUtils.getGson().fromJson("{}", FFmpegProbeResult.class);
+
+    assertThat(result.streams(), is(not(nullValue())));
+  }
+
+  @Test
+  public void sideDataCannotBeNull() {
+    FFmpegStream result = FFmpegUtils.getGson().fromJson("{}", FFmpegStream.class);
+
+    assertThat(result.sideData(), is(not(nullValue())));
+  }
+
+  @Test
+  public void streamTagsCannotBeNull() {
+    FFmpegStream result = FFmpegUtils.getGson().fromJson("{}", FFmpegStream.class);
+
+    assertThat(result.tags(), is(not(nullValue())));
+  }
+
+  @Test
+  public void formatTagsCannotBeNull() {
+    FFmpegFormat result = FFmpegUtils.getGson().fromJson("{}", FFmpegFormat.class);
+
+    assertThat(result.tags(), is(not(nullValue())));
   }
 }

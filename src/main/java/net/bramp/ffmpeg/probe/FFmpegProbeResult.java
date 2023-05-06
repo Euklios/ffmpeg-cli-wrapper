@@ -1,52 +1,35 @@
 package net.bramp.ffmpeg.probe;
 
-import com.google.common.collect.ImmutableList;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
+import com.google.gson.annotations.JsonAdapter;
+import net.bramp.ffmpeg.gson.ImmutableListAdapter;
 
-import java.util.Collections;
 import java.util.List;
 
-/** TODO Make this immutable */
-@SuppressFBWarnings(
-    value = {"UUF_UNUSED_PUBLIC_OR_PROTECTED_FIELD"},
-    justification = "POJO objects where the fields are populated by gson")
-public final class FFmpegProbeResult {
-  public FFmpegError error;
-  public FFmpegFormat format;
-  public List<FFmpegStream> streams;
-  public List<FFmpegChapter> chapters;
-
+public record FFmpegProbeResult(
+        FFmpegError error,
+        FFmpegFormat format,
+        @JsonAdapter(value = ImmutableListAdapter.class, nullSafe = false)
+        List<FFmpegStream> streams,
+        @JsonAdapter(value = ImmutableListAdapter.class, nullSafe = false)
+        List<FFmpegChapter> chapters
+) {
   public FFmpegError getError() {
-    return error;
+    return error();
   }
 
   public boolean hasError() {
-    return error != null;
+    return error() != null;
   }
 
   public FFmpegFormat getFormat() {
-    return format;
+    return format();
   }
 
   public List<FFmpegStream> getStreams() {
-    if (streams == null) return Collections.emptyList();
-    return ImmutableList.copyOf(streams);
+    return streams();
   }
 
   public List<FFmpegChapter> getChapters() {
-    if (chapters == null) return Collections.emptyList();
-    return ImmutableList.copyOf(chapters);
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    return EqualsBuilder.reflectionEquals(this, obj);
-  }
-
-  @Override
-  public int hashCode() {
-    return HashCodeBuilder.reflectionHashCode(this);
+    return chapters();
   }
 }

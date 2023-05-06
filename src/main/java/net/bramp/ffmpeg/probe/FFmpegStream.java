@@ -1,101 +1,94 @@
 package net.bramp.ffmpeg.probe;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
+import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
+import com.google.gson.annotations.JsonAdapter;
+import com.google.gson.annotations.SerializedName;
+import net.bramp.ffmpeg.gson.ImmutableListAdapter;
+import net.bramp.ffmpeg.gson.ImmutableMapAdapter;
 import org.apache.commons.lang3.math.Fraction;
 
-@SuppressFBWarnings(
-    value = {"UUF_UNUSED_PUBLIC_OR_PROTECTED_FIELD"},
-    justification = "POJO objects where the fields are populated by gson")
-public final class FFmpegStream {
+public record FFmpegStream(
+        int index,
+        @SerializedName("codec_name")
+        String codecName,
+        @SerializedName("codec_long_name")
+        String codecLongName,
+        String profile,
+        @SerializedName("codec_type")
+        FFmpegStreamCodecType codecType,
+        @SerializedName("codec_time_base")
+        Fraction codecTimeBase,
 
-  public enum CodecType {
-    VIDEO,
-    AUDIO,
-    SUBTITLE,
-    DATA,
-    ATTACHMENT
-  }
+        @SerializedName("codec_tag_string")
+        String codecTagString,
+        @SerializedName("codec_tag")
+        String codecTag,
 
-  public int index;
-  public String codec_name;
-  public String codec_long_name;
-  public String profile;
-  public CodecType codec_type;
-  public Fraction codec_time_base;
+        int width,
+        int height,
 
-  public String codec_tag_string;
-  public String codec_tag;
+        @SerializedName("has_b_frames")
+        int hasBFrames,
 
-  public int width, height;
+        @SerializedName("sample_aspect_ratio")
+        String sampleAspectRatio, // TODO Change to a Ratio/Fraction object
+        @SerializedName("display_aspect_ratio")
+        String displayAspectRatio,
 
-  public int has_b_frames;
+        @SerializedName("pix_fmt")
+        String pixFmt,
+        int level,
+        @SerializedName("chroma_location")
+        String chromaLocation,
+        int refs,
+        @SerializedName("is_avc")
+        String isAvc,
+        @SerializedName("nal_length_size")
+        String nalLengthSize,
+        @SerializedName("r_frame_rate")
+        Fraction rFrameRate,
+        @SerializedName("avg_frame_rate")
+        Fraction avgFrameRate,
+        @SerializedName("time_base")
+        Fraction timeBase,
 
-  public String sample_aspect_ratio; // TODO Change to a Ratio/Fraction object
-  public String display_aspect_ratio;
+        @SerializedName("start_pts")
+        long startPts,
+        @SerializedName("start_time")
+        double startTime,
 
-  public String pix_fmt;
-  public int level;
-  public String chroma_location;
-  public int refs;
-  public String is_avc;
-  public String nal_length_size;
-  public Fraction r_frame_rate;
-  public Fraction avg_frame_rate;
-  public Fraction time_base;
+        @SerializedName("duration_ts")
+        long durationTs,
+        double duration,
 
-  public long start_pts;
-  public double start_time;
+        @SerializedName("bit_rate")
+        long bitRate,
+        @SerializedName("max_bit_rate")
+        long maxBitRate,
+        @SerializedName("bits_per_raw_sample")
+        int bitsPerRawSample,
+        @SerializedName("bits_per_sample")
+        int bitsPerSample,
 
-  public long duration_ts;
-  public double duration;
+        @SerializedName("nb_frames")
+        long nbFrames,
 
-  public long bit_rate;
-  public long max_bit_rate;
-  public int bits_per_raw_sample;
-  public int bits_per_sample;
+        @SerializedName("sample_fmt")
+        String sampleFmt,
+        @SerializedName("sample_rate")
+        int sampleRate,
+        int channels,
+        @SerializedName("channel_layout")
+        String channelLayout,
 
-  public long nb_frames;
+        FFmpegDisposition disposition,
 
-  public String sample_fmt;
-  public int sample_rate;
-  public int channels;
-  public String channel_layout;
+        @JsonAdapter(value = ImmutableMapAdapter.class, nullSafe = false)
+        Map<String, String> tags,
 
-  public FFmpegDisposition disposition;
-
-  public Map<String, String> tags;
-  public SideData[] side_data_list;
-
-  @Override
-  public boolean equals(Object obj) {
-    return EqualsBuilder.reflectionEquals(this, obj);
-  }
-
-  @Override
-  public int hashCode() {
-    return HashCodeBuilder.reflectionHashCode(this);
-  }
-
-
-  public static class SideData {
-
-    public String side_data_type;
-    public String displaymatrix;
-    public int rotation;
-
-    @Override
-    public boolean equals(Object obj) {
-      return EqualsBuilder.reflectionEquals(this, obj);
-    }
-
-    @Override
-    public int hashCode() {
-      return HashCodeBuilder.reflectionHashCode(this);
-    }
-  }
+        @SerializedName("side_data_list")
+        @JsonAdapter(value = ImmutableListAdapter.class, nullSafe = false)
+        List<FFmpegStreamSideData> sideData) {
 }
