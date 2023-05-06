@@ -138,6 +138,29 @@ public class FFmpegBuilder {
     return inputBuilder;
   }
 
+  /**
+   * Adds an existing FFmpegInputBuilder. This is similar to calling the other addInput methods but
+   * instead allows an existing FFmpegInputBuilder to be used, and reused.
+   *
+   * <pre>
+   * <code>List&lt;String&gt; args = new FFmpegBuilder()
+   *   .addInput(new FFmpegInputBuilder()
+   *     .setFilename(&quot;input.flv&quot;)
+   *     .done()
+   *   )
+   *   .build();</code>
+   * </pre>
+   *
+   * @param inputBuilder FFmpegInputBuilder to add
+   * @return this
+   */
+  public FFmpegBuilder addInput(FFmpegInputBuilder inputBuilder) {
+    checkNotNull(inputBuilder);
+    inputs.add(inputBuilder);
+
+    return this;
+  }
+
   protected void clearInputs() {
     inputs.clear();
     inputProbes.clear();
@@ -151,6 +174,11 @@ public class FFmpegBuilder {
   public FFmpegInputBuilder setInput(String filename) {
     clearInputs();
     return addInput(filename);
+  }
+
+  public FFmpegBuilder setInput(FFmpegInputBuilder inputBuilder) {
+    clearInputs();
+    return addInput(inputBuilder);
   }
 
   public FFmpegBuilder setFormat(String format) {
