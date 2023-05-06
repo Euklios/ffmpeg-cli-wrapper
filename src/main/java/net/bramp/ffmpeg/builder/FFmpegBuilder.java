@@ -3,7 +3,6 @@ package net.bramp.ffmpeg.builder;
 import static net.bramp.ffmpeg.Preconditions.checkArgument;
 import static net.bramp.ffmpeg.Preconditions.checkNotEmpty;
 import static net.bramp.ffmpeg.Preconditions.checkNotNull;
-import static net.bramp.ffmpeg.helper.Expressions.isNotNullOrEmpty;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -37,11 +36,6 @@ public class FFmpegBuilder {
 
   // Output
   final List<FFmpegOutputBuilder> outputs = new ArrayList<>();
-
-  // Filters
-  String audioFilter;
-  String videoFilter;
-  String complexFilter;
 
   public FFmpegBuilder overrideOutputFiles(boolean override) {
     this.override = override;
@@ -143,39 +137,6 @@ public class FFmpegBuilder {
   }
 
   /**
-   * Sets the complex filter flag.
-   *
-   * @param filter
-   * @return
-   */
-  public FFmpegBuilder setComplexFilter(String filter) {
-    this.complexFilter = checkNotEmpty(filter, "filter must not be empty");
-    return this;
-  }
-
-  /**
-   * Sets the audio filter flag.
-   *
-   * @param filter
-   * @return
-   */
-  public FFmpegBuilder setAudioFilter(String filter) {
-    this.audioFilter = checkNotEmpty(filter, "filter must not be empty");
-    return this;
-  }
-
-  /**
-   * Sets the video filter flag.
-   *
-   * @param filter
-   * @return
-   */
-  public FFmpegBuilder setVideoFilter(String filter) {
-    this.videoFilter = checkNotEmpty(filter, "filter must not be empty");
-    return this;
-  }
-
-  /**
    * Add additional ouput arguments (for flags which aren't currently supported).
    *
    * @param values The extra arguments.
@@ -266,15 +227,6 @@ public class FFmpegBuilder {
         args.add("-passlogfile", passDirectory + passPrefix);
       }
     }
-
-    // TODO: -af is an output option and shouldn't be set here
-    args.addArgIf(isNotNullOrEmpty(audioFilter), "-af", audioFilter);
-
-    // TODO: -vf is an output option and shouldn't be set here
-    args.addArgIf(isNotNullOrEmpty(videoFilter), "-vf", videoFilter);
-
-    // TODO: -filter_complex is an output option and shouldn't be set here
-    args.addArgIf(isNotNullOrEmpty(complexFilter), "-filter_complex", complexFilter);
 
     for (FFmpegOutputBuilder output : this.outputs) {
       args.addAll(output.build(this, pass));

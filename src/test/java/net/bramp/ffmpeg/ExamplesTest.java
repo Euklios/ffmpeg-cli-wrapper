@@ -192,10 +192,10 @@ public class ExamplesTest {
             .done()
             .addInput("spot.mp4")
             .done()
+            .addOutput("with-video.mp4")
             .setComplexFilter(
                 "[1:v]scale=368:207,setpts=PTS-STARTPTS+5/TB [ov]; "
                     + "[0:v][ov] overlay=x=(main_w-overlay_w)/2:y=(main_h-overlay_h)/2:enable='between(t,5,15)' [v]")
-            .addOutput("with-video.mp4")
             .addExtraArgs("-map", "[v]")
             .addExtraArgs("-map", "0:a")
             .setVideoCodec("libx264")
@@ -209,8 +209,8 @@ public class ExamplesTest {
         "ffmpeg -y -v error"
             + " -i original.mp4"
             + " -i spot.mp4"
-            + " -filter_complex [1:v]scale=368:207,setpts=PTS-STARTPTS+5/TB [ov]; [0:v][ov] overlay=x=(main_w-overlay_w)/2:y=(main_h-overlay_h)/2:enable='between(t,5,15)' [v]"
             + " -preset ultrafast"
+            + " -filter_complex [1:v]scale=368:207,setpts=PTS-STARTPTS+5/TB [ov]; [0:v][ov] overlay=x=(main_w-overlay_w)/2:y=(main_h-overlay_h)/2:enable='between(t,5,15)' [v]"
             + " -crf 20"
             + " -vcodec libx264"
             + " -acodec copy"
@@ -230,8 +230,8 @@ public class ExamplesTest {
         new FFmpegBuilder()
             .addInput("original.mp4")
             .done()
-            .setVideoFilter("select='gte(n\\,10)',scale=200:-1")
             .addOutput("hevc-video.mp4")
+            .setVideoFilter("select='gte(n\\,10)',scale=200:-1")
             .addExtraArgs("-tag:v", "hvc1")
             .setVideoCodec("libx265")
             .done();
@@ -239,8 +239,8 @@ public class ExamplesTest {
     String expected =
         "ffmpeg -y -v error"
             + " -i original.mp4"
-            + " -vf select='gte(n\\,10)',scale=200:-1"
             + " -vcodec libx265"
+            + " -vf select='gte(n\\,10)',scale=200:-1"
             + " -tag:v hvc1"
             + " hevc-video.mp4";
 

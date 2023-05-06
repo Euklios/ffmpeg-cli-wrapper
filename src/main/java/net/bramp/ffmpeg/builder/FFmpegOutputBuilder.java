@@ -25,13 +25,17 @@ public class FFmpegOutputBuilder extends AbstractFFmpegStreamBuilder<FFmpegOutpu
   public long audioBitRate;
   public Double audioQuality;
   public String audioBitStreamFilter;
-  public String audioFilter;
 
   public long videoBitRate;
   public Double videoQuality;
   public String videoPreset;
-  public String videoFilter;
   public String videoBitStreamFilter;
+
+
+  // Filters
+  String audioFilter;
+  String videoFilter;
+  String complexFilter;
 
   public FFmpegOutputBuilder() {
     super();
@@ -174,6 +178,17 @@ public class FFmpegOutputBuilder extends AbstractFFmpegStreamBuilder<FFmpegOutpu
   }
 
   /**
+   * Sets the complex filter flag.
+   *
+   * @param filter The complex filter definition
+   * @return this
+   */
+  public FFmpegOutputBuilder setComplexFilter(String filter) {
+    this.complexFilter = checkNotEmpty(filter, "filter must not be empty");
+    return this;
+  }
+
+  /**
    * Returns a representation of this Builder that can be safely serialised.
    *
    * <p>NOTE: This method is horribly out of date, and its use should be rethought.
@@ -285,8 +300,8 @@ public class FFmpegOutputBuilder extends AbstractFFmpegStreamBuilder<FFmpegOutpu
   protected void addGlobalFlags(FFmpegBuilder parent, ImmutableListBuilder<String> args) {
     super.addGlobalFlags(parent, args);
 
-    args.addArgIf(
-        constantRateFactor != null, "-crf", () -> formatDecimalInteger(constantRateFactor));
+    args.addArgIf(isNotNullOrEmpty(complexFilter), "-filter_complex", complexFilter);
+    args.addArgIf(constantRateFactor != null, "-crf", () -> formatDecimalInteger(constantRateFactor));
   }
 
   @Override
