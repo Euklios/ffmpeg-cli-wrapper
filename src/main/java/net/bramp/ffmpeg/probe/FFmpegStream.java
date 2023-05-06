@@ -1,6 +1,7 @@
 package net.bramp.ffmpeg.probe;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import java.util.Map;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -69,6 +70,17 @@ public final class FFmpegStream {
 
   public Map<String, String> tags;
   public SideData[] side_data_list;
+
+  @Override
+  public boolean equals(Object obj) {
+    return EqualsBuilder.reflectionEquals(this, obj);
+  }
+
+  @Override
+  public int hashCode() {
+    return HashCodeBuilder.reflectionHashCode(this);
+  }
+
 
   public static class SideData {
 
