@@ -10,9 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.concurrent.TimeUnit;
 import javax.annotation.CheckReturnValue;
-import net.bramp.ffmpeg.FFmpegUtils;
 import net.bramp.ffmpeg.helper.ImmutableListBuilder;
 import net.bramp.ffmpeg.probe.FFmpegProbeResult;
 
@@ -31,12 +29,9 @@ public class FFmpegBuilder {
   URI progress;
   String userAgent;
 
-  // Input settings
-  String format;
-  Long startOffset; // in millis
-  boolean readAtNativeFrameRate = false;
   final List<FFmpegInputBuilder> inputs = new ArrayList<>();
   final Map<String, FFmpegProbeResult> inputProbes = new TreeMap<>();
+
 
   final List<String> extraArgs = new ArrayList<>();
 
@@ -80,11 +75,6 @@ public class FFmpegBuilder {
 
   public FFmpegBuilder setUserAgent(String userAgent) {
     this.userAgent = checkNotNull(userAgent);
-    return this;
-  }
-
-  public FFmpegBuilder readAtNativeFrameRate() {
-    this.readAtNativeFrameRate = true;
     return this;
   }
 
@@ -145,19 +135,6 @@ public class FFmpegBuilder {
   public FFmpegBuilder setInput(FFmpegInputBuilder inputBuilder) {
     clearInputs();
     return addInput(inputBuilder);
-  }
-
-  public FFmpegBuilder setFormat(String format) {
-    this.format = checkNotNull(format);
-    return this;
-  }
-
-  public FFmpegBuilder setStartOffset(long duration, TimeUnit units) {
-    checkNotNull(units);
-
-    this.startOffset = units.toMillis(duration);
-
-    return this;
   }
 
   public FFmpegBuilder addProgress(URI uri) {
@@ -311,21 +288,6 @@ public class FFmpegBuilder {
     args.add("-v", this.verbosity.toString());
 
     args.addArgIf(userAgent != null, "-user_agent", userAgent);
-
-    // TODO: This is either an input or an output option and shouldn't be set here
-    args.addArgIf(
-        startOffset != null,
-        "-ss",
-        () -> FFmpegUtils.toTimecode(startOffset, TimeUnit.MILLISECONDS));
-
-    // TODO: Format is an input or output option and shouldn't be set here
-    // In this case, it only acts as an input option and should be removed entirely
-    args.addArgIf(format != null, "-f", format);
-
-    // TODO: This is an input option and shouldn't be set here
-    // Move to FFmpegInputBuilder
-    args.addFlagIf(readAtNativeFrameRate, "-re");
-
     args.addArgIf(progress != null, "-progress", () -> progress.toString());
 
     args.addAll(extraArgs);

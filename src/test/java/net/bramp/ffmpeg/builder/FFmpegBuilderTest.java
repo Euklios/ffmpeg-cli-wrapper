@@ -9,8 +9,7 @@ import static net.bramp.ffmpeg.builder.StreamSpecifier.tag;
 import static net.bramp.ffmpeg.builder.StreamSpecifier.usable;
 import static net.bramp.ffmpeg.builder.StreamSpecifierType.*;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.net.URI;
 import java.util.List;
@@ -446,5 +445,57 @@ public class FFmpegBuilderTest {
         List.of(
             "-y", "-v", "error", "-i", "input", "-preset", "a", "-fpre", "b", "-vpre", "c", "-apre",
             "d", "-spre", "e", "output"));
+  }
+
+  @Test
+  public void testOverridePosition() {
+    assertEquals(
+        List.of("-n", "-v", "error", "-i", "input.mkv", "output.mkv"),
+        new FFmpegBuilder()
+            .overrideOutputFiles(false)
+            .addInput("input.mkv")
+            .done()
+            .addOutput("output.mkv")
+            .done()
+            .build());
+  }
+
+  @Test
+  public void testVerbosityPosition() {
+    assertEquals(
+        List.of("-y", "-v", "debug", "-i", "input.mkv", "output.mkv"),
+        new FFmpegBuilder()
+            .setVerbosity(Verbosity.DEBUG)
+            .addInput("input.mkv")
+            .done()
+            .addOutput("output.mkv")
+            .done()
+            .build());
+  }
+
+  @Test
+  public void testUserAgentPosition() {
+    assertEquals(
+        List.of("-y", "-v", "error", "-user_agent", "test-agent", "-i", "input.mkv", "output.mkv"),
+        new FFmpegBuilder()
+            .setUserAgent("test-agent")
+            .addInput("input.mkv")
+            .done()
+            .addOutput("output.mkv")
+            .done()
+            .build());
+  }
+
+  @Test
+  public void testExtraArgsPosition() {
+    assertEquals(
+        List.of("-y", "-v", "error", "-test", "value", "-i", "input.mkv", "output.mkv"),
+        new FFmpegBuilder()
+            .addExtraArgs("-test", "value")
+            .addInput("input.mkv")
+            .done()
+            .addOutput("output.mkv")
+            .done()
+            .build());
   }
 }

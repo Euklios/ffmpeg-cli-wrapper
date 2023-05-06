@@ -2,10 +2,13 @@ package net.bramp.ffmpeg.builder;
 
 import java.net.URI;
 import java.util.List;
+import net.bramp.ffmpeg.helper.ImmutableListBuilder;
 import net.bramp.ffmpeg.options.EncodingOptions;
 import org.apache.commons.lang3.NotImplementedException;
 
 public class FFmpegInputBuilder extends AbstractFFmpegStreamBuilder<FFmpegInputBuilder> {
+  private boolean readAtNativeFrameRate;
+
   public FFmpegInputBuilder() {
     super();
   }
@@ -23,10 +26,21 @@ public class FFmpegInputBuilder extends AbstractFFmpegStreamBuilder<FFmpegInputB
     return this;
   }
 
+  public FFmpegInputBuilder readAtNativeFrameRate() {
+    this.readAtNativeFrameRate = true;
+    return this;
+  }
+
   @Override
   public EncodingOptions buildOptions() {
     throw new NotImplementedException(
         "The function AbstractFFmpegStreamBuilder#buildOptions() has not yet been implemented for FFmpegInputBuilder");
+  }
+
+  @Override
+  protected void addGlobalFlags(FFmpegBuilder parent, ImmutableListBuilder<String> args) {
+    args.addFlagIf(readAtNativeFrameRate, "-re");
+    super.addGlobalFlags(parent, args);
   }
 
   @Override
