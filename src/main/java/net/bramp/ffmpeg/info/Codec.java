@@ -1,66 +1,60 @@
 package net.bramp.ffmpeg.info;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-
 /**
  * Information about supported Codecs
  *
+ * @param canDecode Can I decode with this codec
+ * @param canEncode Can I encode with this codec
+ * @param type What type of codec is this
+ *
  * @author bramp
  */
-public final class Codec {
-  final String name;
-  final String longName;
-
-  /** Can I decode with this codec */
-  final boolean canDecode;
-
-  /** Can I encode with this codec */
-  final boolean canEncode;
-
-  /** What type of codec is this */
-  final CodecType type;
-
-  Codec(String name, String longName, boolean canDecode, boolean canEncode, CodecType type) {
-    this.name = name;
-    this.longName = longName;
-    this.canDecode = canDecode;
-    this.canEncode = canEncode;
-    this.type = type;
-  }
+public record Codec(
+        String name,
+        String longName,
+        boolean canDecode,
+        boolean canEncode,
+        CodecType type
+) {
 
   @Override
   public String toString() {
     return name + " " + longName;
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    return EqualsBuilder.reflectionEquals(this, obj);
-  }
-
-  @Override
-  public int hashCode() {
-    return HashCodeBuilder.reflectionHashCode(this);
-  }
-
   public String getName() {
-    return name;
+    return name();
   }
 
+  /**
+   * @deprecated Use {@link Codec#name()} instead
+   */
+  @Deprecated(forRemoval = true)
   public String getLongName() {
-    return longName;
+    return longName();
   }
 
+  /**
+   * @deprecated Use {@link Codec#canDecode()} instead
+   */
+  @Deprecated(forRemoval = true)
   public boolean getCanDecode() {
-    return canDecode;
+    return canDecode();
   }
 
+  /**
+   * @deprecated Use {@link Codec#canEncode()} instead
+   */
+  @Deprecated(forRemoval = true)
   public boolean getCanEncode() {
-    return canEncode;
+    return canEncode();
   }
 
+  /**
+   * @deprecated Use {@link Codec#type()} instead
+   */
+  @Deprecated(forRemoval = true)
   public CodecType getType() {
-    return type;
+    return type();
   }
 }

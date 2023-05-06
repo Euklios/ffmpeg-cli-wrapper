@@ -47,7 +47,7 @@ public class FFmpegGetInfoTest {
     ffmpeg.codecs();
 
     for (Codec codec : ffmpeg.codecs()) {
-      switch (codec.getType()) {
+      switch (codec.type()) {
         case VIDEO -> videoCodecs.add(codec);
         case AUDIO -> audioCodecs.add(codec);
         case SUBTITLE -> subtitleCodecs.add(codec);
