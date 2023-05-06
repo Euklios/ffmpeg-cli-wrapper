@@ -69,7 +69,7 @@ public class MapperTestUtils {
     }
 
     if (List.class.isAssignableFrom(type)) {
-      return Collections.emptyList();
+      return List.of("-metadata", "key=value");
     }
 
     throw new IllegalArgumentException("Unsupported default value for class " + type);
@@ -87,9 +87,10 @@ public class MapperTestUtils {
 
       if (Arrays.stream(nonDefaultFields).noneMatch(p -> p.equals(parameter))) {
         parameterValues[i] = MapperTestUtils.getDefaultValue(parameter.getType());
-      } else if(parameter.getName().equals("enabled")) {
-        // The enabled flag is special, as it by default initialized with true, witch is not the default value.
-        parameterValues[i]= MapperTestUtils.getDefaultValue(parameter.getType());
+      } else if (parameter.getName().equals("enabled")) {
+        // The enabled flag is special, as it by default initialized with true, witch is not the
+        // default value.
+        parameterValues[i] = MapperTestUtils.getDefaultValue(parameter.getType());
       } else {
         parameterValues[i] = MapperTestUtils.getSpecialValue(parameter.getType());
       }

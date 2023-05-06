@@ -12,4 +12,7 @@ public record AudioEncodingOptions(
     int sampleRate,
     String sampleFormat,
     long bitRate,
-    Double quality) {}
+    Double quality,
+    String preset,
+    String bitStreamFilter,
+    String filter) {}

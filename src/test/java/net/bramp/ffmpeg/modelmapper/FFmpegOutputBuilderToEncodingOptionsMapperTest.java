@@ -22,6 +22,14 @@ public class FFmpegOutputBuilderToEncodingOptionsMapperTest {
         .filter(field -> !Modifier.isStatic(field.getModifiers()))
         // Ignore the parent, as it is not serialized
         .filter(field -> !field.getName().equals("parent"))
+        // Ignore pass configuration. This is usually defined by the execution
+        .filter(field -> !field.getName().startsWith("pass"))
+        // Ignore throwWarnings configuration. Shouldn't override as it's not relevant for the
+        // command
+        .filter(field -> !field.getName().equals("throwWarnings"))
+        // Filename and uri might point to files that don't exist on a later machine
+        .filter(field -> !field.getName().equals("filename"))
+        .filter(field -> !field.getName().equals("uri"))
         .toList();
   }
 
@@ -31,7 +39,13 @@ public class FFmpegOutputBuilderToEncodingOptionsMapperTest {
     EncodingOptions reference = new FFmpegOutputBuilder().buildOptions();
     FFmpegOutputBuilder source = new FFmpegOutputBuilder();
     parameter.setAccessible(true);
-    parameter.set(source, MapperTestUtils.getSpecialValue(parameter.getType()));
+    Object value = MapperTestUtils.getSpecialValue(parameter.getType());
+
+    if (parameter.getName().endsWith("Enabled")) {
+      value = false;
+    }
+
+    parameter.set(source, value);
 
     EncodingOptions target = source.buildOptions();
 

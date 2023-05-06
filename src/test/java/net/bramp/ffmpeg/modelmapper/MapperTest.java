@@ -4,31 +4,47 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import net.bramp.ffmpeg.builder.FFmpegOutputBuilder;
-import net.bramp.ffmpeg.options.AudioEncodingOptions;
-import net.bramp.ffmpeg.options.EncodingOptions;
-import net.bramp.ffmpeg.options.MainEncodingOptions;
-import net.bramp.ffmpeg.options.VideoEncodingOptions;
+import net.bramp.ffmpeg.builder.Strict;
+import net.bramp.ffmpeg.options.*;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.junit.jupiter.api.Test;
 
 public class MapperTest {
   @Test
   public void testMapping() {
-    MainEncodingOptions main = new MainEncodingOptions("mp4", 0L, null);
-    AudioEncodingOptions audio = new AudioEncodingOptions(false, null, 0, 0, null, 0, 0.0);
+    MainEncodingOptions main =
+        new MainEncodingOptions("mp4", 0L, null, null, null, null, null, null, Strict.STRICT, 0);
+    AudioEncodingOptions audio =
+        new AudioEncodingOptions(false, null, 0, 0, null, 0, 0.0, null, null, null);
     VideoEncodingOptions video =
         new VideoEncodingOptions(
-            true, null, null, 320, 240, 1000, null, "scale='320:trunc(ow/a/2)*2'", null);
+            true,
+            null,
+            null,
+            320,
+            240,
+            1000,
+            null,
+            "scale='320:trunc(ow/a/2)*2'",
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            true);
+    SubtitleEncodingOptions subtitle = new SubtitleEncodingOptions(true, null, "vtt");
 
-    EncodingOptions options = new EncodingOptions(main, audio, video);
+    EncodingOptions options = new EncodingOptions(main, audio, video, subtitle);
 
     FFmpegOutputBuilder mappedObj = new FFmpegOutputBuilder();
 
     Mapper.map(options, mappedObj);
 
-    assertEquals(main.format(), mappedObj.format);
-    assertEquals(main.startOffset(), mappedObj.startOffset);
-    assertEquals(main.duration(), mappedObj.duration);
+    assertEquals(main.format(), mappedObj.getFormat());
+    assertEquals(main.startOffset(), mappedObj.getStartOffset());
+    assertEquals(main.duration(), mappedObj.getDuration());
   }
 
   @Test

@@ -729,4 +729,8 @@ public abstract class AbstractFFmpegStreamBuilder<T extends AbstractFFmpegStream
   public boolean isThrowWarnings() {
     return throwWarnings;
   }
+
+  public List<String> getExtraArgs() {
+    return extraArgs;
+  }
 }

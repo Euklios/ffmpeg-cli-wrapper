@@ -12,6 +12,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.net.URI;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import net.bramp.ffmpeg.options.AudioEncodingOptions;
@@ -168,11 +169,25 @@ public class FFmpegBuilderTest {
   /** Tests if all the various encoding options actually get stored and used correctly */
   @Test
   public void testSetOptions() {
-    MainEncodingOptions main = new MainEncodingOptions("mp4", 1500L, 2L);
+    MainEncodingOptions main =
+        new MainEncodingOptions(
+            "mp4",
+            1500L,
+            2L,
+            null,
+            Collections.emptyList(),
+            null,
+            null,
+            Collections.emptyList(),
+            Strict.STRICT,
+            0);
     AudioEncodingOptions audio =
-        new AudioEncodingOptions(true, "aac", 1, AUDIO_SAMPLE_48000, AUDIO_FORMAT_S16, 1, 2.0);
+        new AudioEncodingOptions(
+            true, "aac", 1, AUDIO_SAMPLE_48000, AUDIO_FORMAT_S16, 1, 2.0, null, null, null);
     VideoEncodingOptions video =
-        new VideoEncodingOptions(true, "libx264", FPS_30, 320, 240, 1, null, null, null);
+        new VideoEncodingOptions(
+            true, "libx264", FPS_30, 320, 240, 1, null, null, null, null, null, null, null, null,
+            null, true);
 
     EncodingOptions options =
         new FFmpegBuilder()

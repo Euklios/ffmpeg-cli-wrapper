@@ -16,4 +16,11 @@ public record VideoEncodingOptions(
     long bitRate,
     Integer frames,
     String filter,
-    String preset) {}
+    String preset,
+    String videoSize,
+    String videoMovflags,
+    String videoPixelFormat,
+    Double constantRateFactor,
+    Double quality,
+    String bitStreamFilter,
+    Boolean copyinkf) {}

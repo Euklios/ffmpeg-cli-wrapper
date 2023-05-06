@@ -9,10 +9,7 @@ import java.util.regex.Pattern;
 import javax.annotation.CheckReturnValue;
 import net.bramp.ffmpeg.helper.ImmutableListBuilder;
 import net.bramp.ffmpeg.modelmapper.Mapper;
-import net.bramp.ffmpeg.options.AudioEncodingOptions;
-import net.bramp.ffmpeg.options.EncodingOptions;
-import net.bramp.ffmpeg.options.MainEncodingOptions;
-import net.bramp.ffmpeg.options.VideoEncodingOptions;
+import net.bramp.ffmpeg.options.*;
 import net.bramp.ffmpeg.probe.FFmpegProbeResult;
 import org.apache.commons.lang3.SystemUtils;
 
@@ -72,6 +69,11 @@ public class FFmpegOutputBuilder extends AbstractFFmpegStreamBuilder<FFmpegOutpu
   }
 
   public FFmpegOutputBuilder useOptions(VideoEncodingOptions opts) {
+    Mapper.map(opts, this);
+    return this;
+  }
+
+  public FFmpegOutputBuilder useOptions(SubtitleEncodingOptions opts) {
     Mapper.map(opts, this);
     return this;
   }
