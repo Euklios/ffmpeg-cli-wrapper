@@ -8,7 +8,6 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.CountingOutputStream;
 import com.google.common.net.HostAndPort;
@@ -20,6 +19,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import net.bramp.ffmpeg.builder.FFmpegBuilder;
 import net.bramp.ffmpeg.fixtures.Samples;
+import net.bramp.ffmpeg.helper.ImmutableListBuilder;
 import net.bramp.ffmpeg.job.FFmpegJob;
 import net.bramp.ffmpeg.probe.FFmpegProbeResult;
 import net.bramp.ffmpeg.progress.Progress;
@@ -200,8 +200,7 @@ public class FFmpegExecutorTest {
             .setAudioChannels(1)
             .done();
 
-    List<String> newArgs =
-        ImmutableList.<String>builder().add(ffmpeg.getPath()).addAll(builder.build()).build();
+    List<String> newArgs = new ImmutableListBuilder<String>().add(ffmpeg.getPath()).addAll(builder.build()).build();
 
     // TODO Add support to the FFmpegJob to export the stream
     Process p = new ProcessBuilder(newArgs).start();

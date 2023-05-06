@@ -3,11 +3,12 @@ package net.bramp.ffmpeg.builder;
 import static net.bramp.ffmpeg.Preconditions.*;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
 import java.net.URI;
 import java.util.List;
 import java.util.regex.Pattern;
 import javax.annotation.CheckReturnValue;
+
+import net.bramp.ffmpeg.helper.ImmutableListBuilder;
 import net.bramp.ffmpeg.options.AudioEncodingOptions;
 import net.bramp.ffmpeg.options.EncodingOptions;
 import net.bramp.ffmpeg.options.MainEncodingOptions;
@@ -282,16 +283,14 @@ public class FFmpegOutputBuilder extends AbstractFFmpegStreamBuilder<FFmpegOutpu
   }
 
   @Override
-  protected void addGlobalFlags(FFmpegBuilder parent, ImmutableList.Builder<String> args) {
+  protected void addGlobalFlags(FFmpegBuilder parent, ImmutableListBuilder<String> args) {
     super.addGlobalFlags(parent, args);
 
-    if (constantRateFactor != null) {
-      args.add("-crf", formatDecimalInteger(constantRateFactor));
-    }
+    args.addArgIf(constantRateFactor != null, "-crf", () -> formatDecimalInteger(constantRateFactor));
   }
 
   @Override
-  protected void addVideoFlags(FFmpegBuilder parent, ImmutableList.Builder<String> args) {
+  protected void addVideoFlags(FFmpegBuilder parent, ImmutableListBuilder<String> args) {
     super.addVideoFlags(parent, args);
 
     if (videoBitRate > 0 && videoQuality != null) {
@@ -299,17 +298,9 @@ public class FFmpegOutputBuilder extends AbstractFFmpegStreamBuilder<FFmpegOutpu
       throw new IllegalStateException("Only one of videoBitRate and videoQuality can be set");
     }
 
-    if (videoBitRate > 0) {
-      args.add("-b:v", String.valueOf(videoBitRate));
-    }
-
-    if (videoQuality != null) {
-      args.add("-qscale:v", formatDecimalInteger(videoQuality));
-    }
-
-    if (!Strings.isNullOrEmpty(videoPreset)) {
-      args.add("-vpre", videoPreset);
-    }
+    args.addArgIf(videoBitRate > 0, "-b:v", String.valueOf(videoBitRate));
+    args.addArgIf(videoQuality != null, "-qscale:v", () -> formatDecimalInteger(videoQuality));
+    args.addArgIf(!Strings.isNullOrEmpty(videoPreset), "-vpre", videoPreset);
 
     if (!Strings.isNullOrEmpty(videoFilter)) {
       checkState(
@@ -318,39 +309,24 @@ public class FFmpegOutputBuilder extends AbstractFFmpegStreamBuilder<FFmpegOutpu
       args.add("-vf", videoFilter);
     }
 
-    if (!Strings.isNullOrEmpty(videoBitStreamFilter)) {
-      args.add("-bsf:v", videoBitStreamFilter);
-    }
+    args.addArgIf(!Strings.isNullOrEmpty(videoBitStreamFilter), "-bsf:v", videoBitStreamFilter);
   }
 
   @Override
-  protected void addAudioFlags(ImmutableList.Builder<String> args) {
+  protected void addAudioFlags(ImmutableListBuilder<String> args) {
     super.addAudioFlags(args);
 
-    if (!Strings.isNullOrEmpty(audioSampleFormat)) {
-      args.add("-sample_fmt", audioSampleFormat);
-    }
+    args.addArgIf(!Strings.isNullOrEmpty(audioSampleFormat), "-sample_fmt", audioSampleFormat);
 
     if (audioBitRate > 0 && audioQuality != null && throwWarnings) {
       // I'm not sure, but it seems audioQuality overrides audioBitRate, so don't allow both
       throw new IllegalStateException("Only one of audioBitRate and audioQuality can be set");
     }
 
-    if (audioBitRate > 0) {
-      args.add("-b:a", String.valueOf(audioBitRate));
-    }
-
-    if (audioQuality != null) {
-      args.add("-qscale:a", formatDecimalInteger(audioQuality));
-    }
-
-    if (!Strings.isNullOrEmpty(audioBitStreamFilter)) {
-      args.add("-bsf:a", audioBitStreamFilter);
-    }
-
-    if (!Strings.isNullOrEmpty(audioFilter)) {
-      args.add("-af", audioFilter);
-    }
+    args.addArgIf(audioBitRate > 0, "-b:a", String.valueOf(audioBitRate));
+    args.addArgIf(audioQuality != null, "-qscale:a", () -> formatDecimalInteger(audioQuality));
+    args.addArgIf(!Strings.isNullOrEmpty(audioBitStreamFilter), "-bsf:a", audioBitStreamFilter);
+    args.addArgIf(!Strings.isNullOrEmpty(audioFilter), "-af", audioFilter);
   }
 
   @CheckReturnValue

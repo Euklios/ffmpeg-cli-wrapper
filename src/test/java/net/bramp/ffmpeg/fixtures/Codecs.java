@@ -1,8 +1,10 @@
 package net.bramp.ffmpeg.fixtures;
 
-import com.google.common.collect.ImmutableList;
+import net.bramp.ffmpeg.helper.ImmutableListBuilder;
 import net.bramp.ffmpeg.info.Codec;
 import net.bramp.ffmpeg.info.CodecFactory;
+
+import java.util.List;
 
 /**
  * Class that contains all codecs as defined in the unit tests This should not be used as a concise
@@ -17,8 +19,8 @@ public final class Codecs {
     throw new AssertionError("No instances for you!");
   }
 
-  public static final ImmutableList<Codec> CODECS =
-          new ImmutableList.Builder<Codec>()
+  public static final List<Codec> CODECS =
+          new ImmutableListBuilder<Codec>()
                   .add(
                           CodecFactory.create("012v",                 "Uncompressed 4:2:2 10-bit", "D.VI.S"),
                           CodecFactory.create("4xm",                  "4X Movie", "D.V.L."),

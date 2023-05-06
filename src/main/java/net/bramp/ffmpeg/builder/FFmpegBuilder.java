@@ -14,6 +14,7 @@ import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 import javax.annotation.CheckReturnValue;
 import net.bramp.ffmpeg.FFmpegUtils;
+import net.bramp.ffmpeg.helper.ImmutableListBuilder;
 import net.bramp.ffmpeg.probe.FFmpegProbeResult;
 
 /**
@@ -303,7 +304,7 @@ public class FFmpegBuilder {
 
   @CheckReturnValue
   public List<String> build() {
-    ImmutableList.Builder<String> args = new ImmutableList.Builder<>();
+    ImmutableListBuilder<String> args = new ImmutableListBuilder<>();
 
     checkArgument(!inputs.isEmpty(), "At least one input must be specified");
     checkArgument(!outputs.isEmpty(), "At least one output must be specified");
@@ -324,19 +325,13 @@ public class FFmpegBuilder {
     }
 
     // TODO: -af is an output option and shouldn't be set here
-    if (!Strings.isNullOrEmpty(audioFilter)) {
-      args.add("-af", audioFilter);
-    }
+    args.addArgIf(!Strings.isNullOrEmpty(audioFilter), "-af", audioFilter);
 
     // TODO: -vf is an output option and shouldn't be set here
-    if (!Strings.isNullOrEmpty(videoFilter)) {
-      args.add("-vf", videoFilter);
-    }
+    args.addArgIf(!Strings.isNullOrEmpty(videoFilter), "-vf", videoFilter);
 
     // TODO: -filter_complex is an output option and shouldn't be set here
-    if (!Strings.isNullOrEmpty(complexFilter)) {
-      args.add("-filter_complex", complexFilter);
-    }
+    args.addArgIf(!Strings.isNullOrEmpty(complexFilter), "-filter_complex", complexFilter);
 
     for (FFmpegOutputBuilder output : this.outputs) {
       args.addAll(output.build(this, pass));
@@ -345,34 +340,24 @@ public class FFmpegBuilder {
     return args.build();
   }
 
-  private void buildGlobalOptions(ImmutableList.Builder<String> args) {
+  private void buildGlobalOptions(ImmutableListBuilder<String> args) {
     args.add(override ? "-y" : "-n");
     args.add("-v", this.verbosity.toString());
 
-    if (userAgent != null) {
-      args.add("-user_agent", userAgent);
-    }
+    args.addArgIf(userAgent != null, "-user_agent", userAgent);
 
     // TODO: This is either an input or an output option and shouldn't be set here
-    if (startOffset != null) {
-      args.add("-ss", FFmpegUtils.toTimecode(startOffset, TimeUnit.MILLISECONDS));
-    }
+    args.addArgIf(startOffset != null, "-ss", () -> FFmpegUtils.toTimecode(startOffset, TimeUnit.MILLISECONDS));
 
     // TODO: Format is an input or output option and shouldn't be set here
     // In this case, it only acts as an input option and should be removed entirely
-    if (format != null) {
-      args.add("-f", format);
-    }
+    args.addArgIf(format != null, "-f", format);
 
     // TODO: This is an input option and shouldn't be set here
     // Move to FFmpegInputBuilder
-    if (readAtNativeFrameRate) {
-      args.add("-re");
-    }
+    args.addFlagIf(readAtNativeFrameRate, "-re");
 
-    if (progress != null) {
-      args.add("-progress", progress.toString());
-    }
+    args.addArgIf(progress != null, "-progress", () -> progress.toString());
 
     args.addAll(extraArgs);
   }

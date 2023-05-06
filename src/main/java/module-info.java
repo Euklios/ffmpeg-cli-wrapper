@@ -21,6 +21,7 @@ module ffmpeg_cli_wrapper {
     exports net.bramp.ffmpeg.options;
     exports net.bramp.ffmpeg.probe;
     exports net.bramp.ffmpeg.progress;
+    exports net.bramp.ffmpeg.helper;
 
     exports net.bramp.ffmpeg.gson to com.google.gson;
 

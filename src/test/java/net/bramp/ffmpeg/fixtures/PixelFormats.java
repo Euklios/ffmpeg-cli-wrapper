@@ -1,8 +1,10 @@
 package net.bramp.ffmpeg.fixtures;
 
-import com.google.common.collect.ImmutableList;
+import net.bramp.ffmpeg.helper.ImmutableListBuilder;
 import net.bramp.ffmpeg.info.PixelFormat;
 import net.bramp.ffmpeg.info.PixelFormatFactory;
+
+import java.util.List;
 
 /**
  * Class that contains all pixel formats as defined in the unit tests This should not be used as a concise
@@ -16,8 +18,8 @@ public final class PixelFormats
     throw new AssertionError("No instances for you!");
   }
 
-  public static final ImmutableList<PixelFormat> PIXEL_FORMATS =
-      new ImmutableList.Builder<PixelFormat>()
+  public static final List<PixelFormat> PIXEL_FORMATS =
+      new ImmutableListBuilder<PixelFormat>()
           .add(
               PixelFormatFactory.create("yuv420p", 3, 12, "IO..."),
               PixelFormatFactory.create("yuyv422", 3, 16, "IO..."),

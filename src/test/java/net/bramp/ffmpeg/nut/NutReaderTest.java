@@ -2,7 +2,6 @@ package net.bramp.ffmpeg.nut;
 
 import static org.junit.Assert.assertEquals;
 
-import com.google.common.collect.ImmutableList;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -16,6 +15,7 @@ import javax.sound.sampled.SourceDataLine;
 import net.bramp.ffmpeg.FFmpeg;
 import net.bramp.ffmpeg.builder.FFmpegBuilder;
 import net.bramp.ffmpeg.fixtures.Samples;
+import net.bramp.ffmpeg.helper.ImmutableListBuilder;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.Timeout;
@@ -49,8 +49,7 @@ public class NutReaderTest {
             .done()
             .build();
 
-    List<String> newArgs =
-        ImmutableList.<String>builder().add(FFmpeg.DEFAULT_PATH).addAll(args).build();
+    List<String> newArgs = new ImmutableListBuilder<String>().add(FFmpeg.DEFAULT_PATH).addAll(args).build();
 
     ProcessBuilder builder = new ProcessBuilder(newArgs);
     Process p = builder.start();

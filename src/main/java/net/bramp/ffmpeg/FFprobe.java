@@ -1,7 +1,6 @@
 package net.bramp.ffmpeg;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.io.Reader;
@@ -10,6 +9,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.bramp.ffmpeg.builder.ProcessOptions;
+import net.bramp.ffmpeg.helper.ImmutableListBuilder;
 import net.bramp.ffmpeg.io.LoggingFilterReader;
 import net.bramp.ffmpeg.probe.FFmpegProbeResult;
 import org.slf4j.Logger;
@@ -84,24 +84,22 @@ public class FFprobe extends FFcommon {
   public FFmpegProbeResult probe(String mediaPath, @Nullable String userAgent) throws IOException {
     checkIfFFprobe();
 
-    ImmutableList.Builder<String> args = new ImmutableList.Builder<>();
+    ImmutableListBuilder<String> args = new ImmutableListBuilder<>();
 
     // TODO Add:
     // .add("--show_packets")
     // .add("--show_frames")
 
-    args.add(path).add("-v", "quiet");
+    args.add(path);
+    args.add("-v", "quiet");
+    args.addArgIf(userAgent != null, "-user_agent", userAgent);
 
-    if (userAgent != null) {
-      args.add("-user_agent", userAgent);
-    }
-
-    args.add("-print_format", "json")
-        .add("-show_error")
-        .add("-show_format")
-        .add("-show_streams")
-        .add("-show_chapters")
-        .add(mediaPath);
+    args.add("-print_format", "json");
+    args.add("-show_error");
+    args.add("-show_format");
+    args.add("-show_streams");
+    args.add("-show_chapters");
+    args.add(mediaPath);
 
     ProcessOptions processOptions = new ProcessOptions();
     Process p = runFunc.run(args.build(), processOptions);

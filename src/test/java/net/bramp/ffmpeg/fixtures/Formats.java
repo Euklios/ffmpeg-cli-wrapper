@@ -1,8 +1,10 @@
 package net.bramp.ffmpeg.fixtures;
 
-import com.google.common.collect.ImmutableList;
+import net.bramp.ffmpeg.helper.ImmutableListBuilder;
 import net.bramp.ffmpeg.info.Format;
 import net.bramp.ffmpeg.info.FormatFactory;
+
+import java.util.List;
 
 /**
  * Class that contains all formats as defined in the unit tests This should not be used to test if a
@@ -17,8 +19,8 @@ public final class Formats {
     throw new AssertionError("No instances for you!");
   }
 
-  public static final ImmutableList<Format> FORMATS =
-      new ImmutableList.Builder<Format>()
+  public static final List<Format> FORMATS =
+      new ImmutableListBuilder<Format>()
           .add(
               FormatFactory.create("3g2", "3GP2 format", " E"),
               FormatFactory.create("3gp", "3GP format", " E"),

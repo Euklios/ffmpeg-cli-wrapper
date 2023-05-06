@@ -5,11 +5,12 @@ import static net.bramp.ffmpeg.Preconditions.*;
 import static net.bramp.ffmpeg.builder.MetadataSpecifier.checkValidKey;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import net.bramp.ffmpeg.helper.ImmutableListBuilder;
 import net.bramp.ffmpeg.modelmapper.Mapper;
 import net.bramp.ffmpeg.options.AudioEncodingOptions;
 import net.bramp.ffmpeg.options.EncodingOptions;
@@ -548,7 +549,7 @@ public abstract class AbstractFFmpegStreamBuilder<T extends AbstractFFmpegStream
     checkNotNull(parent);
     checkBuildPreconditions(parent, pass);
 
-    ImmutableList.Builder<String> args = new ImmutableList.Builder<>();
+    ImmutableListBuilder<String> args = new ImmutableListBuilder<>();
 
     args.addAll(buildInputOutputOptions(parent, pass));
     args.addAll(buildFileNameArgument(pass));
@@ -556,8 +557,8 @@ public abstract class AbstractFFmpegStreamBuilder<T extends AbstractFFmpegStream
     return args.build();
   }
 
-  protected Iterable<String> buildInputOutputOptions(FFmpegBuilder parent, int pass) {
-    ImmutableList.Builder<String> args = new ImmutableList.Builder<>();
+  protected List<String> buildInputOutputOptions(FFmpegBuilder parent, int pass) {
+    ImmutableListBuilder<String> args = new ImmutableListBuilder<>();
 
     addGlobalFlags(parent, args);
 
@@ -573,13 +574,10 @@ public abstract class AbstractFFmpegStreamBuilder<T extends AbstractFFmpegStream
       args.add("-an");
     }
 
+
     if (subtitleEnabled) {
-      if (!Strings.isNullOrEmpty(subtitleCodec)) {
-        args.add("-scodec", subtitleCodec);
-      }
-      if (!Strings.isNullOrEmpty(subtitlePreset)) {
-        args.add("-spre", subtitlePreset);
-      }
+      args.addArgIf(!Strings.isNullOrEmpty(subtitleCodec), "-scodec", subtitleCodec);
+      args.addArgIf(!Strings.isNullOrEmpty(subtitlePreset), "-spre", subtitlePreset);
     } else {
       args.add("-sn");
     }
@@ -596,7 +594,7 @@ public abstract class AbstractFFmpegStreamBuilder<T extends AbstractFFmpegStream
   protected void checkBuildPreconditions(FFmpegBuilder parent, int pass) {
   }
 
-  protected Iterable<String> buildFileNameArgument(int pass) {
+  protected List<String> buildFileNameArgument(int pass) {
     if (pass == 1) {
       return List.of(DEVNULL);
     } else if (filename != null) {
@@ -609,72 +607,30 @@ public abstract class AbstractFFmpegStreamBuilder<T extends AbstractFFmpegStream
     }
   }
 
-  protected void addGlobalFlags(FFmpegBuilder parent, ImmutableList.Builder<String> args) {
-    if (strict != FFmpegBuilder.Strict.NORMAL) {
-      args.add("-strict", strict.toString());
-    }
-
-    if (!Strings.isNullOrEmpty(format)) {
-      args.add("-f", format);
-    }
-
-    if (!Strings.isNullOrEmpty(preset)) {
-      args.add("-preset", preset);
-    }
-
-    if (!Strings.isNullOrEmpty(presetFilename)) {
-      args.add("-fpre", presetFilename);
-    }
-
-    if (startOffset != null) {
-      args.add("-ss", toTimecode(startOffset, TimeUnit.MILLISECONDS));
-    }
-
-    if (duration != null) {
-      args.add("-t", toTimecode(duration, TimeUnit.MILLISECONDS));
-    }
+  protected void addGlobalFlags(FFmpegBuilder parent, ImmutableListBuilder<String> args) {
+    args.addArgIf(strict != FFmpegBuilder.Strict.NORMAL, "-strict", strict.toString());
+    args.addArgIf(!Strings.isNullOrEmpty(format), "-f", format);
+    args.addArgIf(!Strings.isNullOrEmpty(preset), "-preset", preset);
+    args.addArgIf(!Strings.isNullOrEmpty(presetFilename), "-fpre", presetFilename);
+    args.addArgIf(startOffset != null, "-ss", () -> toTimecode(startOffset, TimeUnit.MILLISECONDS));
+    args.addArgIf(duration != null, "-t", () -> toTimecode(duration, TimeUnit.MILLISECONDS));
 
     args.addAll(metaTags);
   }
 
-  protected void addAudioFlags(ImmutableList.Builder<String> args) {
-    if (!Strings.isNullOrEmpty(audioCodec)) {
-      args.add("-acodec", audioCodec);
-    }
-
-    if (audioChannels > 0) {
-      args.add("-ac", String.valueOf(audioChannels));
-    }
-
-    if (audioSampleRate > 0) {
-      args.add("-ar", String.valueOf(audioSampleRate));
-    }
-
-    if (!Strings.isNullOrEmpty(audioPreset)) {
-      args.add("-apre", audioPreset);
-    }
+  protected void addAudioFlags(ImmutableListBuilder<String> args) {
+    args.addArgIf(!Strings.isNullOrEmpty(audioCodec), "-acodec", audioCodec);
+    args.addArgIf(audioChannels > 0, "-ac", String.valueOf(audioChannels));
+    args.addArgIf(audioSampleRate > 0, "-ar", String.valueOf(audioSampleRate));
+    args.addArgIf(!Strings.isNullOrEmpty(audioPreset), "-apre", audioPreset);
   }
 
-  protected void addVideoFlags(FFmpegBuilder parent, ImmutableList.Builder<String> args) {
-    if (videoFrames != null) {
-      args.add("-vframes", videoFrames.toString());
-    }
-
-    if (!Strings.isNullOrEmpty(videoCodec)) {
-      args.add("-vcodec", videoCodec);
-    }
-
-    if (!Strings.isNullOrEmpty(videoPixelFormat)) {
-      args.add("-pix_fmt", videoPixelFormat);
-    }
-
-    if (videoCopyinkf) {
-      args.add("-copyinkf");
-    }
-
-    if (!Strings.isNullOrEmpty(videoMovflags)) {
-      args.add("-movflags", videoMovflags);
-    }
+  protected void addVideoFlags(FFmpegBuilder parent, ImmutableListBuilder<String> args) {
+    args.addArgIf(videoFrames != null, "-vframes", () -> videoFrames.toString());
+    args.addArgIf(!Strings.isNullOrEmpty(videoCodec), "-vcodec", videoCodec);
+    args.addArgIf(!Strings.isNullOrEmpty(videoPixelFormat), "-pix_fmt", videoPixelFormat);
+    args.addFlagIf(videoCopyinkf, "-copyinkf");
+    args.addArgIf(!Strings.isNullOrEmpty(videoMovflags), "-movflags", videoMovflags);
 
     if (videoSize != null) {
       checkArgument(
@@ -688,8 +644,6 @@ public abstract class AbstractFFmpegStreamBuilder<T extends AbstractFFmpegStream
 
     // TODO What if width is set but heigh isn't. We don't seem to do anything
 
-    if (videoFrameRate != null) {
-      args.add("-r", videoFrameRate.toString());
-    }
+    args.addArgIf(videoFrameRate != null, "-r", () -> videoFrameRate.toString());
   }
 }

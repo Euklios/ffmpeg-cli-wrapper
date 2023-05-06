@@ -3,7 +3,6 @@ package net.bramp.ffmpeg;
 import static com.google.common.base.MoreObjects.firstNonNull;
 import static net.bramp.ffmpeg.Preconditions.checkNotNull;
 
-import com.google.common.collect.ImmutableList;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -163,7 +162,7 @@ public class FFmpeg extends FFcommon {
         }
 
         throwOnError(p, processOptions);
-        this.formats = ImmutableList.copyOf(formats);
+        this.formats = List.copyOf(formats);
       } finally {
         p.destroy();
       }
@@ -196,7 +195,7 @@ public class FFmpeg extends FFcommon {
         }
 
         throwOnError(p, processOptions);
-        this.pixelFormats = ImmutableList.copyOf(pixelFormats);
+        this.pixelFormats = List.copyOf(pixelFormats);
       } finally {
         p.destroy();
       }
