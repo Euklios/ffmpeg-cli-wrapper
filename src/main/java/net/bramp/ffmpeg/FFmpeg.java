@@ -1,7 +1,7 @@
 package net.bramp.ffmpeg;
 
 import static com.google.common.base.MoreObjects.firstNonNull;
-import static com.google.common.base.Preconditions.checkNotNull;
+import static net.bramp.ffmpeg.Preconditions.checkNotNull;
 
 import com.google.common.collect.ImmutableList;
 import java.io.BufferedReader;
@@ -123,7 +123,7 @@ public class FFmpeg extends FFcommon {
       codecs = new ArrayList<>();
 
       ProcessOptions processOptions = new ProcessOptions();
-      Process p = runFunc.run(ImmutableList.of(path, "-codecs"), processOptions);
+      Process p = runFunc.run(List.of(path, "-codecs"), processOptions);
       try {
         BufferedReader r = wrapInReader(p);
         String line;
@@ -135,7 +135,7 @@ public class FFmpeg extends FFcommon {
         }
 
         throwOnError(p, processOptions);
-        this.codecs = ImmutableList.copyOf(codecs);
+        this.codecs = List.copyOf(codecs);
       } finally {
         p.destroy();
       }
@@ -151,7 +151,7 @@ public class FFmpeg extends FFcommon {
       formats = new ArrayList<>();
 
       ProcessOptions processOptions = new ProcessOptions();
-      Process p = runFunc.run(ImmutableList.of(path, "-formats"), processOptions);
+      Process p = runFunc.run(List.of(path, "-formats"), processOptions);
       try {
         BufferedReader r = wrapInReader(p);
         String line;
@@ -178,7 +178,7 @@ public class FFmpeg extends FFcommon {
       pixelFormats = new ArrayList<>();
 
       ProcessOptions processOptions = new ProcessOptions();
-      Process p = runFunc.run(ImmutableList.of(path, "-pix_fmts"), processOptions);
+      Process p = runFunc.run(List.of(path, "-pix_fmts"), processOptions);
       try {
         BufferedReader r = wrapInReader(p);
         String line;

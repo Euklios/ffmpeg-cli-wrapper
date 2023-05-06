@@ -1,7 +1,5 @@
 package net.bramp.ffmpeg.options;
 
-import java.beans.ConstructorProperties;
-
 /**
  * @author bramp
  */

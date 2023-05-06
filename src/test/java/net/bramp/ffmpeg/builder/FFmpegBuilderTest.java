@@ -12,7 +12,6 @@ import static net.bramp.ffmpeg.builder.StreamSpecifierType.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 
-import com.google.common.collect.ImmutableList;
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
@@ -60,7 +59,7 @@ public class FFmpegBuilderTest {
 
     assertEquals(
         args,
-        ImmutableList.of(
+        List.of(
             "-y",
             "-v",
             "debug",
@@ -112,7 +111,7 @@ public class FFmpegBuilderTest {
             .build();
 
     assertEquals(
-        args, ImmutableList.of("-y", "-v", "error", "-i", "input", "-vn", "-an", "-sn", "output"));
+        args, List.of("-y", "-v", "error", "-i", "input", "-vn", "-an", "-sn", "output"));
   }
 
   @Test
@@ -131,7 +130,7 @@ public class FFmpegBuilderTest {
 
     assertEquals(
         args,
-        ImmutableList.of(
+        List.of(
             "-y",
             "-v",
             "error",
@@ -159,7 +158,7 @@ public class FFmpegBuilderTest {
 
     assertEquals(
         args,
-        ImmutableList.of(
+        List.of(
             "-y",
             "-v",
             "error",
@@ -216,7 +215,7 @@ public class FFmpegBuilderTest {
 
     assertEquals(
         args,
-        ImmutableList.of(
+        List.of(
             "-y", "-v", "error", "-i", "input", "-s", "320x240", "output1", "-s", "640x480",
             "output2", "-s", "ntsc", "output3"));
   }
@@ -248,7 +247,7 @@ public class FFmpegBuilderTest {
 
     assertEquals(
         args,
-        ImmutableList.of(
+        List.of(
             "-y", "-v", "error", "-i", "input", "-s", "320x240", "udp://10.1.0.102:1234"));
   }
 
@@ -291,7 +290,7 @@ public class FFmpegBuilderTest {
 
     assertEquals(
         args,
-        ImmutableList.of(
+        List.of(
             "-y",
             "-v",
             "error",
@@ -330,7 +329,7 @@ public class FFmpegBuilderTest {
 
     assertEquals(
         args,
-        ImmutableList.of(
+        List.of(
             "-y",
             "-v",
             "error",
@@ -377,7 +376,7 @@ public class FFmpegBuilderTest {
 
     assertEquals(
         args,
-        ImmutableList.of(
+        List.of(
             "-y", "-v", "error", "-a", "b", "-i", "input", "-an", "-sn", "-c", "d", "output"));
   }
 
@@ -399,7 +398,7 @@ public class FFmpegBuilderTest {
             .build();
 
     assertEquals(
-        args, ImmutableList.of("-y", "-v", "error", "-i", "input1", "-i", "input2", "output"));
+        args, List.of("-y", "-v", "error", "-i", "input1", "-i", "input2", "output"));
   }
 
   @Test
@@ -414,7 +413,7 @@ public class FFmpegBuilderTest {
 
     assertEquals(
         args,
-        ImmutableList.of(
+        List.of(
             "-y",
             "-v",
             "error",
@@ -445,7 +444,7 @@ public class FFmpegBuilderTest {
 
     assertEquals(
         args,
-        ImmutableList.of(
+        List.of(
             "-y", "-v", "error", "-i", "input", "-preset", "a", "-fpre", "b", "-vpre", "c", "-apre",
             "d", "-spre", "e", "output"));
   }

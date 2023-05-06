@@ -12,8 +12,8 @@ import javax.annotation.Nullable;
 
 public final class Preconditions {
 
-  private static final List<String> rtps = ImmutableList.of("rtsp", "rtp", "rtmp");
-  private static final List<String> udpTcp = ImmutableList.of("udp", "tcp");
+  private static final List<String> rtps = List.of("rtsp", "rtp", "rtmp");
+  private static final List<String> udpTcp = List.of("udp", "tcp");
 
   Preconditions() {
     throw new AssertionError("No instances for you!");

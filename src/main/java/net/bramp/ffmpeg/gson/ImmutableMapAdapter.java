@@ -9,7 +9,6 @@ import com.google.gson.JsonParseException;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.List;
 import java.util.Map;
 
 public class ImmutableMapAdapter implements JsonDeserializer<Map<?, ?>> {
