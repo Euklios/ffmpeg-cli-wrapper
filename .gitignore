@@ -21,3 +21,8 @@ apidocs
 *.log
 *.log.mbtree
 output.mp4
+
+# In project mvn
+.mvn
+mvnw
+mvnw.cmd
