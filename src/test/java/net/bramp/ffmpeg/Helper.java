@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static net.bramp.ffmpeg.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterators.asEnumeration;
 
 /** Random test helper methods. */

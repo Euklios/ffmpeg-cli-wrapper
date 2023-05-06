@@ -1,6 +1,6 @@
 package net.bramp.ffmpeg.gson;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static net.bramp.ffmpeg.Preconditions.checkNotNull;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.errorprone.annotations.Immutable;

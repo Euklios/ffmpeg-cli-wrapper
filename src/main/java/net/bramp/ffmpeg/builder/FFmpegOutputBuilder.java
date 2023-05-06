@@ -1,9 +1,7 @@
 package net.bramp.ffmpeg.builder;
 
-import static com.google.common.base.Preconditions.*;
-import static net.bramp.ffmpeg.Preconditions.checkNotEmpty;
+import static net.bramp.ffmpeg.Preconditions.*;
 
-import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import java.net.URI;
@@ -213,7 +211,7 @@ public class FFmpegOutputBuilder extends AbstractFFmpegStreamBuilder<FFmpegOutpu
   @CheckReturnValue
   @Override
   protected List<String> build(int pass) {
-    Preconditions.checkState(parent != null, "Can not build without parent being set");
+    checkState(parent != null, "Can not build without parent being set");
     return build(parent, pass);
   }
 

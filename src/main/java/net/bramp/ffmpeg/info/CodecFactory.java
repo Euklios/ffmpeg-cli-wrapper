@@ -1,6 +1,7 @@
 package net.bramp.ffmpeg.info;
 
-import com.google.common.base.Preconditions;
+import static net.bramp.ffmpeg.Preconditions.checkArgument;
+import static net.bramp.ffmpeg.Preconditions.checkNotNull;
 
 public class CodecFactory {
     private CodecFactory() {
@@ -25,11 +26,11 @@ public class CodecFactory {
      * @return Codec
      */
     public static Codec create(String name, String longName, String flags) {
-        name = Preconditions.checkNotNull(name).trim();
-        longName = Preconditions.checkNotNull(longName).trim();
+        name = checkNotNull(name).trim();
+        longName = checkNotNull(longName).trim();
 
-        Preconditions.checkNotNull(flags);
-        Preconditions.checkArgument(flags.length() == 6, "Format flags is invalid '{}'", flags);
+        checkNotNull(flags);
+        checkArgument(flags.length() == 6, "Format flags is invalid '%s'".formatted(flags));
 
         boolean canDecode = flags.charAt(0) == 'D';
         boolean canEncode = flags.charAt(1) == 'E';

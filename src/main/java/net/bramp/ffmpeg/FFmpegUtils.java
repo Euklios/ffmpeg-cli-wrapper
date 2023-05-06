@@ -1,6 +1,6 @@
 package net.bramp.ffmpeg;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import static net.bramp.ffmpeg.Preconditions.checkArgument;
 import static java.util.concurrent.TimeUnit.*;
 import static net.bramp.ffmpeg.Preconditions.checkNotEmpty;
 
@@ -12,8 +12,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.bramp.commons.lang3.math.gson.FractionAdapter;
 import net.bramp.ffmpeg.gson.LowercaseEnumTypeAdapterFactory;
-import net.bramp.ffmpeg.gson.NamedBitsetAdapter;
-import net.bramp.ffmpeg.probe.FFmpegDisposition;
 import org.apache.commons.lang3.math.Fraction;
 
 /** Helper class with commonly used methods */

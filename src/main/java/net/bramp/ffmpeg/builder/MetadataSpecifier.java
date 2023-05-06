@@ -7,8 +7,8 @@ package net.bramp.ffmpeg.builder;
 // p:program_index
 // index is meant to be zero based, by negitive is allowed as dummy values
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
+import static net.bramp.ffmpeg.Preconditions.checkArgument;
+import static net.bramp.ffmpeg.Preconditions.checkNotNull;
 
 import com.google.errorprone.annotations.Immutable;
 

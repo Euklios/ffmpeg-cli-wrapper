@@ -1,7 +1,7 @@
 package net.bramp.ffmpeg.nut;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
+import static net.bramp.ffmpeg.Preconditions.checkArgument;
+import static net.bramp.ffmpeg.Preconditions.checkNotNull;
 import static net.bramp.ffmpeg.nut.StreamHeaderPacket.fourccToString;
 
 import java.awt.image.BufferedImage;

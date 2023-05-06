@@ -10,7 +10,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static net.bramp.ffmpeg.Preconditions.checkNotNull;
 
 /**
  * Converts a json object which represents a set of booleans. For example:

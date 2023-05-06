@@ -1,6 +1,6 @@
 package net.bramp.ffmpeg.job;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static net.bramp.ffmpeg.Preconditions.checkNotNull;
 
 import com.google.common.base.Throwables;
 import java.io.IOException;

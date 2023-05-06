@@ -1,13 +1,9 @@
 package net.bramp.ffmpeg.builder;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 import static net.bramp.ffmpeg.FFmpegUtils.toTimecode;
-import static net.bramp.ffmpeg.Preconditions.checkNotEmpty;
-import static net.bramp.ffmpeg.Preconditions.checkValidStream;
+import static net.bramp.ffmpeg.Preconditions.*;
 import static net.bramp.ffmpeg.builder.MetadataSpecifier.checkValidKey;
 
-import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import java.net.URI;
@@ -522,7 +518,7 @@ public abstract class AbstractFFmpegStreamBuilder<T extends AbstractFFmpegStream
    * @return the parent FFmpegBuilder
    */
   public FFmpegBuilder done() {
-    Preconditions.checkState(parent != null, "Can not call done without parent being set");
+    checkState(parent != null, "Can not call done without parent being set");
     return parent;
   }
 
@@ -536,7 +532,7 @@ public abstract class AbstractFFmpegStreamBuilder<T extends AbstractFFmpegStream
   public abstract EncodingOptions buildOptions();
 
   protected List<String> build(int pass) {
-    Preconditions.checkState(parent != null, "Can not build without parent being set");
+    checkState(parent != null, "Can not build without parent being set");
     return build(parent, pass);
   }
 

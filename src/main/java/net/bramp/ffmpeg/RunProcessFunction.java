@@ -1,7 +1,6 @@
 package net.bramp.ffmpeg;
 
 import com.google.common.base.Joiner;
-import com.google.common.base.Preconditions;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -9,6 +8,9 @@ import java.util.List;
 import net.bramp.ffmpeg.builder.ProcessOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static net.bramp.ffmpeg.Preconditions.checkArgument;
+import static net.bramp.ffmpeg.Preconditions.checkNotNull;
 
 /**
  * Simple function that creates a Process with the arguments, and returns a BufferedReader reading
@@ -24,8 +26,8 @@ public class RunProcessFunction implements ProcessFunction {
 
   @Override
   public Process run(List<String> args, ProcessOptions processOptions) throws IOException {
-    Preconditions.checkNotNull(args, "Arguments must not be null");
-    Preconditions.checkArgument(!args.isEmpty(), "No arguments specified");
+    checkNotNull(args, "Arguments must not be null");
+    checkArgument(!args.isEmpty(), "No arguments specified");
 
     if (LOG.isInfoEnabled()) {
       LOG.info("{}", Joiner.on(" ").join(args));

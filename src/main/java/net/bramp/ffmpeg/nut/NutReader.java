@@ -1,6 +1,6 @@
 package net.bramp.ffmpeg.nut;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static net.bramp.ffmpeg.Preconditions.checkNotNull;
 import static net.bramp.ffmpeg.nut.Packet.Startcode;
 
 import com.google.common.base.Charsets;

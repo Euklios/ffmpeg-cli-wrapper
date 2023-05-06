@@ -1,6 +1,7 @@
 package net.bramp.ffmpeg.info;
 
-import com.google.common.base.Preconditions;
+import static net.bramp.ffmpeg.Preconditions.checkArgument;
+import static net.bramp.ffmpeg.Preconditions.checkNotNull;
 
 public class FormatFactory {
     private FormatFactory() {
@@ -17,11 +18,11 @@ public class FormatFactory {
      * </pre>
      */
     public static Format create(String name, String longName, String flags) {
-        name = Preconditions.checkNotNull(name).trim();
-        longName = Preconditions.checkNotNull(longName).trim();
+        name = checkNotNull(name).trim();
+        longName = checkNotNull(longName).trim();
 
-        Preconditions.checkNotNull(flags);
-        Preconditions.checkArgument(flags.length() == 2, "Format flags is invalid '{}'", flags);
+        checkNotNull(flags);
+        checkArgument(flags.length() == 2, "Format flags is invalid '%s'".formatted(flags));
         boolean canDemux = flags.charAt(0) == 'D';
         boolean canMux = flags.charAt(1) == 'E';
 

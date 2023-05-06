@@ -1,10 +1,9 @@
 package net.bramp.ffmpeg.builder;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
+import static net.bramp.ffmpeg.Preconditions.checkArgument;
+import static net.bramp.ffmpeg.Preconditions.checkNotNull;
 import static net.bramp.ffmpeg.Preconditions.checkNotEmpty;
 
-import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import java.net.URI;
@@ -306,8 +305,8 @@ public class FFmpegBuilder {
   public List<String> build() {
     ImmutableList.Builder<String> args = new ImmutableList.Builder<>();
 
-    Preconditions.checkArgument(!inputs.isEmpty(), "At least one input must be specified");
-    Preconditions.checkArgument(!outputs.isEmpty(), "At least one output must be specified");
+    checkArgument(!inputs.isEmpty(), "At least one input must be specified");
+    checkArgument(!outputs.isEmpty(), "At least one output must be specified");
 
     buildGlobalOptions(args);
 

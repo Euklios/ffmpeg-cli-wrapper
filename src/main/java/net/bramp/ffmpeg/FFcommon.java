@@ -1,8 +1,5 @@
 package net.bramp.ffmpeg;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.io.CharStreams;
@@ -17,6 +14,9 @@ import javax.annotation.Nonnull;
 
 import net.bramp.error.handler.ExceptionParser;
 import net.bramp.ffmpeg.builder.ProcessOptions;
+
+import static net.bramp.ffmpeg.Preconditions.checkArgument;
+import static net.bramp.ffmpeg.Preconditions.checkNotNull;
 
 /** Private class to contain common methods for both FFmpeg and FFprobe. */
 abstract class FFcommon {
@@ -35,7 +35,7 @@ abstract class FFcommon {
   }
 
   protected FFcommon(@Nonnull String path, @Nonnull ProcessFunction runFunction) {
-    Preconditions.checkArgument(!Strings.isNullOrEmpty(path));
+    checkArgument(!Strings.isNullOrEmpty(path));
     this.runFunc = checkNotNull(runFunction);
     this.path = path;
   }
@@ -65,7 +65,7 @@ abstract class FFcommon {
   public synchronized @Nonnull String version() throws IOException {
     if (this.version == null) {
       ProcessOptions processOptions = new ProcessOptions();
-      Process p = runFunc.run(ImmutableList.of(path, "-version"), processOptions);
+      Process p = runFunc.run(List.of(path, "-version"), processOptions);
       try {
         BufferedReader r = wrapInReader(p);
         this.version = r.readLine();

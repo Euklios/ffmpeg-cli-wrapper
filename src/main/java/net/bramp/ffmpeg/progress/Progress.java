@@ -1,6 +1,6 @@
 package net.bramp.ffmpeg.progress;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static net.bramp.ffmpeg.Preconditions.checkNotNull;
 import static net.bramp.ffmpeg.FFmpegUtils.fromTimecode;
 
 import com.google.common.base.MoreObjects;

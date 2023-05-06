@@ -1,6 +1,6 @@
 package net.bramp.ffmpeg.nut;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static net.bramp.ffmpeg.Preconditions.checkNotNull;
 
 import com.google.common.io.CountingInputStream;
 import java.io.DataInput;
