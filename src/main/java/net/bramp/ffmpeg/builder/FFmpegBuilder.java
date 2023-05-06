@@ -309,35 +309,13 @@ public class FFmpegBuilder {
     Preconditions.checkArgument(!inputs.isEmpty(), "At least one input must be specified");
     Preconditions.checkArgument(!outputs.isEmpty(), "At least one output must be specified");
 
-    args.add(override ? "-y" : "-n");
-    args.add("-v", this.verbosity.toString());
-
-    if (user_agent != null) {
-      args.add("-user_agent", user_agent);
-    }
-
-    if (startOffset != null) {
-      args.add("-ss", FFmpegUtils.toTimecode(startOffset, TimeUnit.MILLISECONDS));
-    }
-
-    if (format != null) {
-      args.add("-f", format);
-    }
-
-    if (read_at_native_frame_rate) {
-      args.add("-re");
-    }
-
-    if (progress != null) {
-      args.add("-progress", progress.toString());
-    }
-
-    args.addAll(extra_args);
+    buildGlobalOptions(args);
 
     for (FFmpegInputBuilder input : inputs) {
       args.addAll(input.build(this, pass));
     }
 
+    // TODO: -pass and -passlogfile are output options and shouldn't be set here
     if (pass > 0) {
       args.add("-pass", Integer.toString(pass));
 
@@ -346,14 +324,17 @@ public class FFmpegBuilder {
       }
     }
 
+    // TODO: -af is an output option and shouldn't be set here
     if (!Strings.isNullOrEmpty(audioFilter)) {
       args.add("-af", audioFilter);
     }
 
+    // TODO: -vf is an output option and shouldn't be set here
     if (!Strings.isNullOrEmpty(videoFilter)) {
       args.add("-vf", videoFilter);
     }
 
+    // TODO: -filter_complex is an output option and shouldn't be set here
     if (!Strings.isNullOrEmpty(complexFilter)) {
       args.add("-filter_complex", complexFilter);
     }
@@ -363,5 +344,37 @@ public class FFmpegBuilder {
     }
 
     return args.build();
+  }
+
+  private void buildGlobalOptions(ImmutableList.Builder<String> args) {
+    args.add(override ? "-y" : "-n");
+    args.add("-v", this.verbosity.toString());
+
+    if (user_agent != null) {
+      args.add("-user_agent", user_agent);
+    }
+
+    // TODO: This is either an input or an output option and shouldn't be set here
+    if (startOffset != null) {
+      args.add("-ss", FFmpegUtils.toTimecode(startOffset, TimeUnit.MILLISECONDS));
+    }
+
+    // TODO: Format is an input or output option and shouldn't be set here
+    // In this case, it only acts as an input option and should be removed entirely
+    if (format != null) {
+      args.add("-f", format);
+    }
+
+    // TODO: This is an input option and shouldn't be set here
+    // Move to FFmpegInputBuilder
+    if (read_at_native_frame_rate) {
+      args.add("-re");
+    }
+
+    if (progress != null) {
+      args.add("-progress", progress.toString());
+    }
+
+    args.addAll(extra_args);
   }
 }

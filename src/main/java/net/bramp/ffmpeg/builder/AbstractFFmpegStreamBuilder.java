@@ -554,6 +554,15 @@ public abstract class AbstractFFmpegStreamBuilder<T extends AbstractFFmpegStream
 
     ImmutableList.Builder<String> args = new ImmutableList.Builder<>();
 
+    args.addAll(buildInputOutputOptions(parent, pass));
+    args.addAll(buildFileNameArgument(pass));
+
+    return args.build();
+  }
+
+  protected Iterable<String> buildInputOutputOptions(FFmpegBuilder parent, int pass) {
+    ImmutableList.Builder<String> args = new ImmutableList.Builder<>();
+
     addGlobalFlags(parent, args);
 
     if (video_enabled) {
@@ -584,8 +593,6 @@ public abstract class AbstractFFmpegStreamBuilder<T extends AbstractFFmpegStream
     if (filename != null && uri != null) {
       throw new IllegalStateException("Only one of filename and uri can be set");
     }
-
-    args.addAll(buildFileNameArgument(pass));
 
     return args.build();
   }
