@@ -1,6 +1,7 @@
 package net.bramp.ffmpeg;
 
 import static net.bramp.ffmpeg.FFmpegTest.argThatHasItem;
+import static net.bramp.ffmpeg.FFmpegTest.argThatIsInstanceOf;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import net.bramp.ffmpeg.builder.FFmpegBuilder;
 import net.bramp.ffmpeg.builder.FFmpegOutputBuilder;
+import net.bramp.ffmpeg.builder.ProcessOptions;
 import net.bramp.ffmpeg.lang.NewProcessAnswer;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -32,7 +34,7 @@ public class ExamplesTest {
 
   @Before
   public void before() throws IOException {
-    when(runFunc.run(argThatHasItem("-version")))
+    when(runFunc.run(argThatHasItem("-version"), argThatIsInstanceOf(ProcessOptions.class)))
         .thenAnswer(new NewProcessAnswer("ffmpeg-version"));
     ffmpeg = new FFmpeg("ffmpeg", runFunc);
   }

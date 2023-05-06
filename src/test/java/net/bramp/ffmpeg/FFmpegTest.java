@@ -1,12 +1,15 @@
 package net.bramp.ffmpeg;
 
 import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 
 import java.io.IOException;
 import java.util.List;
+
+import net.bramp.ffmpeg.builder.ProcessOptions;
 import net.bramp.ffmpeg.fixtures.Codecs;
 import net.bramp.ffmpeg.fixtures.Formats;
 import net.bramp.ffmpeg.fixtures.PixelFormats;
@@ -26,12 +29,14 @@ public class FFmpegTest {
 
   @Before
   public void before() throws IOException {
-    when(runFunc.run(argThatHasItem("-version")))
+    when(runFunc.run(argThatHasItem("-version"), argThatIsInstanceOf(ProcessOptions.class)))
         .thenAnswer(new NewProcessAnswer("ffmpeg-version"));
-    when(runFunc.run(argThatHasItem("-formats")))
+    when(runFunc.run(argThatHasItem("-formats"), argThatIsInstanceOf(ProcessOptions.class)))
         .thenAnswer(new NewProcessAnswer("ffmpeg-formats"));
-    when(runFunc.run(argThatHasItem("-codecs"))).thenAnswer(new NewProcessAnswer("ffmpeg-codecs"));
-    when(runFunc.run(argThatHasItem("-pix_fmts"))).thenAnswer(new NewProcessAnswer("ffmpeg-pix_fmts"));
+    when(runFunc.run(argThatHasItem("-codecs"), argThatIsInstanceOf(ProcessOptions.class)))
+            .thenAnswer(new NewProcessAnswer("ffmpeg-codecs"));
+    when(runFunc.run(argThatHasItem("-pix_fmts"), argThatIsInstanceOf(ProcessOptions.class)))
+            .thenAnswer(new NewProcessAnswer("ffmpeg-pix_fmts"));
 
     ffmpeg = new FFmpeg(runFunc);
   }
@@ -41,12 +46,16 @@ public class FFmpegTest {
     return (List<T>) argThat(hasItem(s));
   }
 
+  public static <T> T argThatIsInstanceOf(Class<T> tClass) {
+      return argThat(instanceOf(tClass));
+  }
+
   @Test
   public void testVersion() throws Exception {
     assertEquals("ffmpeg version 0.10.9-7:0.10.9-1~raring1", ffmpeg.version());
     assertEquals("ffmpeg version 0.10.9-7:0.10.9-1~raring1", ffmpeg.version());
 
-    verify(runFunc, times(1)).run(argThatHasItem("-version"));
+    verify(runFunc, times(1)).run(argThatHasItem("-version"), argThatIsInstanceOf(ProcessOptions.class));
   }
 
   @Test
@@ -55,7 +64,7 @@ public class FFmpegTest {
     assertEquals(Codecs.CODECS, ffmpeg.codecs());
     assertEquals(Codecs.CODECS, ffmpeg.codecs());
 
-    verify(runFunc, times(1)).run(argThatHasItem("-codecs"));
+    verify(runFunc, times(1)).run(argThatHasItem("-codecs"), argThatIsInstanceOf(ProcessOptions.class));
   }
 
   @Test
@@ -64,7 +73,7 @@ public class FFmpegTest {
     assertEquals(Formats.FORMATS, ffmpeg.formats());
     assertEquals(Formats.FORMATS, ffmpeg.formats());
 
-    verify(runFunc, times(1)).run(argThatHasItem("-formats"));
+    verify(runFunc, times(1)).run(argThatHasItem("-formats"), argThatIsInstanceOf(ProcessOptions.class));
   }
 
   @Test
@@ -73,6 +82,6 @@ public class FFmpegTest {
     assertEquals(PixelFormats.PIXEL_FORMATS, ffmpeg.pixelFormats());
     assertEquals(PixelFormats.PIXEL_FORMATS, ffmpeg.pixelFormats());
 
-    verify(runFunc, times(1)).run(argThatHasItem("-pix_fmts"));
+    verify(runFunc, times(1)).run(argThatHasItem("-pix_fmts"), argThatIsInstanceOf(ProcessOptions.class));
   }
 }

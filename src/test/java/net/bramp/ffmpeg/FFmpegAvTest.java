@@ -1,11 +1,14 @@
 package net.bramp.ffmpeg;
 
 import static net.bramp.ffmpeg.FFmpegTest.argThatHasItem;
+import static net.bramp.ffmpeg.FFmpegTest.argThatIsInstanceOf;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.util.Collections;
+
+import net.bramp.ffmpeg.builder.ProcessOptions;
 import net.bramp.ffmpeg.lang.NewProcessAnswer;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,7 +26,7 @@ public class FFmpegAvTest {
 
   @Before
   public void before() throws IOException {
-    when(runFunc.run(argThatHasItem("-version")))
+    when(runFunc.run(argThatHasItem("-version"), argThatIsInstanceOf(ProcessOptions.class)))
         .thenAnswer(new NewProcessAnswer("avconv-version"));
 
     ffmpeg = new FFmpeg(runFunc);
@@ -44,7 +47,7 @@ public class FFmpegAvTest {
    */
   @Test(expected = IllegalArgumentException.class)
   public void testProbeVideo() throws IOException {
-    ffmpeg.run(Collections.<String>emptyList());
+    ffmpeg.run(Collections.emptyList(), new ProcessOptions());
   }
 
   @Test(expected = IllegalArgumentException.class)

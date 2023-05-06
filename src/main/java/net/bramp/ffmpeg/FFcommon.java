@@ -11,9 +11,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import javax.annotation.Nonnull;
+
+import net.bramp.ffmpeg.builder.ProcessOptions;
 import net.bramp.ffmpeg.io.ProcessUtils;
 
 /** Private class to contain common methods for both FFmpeg and FFprobe. */
@@ -62,7 +66,7 @@ abstract class FFcommon {
    */
   public synchronized @Nonnull String version() throws IOException {
     if (this.version == null) {
-      Process p = runFunc.run(ImmutableList.of(path, "-version"));
+      Process p = runFunc.run(ImmutableList.of(path, "-version"), new ProcessOptions());
       try {
         BufferedReader r = wrapInReader(p);
         this.version = r.readLine();
@@ -92,27 +96,40 @@ abstract class FFcommon {
   }
 
   /**
+   * Runs the binary (ffmpeg) with the supplied args. Does not block the current execution.
+   *
+   * @param args The arguments to pass to the binary.
+   * @throws IOException If there is a problem executing the binary.
+   */
+  public CompletableFuture<Process> asyncRun(List<String> args, ProcessOptions processOptions) throws IOException {
+    return createAndStartProcess(args, processOptions).onExit();
+  }
+
+  /**
    * Runs the binary (ffmpeg) with the supplied args. Blocking until finished.
    *
    * @param args The arguments to pass to the binary.
    * @throws IOException If there is a problem executing the binary.
    */
-  public void run(List<String> args) throws IOException {
-    checkNotNull(args);
-
-    Process p = runFunc.run(path(args));
-    assert (p != null);
+  public void run(List<String> args, ProcessOptions processOptions) throws IOException {
+    Process process = createAndStartProcess(args, processOptions);
 
     try {
-      // TODO Move the copy onto a thread, so that FFmpegProgressListener can be on this thread.
-
-      // Now block reading ffmpeg's stdout. We are effectively throwing away the output.
-      CharStreams.copy(wrapInReader(p), System.out); // TODO Should I be outputting to stdout?
-
-      throwOnError(p);
-
-    } finally {
-      p.destroy();
+      process.waitFor();
+      throwOnError(process);
+    } catch (InterruptedException e) {
+      // TODO: This should probably be thrown as a checked exception
+      throw new RuntimeException(e);
     }
+  }
+
+  protected Process createAndStartProcess(List<String> args, ProcessOptions processOptions) throws IOException {
+    checkNotNull(args);
+    checkNotNull(processOptions);
+
+    Process process = runFunc.run(path(args), processOptions);
+    assert process != null;
+
+    return process;
   }
 }

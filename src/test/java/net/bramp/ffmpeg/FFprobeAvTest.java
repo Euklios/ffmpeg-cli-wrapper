@@ -1,11 +1,15 @@
 package net.bramp.ffmpeg;
 
 import static net.bramp.ffmpeg.FFmpegTest.argThatHasItem;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
+import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 
 import com.google.gson.Gson;
 import java.io.IOException;
+
+import net.bramp.ffmpeg.builder.ProcessOptions;
 import net.bramp.ffmpeg.fixtures.Samples;
 import net.bramp.ffmpeg.lang.NewProcessAnswer;
 import org.junit.Before;
@@ -26,7 +30,7 @@ public class FFprobeAvTest {
 
   @Before
   public void before() throws IOException {
-    when(runFunc.run(argThatHasItem("-version")))
+    when(runFunc.run(argThatHasItem("-version"), argThat(instanceOf(ProcessOptions.class))))
         .thenAnswer(new NewProcessAnswer("avprobe-version"));
 
     ffprobe = new FFprobe(runFunc);

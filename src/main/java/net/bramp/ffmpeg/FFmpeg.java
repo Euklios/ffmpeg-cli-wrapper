@@ -15,6 +15,7 @@ import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.bramp.ffmpeg.builder.FFmpegBuilder;
+import net.bramp.ffmpeg.builder.ProcessOptions;
 import net.bramp.ffmpeg.info.Codec;
 import net.bramp.ffmpeg.info.Format;
 import net.bramp.ffmpeg.info.PixelFormat;
@@ -123,7 +124,7 @@ public class FFmpeg extends FFcommon {
     if (this.codecs == null) {
       codecs = new ArrayList<>();
 
-      Process p = runFunc.run(ImmutableList.of(path, "-codecs"));
+      Process p = runFunc.run(ImmutableList.of(path, "-codecs"), new ProcessOptions());
       try {
         BufferedReader r = wrapInReader(p);
         String line;
@@ -150,7 +151,7 @@ public class FFmpeg extends FFcommon {
     if (this.formats == null) {
       formats = new ArrayList<>();
 
-      Process p = runFunc.run(ImmutableList.of(path, "-formats"));
+      Process p = runFunc.run(ImmutableList.of(path, "-formats"), new ProcessOptions());
       try {
         BufferedReader r = wrapInReader(p);
         String line;
@@ -176,7 +177,7 @@ public class FFmpeg extends FFcommon {
     if (this.pixelFormats == null) {
       pixelFormats = new ArrayList<>();
 
-      Process p = runFunc.run(ImmutableList.of(path, "-pix_fmts"));
+      Process p = runFunc.run(ImmutableList.of(path, "-pix_fmts"), new ProcessOptions());
       try {
         BufferedReader r = wrapInReader(p);
         String line;
@@ -215,9 +216,9 @@ public class FFmpeg extends FFcommon {
   }
 
   @Override
-  public void run(List<String> args) throws IOException {
+  public void run(List<String> args, ProcessOptions options) throws IOException {
     checkIfFFmpeg();
-    super.run(args);
+    super.run(args, options);
   }
 
   public void run(FFmpegBuilder builder) throws IOException {
@@ -227,15 +228,18 @@ public class FFmpeg extends FFcommon {
   public void run(FFmpegBuilder builder, @Nullable ProgressListener listener) throws IOException {
     checkNotNull(builder);
 
+    ProcessOptions processOptions = new ProcessOptions();
+    processOptions.setOutputStreamRedirect(ProcessBuilder.Redirect.DISCARD);
+
     if (listener != null) {
       try (ProgressParser progressParser = createProgressParser(listener)) {
         progressParser.start();
         builder = builder.addProgress(progressParser.getUri());
 
-        run(builder.build());
+        run(builder.build(), processOptions);
       }
     } else {
-      run(builder.build());
+      run(builder.build(), processOptions);
     }
   }
 

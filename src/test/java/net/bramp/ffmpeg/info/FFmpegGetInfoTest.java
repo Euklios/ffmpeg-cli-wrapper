@@ -3,6 +3,7 @@ package net.bramp.ffmpeg.info;
 
 import net.bramp.ffmpeg.FFmpeg;
 import net.bramp.ffmpeg.ProcessFunction;
+import net.bramp.ffmpeg.builder.ProcessOptions;
 import net.bramp.ffmpeg.lang.NewProcessAnswer;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static net.bramp.ffmpeg.FFmpegTest.argThatHasItem;
+import static net.bramp.ffmpeg.FFmpegTest.argThatIsInstanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.when;
@@ -26,10 +28,10 @@ public class FFmpegGetInfoTest {
 
   @Before
   public void before() throws IOException {
-    when(runFunc.run(argThatHasItem("-version")))
+    when(runFunc.run(argThatHasItem("-version"), argThatIsInstanceOf(ProcessOptions.class)))
         .thenAnswer(new NewProcessAnswer("ffmpeg-version"));
 
-    when(runFunc.run(argThatHasItem("-codecs")))
+    when(runFunc.run(argThatHasItem("-codecs"), argThatIsInstanceOf(ProcessOptions.class)))
         .thenAnswer(new NewProcessAnswer("ffmpeg-codecs"));
   }
 

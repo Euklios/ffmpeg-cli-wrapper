@@ -5,6 +5,8 @@ import com.google.common.base.Preconditions;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+
+import net.bramp.ffmpeg.builder.ProcessOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,7 +23,7 @@ public class RunProcessFunction implements ProcessFunction {
   File workingDirectory;
 
   @Override
-  public Process run(List<String> args) throws IOException {
+  public Process run(List<String> args, ProcessOptions processOptions) throws IOException {
     Preconditions.checkNotNull(args, "Arguments must not be null");
     Preconditions.checkArgument(!args.isEmpty(), "No arguments specified");
 
@@ -33,7 +35,11 @@ public class RunProcessFunction implements ProcessFunction {
     if (workingDirectory != null) {
       builder.directory(workingDirectory);
     }
-    builder.redirectErrorStream(true);
+
+    builder.redirectError(processOptions.getErrorStreamRedirect());
+    builder.redirectOutput(processOptions.getOutputStreamRedirect());
+    builder.redirectErrorStream(processOptions.isRedirectErrorStreamToOutputStream());
+
     return builder.start();
   }
 

@@ -8,6 +8,8 @@ import java.io.Reader;
 import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import net.bramp.ffmpeg.builder.ProcessOptions;
 import net.bramp.ffmpeg.io.LoggingFilterReader;
 import net.bramp.ffmpeg.probe.FFmpegProbeResult;
 import org.slf4j.Logger;
@@ -72,9 +74,9 @@ public class FFprobe extends FFcommon {
   }
 
   @Override
-  public void run(List<String> args) throws IOException {
+  public void run(List<String> args, ProcessOptions processOptions) throws IOException {
     checkIfFFprobe();
-    super.run(args);
+    super.run(args, processOptions);
   }
 
   // TODO Add Probe Inputstream
@@ -100,7 +102,7 @@ public class FFprobe extends FFcommon {
         .add("-show_chapters")
         .add(mediaPath);
 
-    Process p = runFunc.run(args.build());
+    Process p = runFunc.run(args.build(), new ProcessOptions());
     try {
       Reader reader = wrapInReader(p);
       if (LOG.isDebugEnabled()) {
