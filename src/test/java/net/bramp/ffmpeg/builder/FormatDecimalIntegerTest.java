@@ -5,14 +5,10 @@ import static org.hamcrest.core.IsEqual.equalTo;
 
 import java.util.Arrays;
 import java.util.List;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-@RunWith(Parameterized.class)
 public class FormatDecimalIntegerTest {
-
-  @Parameterized.Parameters(name = "{0}")
   public static List<Object[]> data() {
     return Arrays.asList(
         new Object[][] {
@@ -28,16 +24,9 @@ public class FormatDecimalIntegerTest {
         });
   }
 
-  final double input;
-  final String expected;
-
-  public FormatDecimalIntegerTest(double input, String expected) {
-    this.input = input;
-    this.expected = expected;
-  }
-
-  @Test
-  public void formatDecimalInteger() throws Exception {
+  @ParameterizedTest
+  @MethodSource("data")
+  public void formatDecimalInteger(double input, String expected) throws Exception {
     String got = FFmpegOutputBuilder.formatDecimalInteger(input);
 
     assertThat(got, equalTo(expected));

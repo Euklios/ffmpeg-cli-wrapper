@@ -5,7 +5,7 @@ import static net.bramp.ffmpeg.builder.StreamSpecifierType.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class StreamSpecTest {
 

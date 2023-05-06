@@ -1,6 +1,7 @@
 package net.bramp.ffmpeg.modelmapper;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import net.bramp.ffmpeg.builder.FFmpegOutputBuilder;
 import net.bramp.ffmpeg.options.AudioEncodingOptions;
@@ -8,10 +9,9 @@ import net.bramp.ffmpeg.options.EncodingOptions;
 import net.bramp.ffmpeg.options.MainEncodingOptions;
 import net.bramp.ffmpeg.options.VideoEncodingOptions;
 import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class MapperTest {
-
   @Test
   public void testMapping() {
     MainEncodingOptions main = new MainEncodingOptions("mp4", 0L, null);

@@ -33,6 +33,15 @@ public class StreamHeaderPacket extends Packet {
   Fraction sampleRate = Fraction.ZERO;
   int channels;
 
+  public StreamHeaderPacket() {}
+
+  public StreamHeaderPacket(long type, byte[] fourcc, Fraction sampleRate, int channels) {
+    this.type = type;
+    this.fourcc = fourcc;
+    this.sampleRate = sampleRate;
+    this.channels = channels;
+  }
+
   protected static String fourccToString(byte[] fourcc) {
     return new String(fourcc, StandardCharsets.ISO_8859_1);
   }

@@ -2,7 +2,7 @@ package net.bramp.ffmpeg;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -15,7 +15,7 @@ import net.bramp.ffmpeg.probe.FFmpegProbeResult;
 import net.bramp.ffmpeg.probe.FFmpegStream;
 import net.bramp.ffmpeg.progress.Progress;
 import net.bramp.ffmpeg.progress.ProgressListener;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /** Ensures the examples in the README continue to work. */
 public class ReadmeTest {

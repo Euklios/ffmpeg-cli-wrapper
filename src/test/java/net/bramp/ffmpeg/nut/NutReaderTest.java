@@ -1,12 +1,11 @@
 package net.bramp.ffmpeg.nut;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import javax.imageio.ImageIO;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
@@ -16,21 +15,19 @@ import net.bramp.ffmpeg.FFmpeg;
 import net.bramp.ffmpeg.builder.FFmpegBuilder;
 import net.bramp.ffmpeg.fixtures.Samples;
 import net.bramp.ffmpeg.helper.ImmutableListBuilder;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.Timeout;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 // TODO fix "invalid packet checksum" when running test
+@Timeout(30)
 public class NutReaderTest {
 
   static final Logger LOG = LoggerFactory.getLogger(NutReaderTest.class);
 
   final boolean OUTPUT_AUDIO = false;
   final boolean OUTPUT_IMAGES = false;
-
-  @Rule public Timeout timeout = new Timeout(30, TimeUnit.SECONDS);
 
   @Test
   public void testNutReader() throws InterruptedException, IOException {

@@ -3,38 +3,28 @@ package net.bramp.ffmpeg;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-@RunWith(Parameterized.class)
 public class PreconditionsCheckValidStreamTest {
-
-  @Parameters(name = "{0}")
-  public static List<String> data() {
+  public static List<URI> data() {
     return Arrays.asList(
-        "udp://10.1.0.102:1234",
-        "tcp://127.0.0.1:2000",
-        "udp://236.0.0.1:2000",
-        "rtmp://live.twitch.tv/app/live_",
-        "rtmp:///live/myStream.sdp",
-        "rtp://127.0.0.1:1234",
-        "rtsp://localhost:8888/live.sdp",
-        "rtsp://localhost:8888/live.sdp?tcp",
+        URI.create("udp://10.1.0.102:1234"),
+        URI.create("tcp://127.0.0.1:2000"),
+        URI.create("udp://236.0.0.1:2000"),
+        URI.create("rtmp://live.twitch.tv/app/live_"),
+        URI.create("rtmp:///live/myStream.sdp"),
+        URI.create("rtp://127.0.0.1:1234"),
+        URI.create("rtsp://localhost:8888/live.sdp"),
+        URI.create("rtsp://localhost:8888/live.sdp?tcp"),
 
         // Some others
-        "UDP://10.1.0.102:1234");
+        URI.create("UDP://10.1.0.102:1234"));
   }
 
-  private final URI uri;
-
-  public PreconditionsCheckValidStreamTest(String url) {
-    this.uri = URI.create(url);
-  }
-
-  @Test
-  public void testUri() {
+  @ParameterizedTest
+  @MethodSource("data")
+  public void testUri(URI uri) {
     Preconditions.checkValidStream(uri);
   }
 }

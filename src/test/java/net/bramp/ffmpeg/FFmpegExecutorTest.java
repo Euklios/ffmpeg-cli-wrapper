@@ -5,8 +5,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import com.google.common.io.ByteStreams;
 import com.google.common.io.CountingOutputStream;
@@ -28,20 +28,18 @@ import org.glassfish.grizzly.PortRange;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.grizzly.http.server.NetworkListener;
 import org.glassfish.grizzly.http.util.MimeType;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.Timeout;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /** Tests actually shelling out ffmpeg and ffprobe. Could be flakey if ffmpeg or ffprobe change. */
+@Timeout(30)
 public class FFmpegExecutorTest {
 
   static final Logger LOG = LoggerFactory.getLogger(FFmpegExecutorTest.class);
-
-  @Rule public Timeout timeout = new Timeout(30, TimeUnit.SECONDS);
 
   final FFmpeg ffmpeg = new FFmpeg();
   final FFprobe ffprobe = new FFprobe();
@@ -53,7 +51,7 @@ public class FFmpegExecutorTest {
   // Webserver which can be used for fetching files over HTTP
   static HttpServer server;
 
-  @BeforeClass
+  @BeforeAll
   public static void startWebserver() throws IOException {
     MimeType.add("mp4", "video/mp4");
 
@@ -65,7 +63,7 @@ public class FFmpegExecutorTest {
     LOG.info("Started server at {}", getWebserverRoot());
   }
 
-  @AfterClass
+  @AfterAll
   public static void stopWebserver() {
     server.shutdownNow();
   }

@@ -5,7 +5,8 @@ import static net.bramp.ffmpeg.FFmpegTest.argThatIsInstanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.Mockito.*;
 
 import java.io.IOException;
@@ -14,47 +15,62 @@ import net.bramp.ffmpeg.fixtures.Samples;
 import net.bramp.ffmpeg.lang.NewProcessAnswer;
 import net.bramp.ffmpeg.probe.*;
 import org.apache.commons.lang3.math.Fraction;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class FFprobeTest {
 
   @Mock ProcessFunction runFunc;
 
   FFprobe ffprobe;
 
-  @Before
+  @BeforeEach
   public void before() throws IOException {
-    when(runFunc.run(argThatHasItem("-version"), argThatIsInstanceOf(ProcessOptions.class)))
+    lenient()
+        .when(runFunc.run(argThatHasItem("-version"), argThatIsInstanceOf(ProcessOptions.class)))
         .thenAnswer(new NewProcessAnswer("ffprobe-version"));
 
-    when(runFunc.run(
-            argThatHasItem(Samples.big_buck_bunny_720p_1mb),
-            argThatIsInstanceOf(ProcessOptions.class)))
+    lenient()
+        .when(
+            runFunc.run(
+                argThatHasItem(Samples.big_buck_bunny_720p_1mb),
+                argThatIsInstanceOf(ProcessOptions.class)))
         .thenAnswer(new NewProcessAnswer("ffprobe-big_buck_bunny_720p_1mb.mp4"));
 
-    when(runFunc.run(
-            argThatHasItem(Samples.always_on_my_mind), argThatIsInstanceOf(ProcessOptions.class)))
+    lenient()
+        .when(
+            runFunc.run(
+                argThatHasItem(Samples.always_on_my_mind),
+                argThatIsInstanceOf(ProcessOptions.class)))
         .thenAnswer(new NewProcessAnswer("ffprobe-Always On My Mind [Program Only] - Adelén.mp4"));
 
-    when(runFunc.run(
-            argThatHasItem(Samples.start_pts_test), argThatIsInstanceOf(ProcessOptions.class)))
+    lenient()
+        .when(
+            runFunc.run(
+                argThatHasItem(Samples.start_pts_test), argThatIsInstanceOf(ProcessOptions.class)))
         .thenAnswer(new NewProcessAnswer("ffprobe-start_pts_test"));
 
-    when(runFunc.run(
-            argThatHasItem(Samples.divide_by_zero), argThatIsInstanceOf(ProcessOptions.class)))
+    lenient()
+        .when(
+            runFunc.run(
+                argThatHasItem(Samples.divide_by_zero), argThatIsInstanceOf(ProcessOptions.class)))
         .thenAnswer(new NewProcessAnswer("ffprobe-divide-by-zero"));
 
-    when(runFunc.run(
-            argThatHasItem(Samples.book_with_chapters), argThatIsInstanceOf(ProcessOptions.class)))
+    lenient()
+        .when(
+            runFunc.run(
+                argThatHasItem(Samples.book_with_chapters),
+                argThatIsInstanceOf(ProcessOptions.class)))
         .thenAnswer(new NewProcessAnswer("book_with_chapters.m4b"));
 
-    when(runFunc.run(
-            argThatHasItem(Samples.side_data_list), argThatIsInstanceOf(ProcessOptions.class)))
+    lenient()
+        .when(
+            runFunc.run(
+                argThatHasItem(Samples.side_data_list), argThatIsInstanceOf(ProcessOptions.class)))
         .thenAnswer(new NewProcessAnswer("ffprobe-side_data_list"));
 
     ffprobe = new FFprobe(runFunc);

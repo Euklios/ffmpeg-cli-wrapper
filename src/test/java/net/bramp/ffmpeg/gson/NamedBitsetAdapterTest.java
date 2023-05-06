@@ -6,8 +6,8 @@ import static org.hamcrest.core.IsEqual.equalTo;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 public class NamedBitsetAdapterTest {
 
@@ -54,7 +54,7 @@ public class NamedBitsetAdapterTest {
 
   static Gson gson;
 
-  @BeforeClass
+  @BeforeAll
   public static void setupGson() {
     GsonBuilder builder = new GsonBuilder();
     builder.registerTypeAdapter(Set.class, new NamedBitsetAdapter<>(Set.class));

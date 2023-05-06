@@ -10,9 +10,9 @@ import static net.bramp.ffmpeg.builder.StreamSpecifier.tag;
 import static net.bramp.ffmpeg.builder.StreamSpecifier.usable;
 import static net.bramp.ffmpeg.builder.StreamSpecifierType.*;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -20,15 +20,12 @@ import net.bramp.ffmpeg.options.AudioEncodingOptions;
 import net.bramp.ffmpeg.options.EncodingOptions;
 import net.bramp.ffmpeg.options.MainEncodingOptions;
 import net.bramp.ffmpeg.options.VideoEncodingOptions;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author bramp
  */
 public class FFmpegBuilderTest {
-
-  public FFmpegBuilderTest() throws IOException {}
-
   @Test
   public void testNormal() {
 
@@ -219,17 +216,18 @@ public class FFmpegBuilderTest {
             "output2", "-s", "ntsc", "output3"));
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void testConflictingVideoSize() {
-    List<String> unused =
+    FFmpegBuilder builder =
         new FFmpegBuilder()
             .setInput("input")
             .done()
             .addOutput("output")
             .setVideoResolution(320, 240)
             .setVideoResolution("ntsc")
-            .done()
-            .build();
+            .done();
+
+    assertThrows(IllegalArgumentException.class, () -> builder.build());
   }
 
   @Test
@@ -249,33 +247,31 @@ public class FFmpegBuilderTest {
         List.of("-y", "-v", "error", "-i", "input", "-s", "320x240", "udp://10.1.0.102:1234"));
   }
 
-  @Test(expected = IllegalStateException.class)
+  @Test
   public void testURIAndFilenameOutput() {
-    List<String> unused =
+    FFmpegBuilder builder =
         new FFmpegBuilder()
             .setInput("input")
             .done()
             .addOutput(URI.create("udp://10.1.0.102:1234"))
             .setFilename("filename")
-            .done()
-            .build();
+            .done();
+
+    assertThrows(IllegalStateException.class, () -> builder.build());
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void testAddEmptyFilename() {
-    List<String> unused = new FFmpegBuilder().setInput("input").done().addOutput("").done().build();
+    FFmpegBuilder builder = new FFmpegBuilder().setInput("input").done();
+
+    assertThrows(IllegalArgumentException.class, () -> builder.addOutput(""));
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void testSetEmptyFilename() {
-    List<String> unused =
-        new FFmpegBuilder()
-            .setInput("input")
-            .done()
-            .addOutput("output")
-            .setFilename("")
-            .done()
-            .build();
+    FFmpegOutputBuilder builder = new FFmpegBuilder().setInput("input").done().addOutput("output");
+
+    assertThrows(IllegalArgumentException.class, () -> builder.setFilename(""));
   }
 
   @Test
@@ -383,9 +379,11 @@ public class FFmpegBuilderTest {
         List.of("-y", "-v", "error", "-a", "b", "-i", "input", "-an", "-sn", "-c", "d", "output"));
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void testNothing() {
-    List<String> unused = new FFmpegBuilder().build();
+    FFmpegBuilder builder = new FFmpegBuilder();
+
+    assertThrows(IllegalArgumentException.class, () -> builder.build());
   }
 
   @Test

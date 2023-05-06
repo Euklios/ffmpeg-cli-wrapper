@@ -13,17 +13,17 @@ import net.bramp.ffmpeg.FFmpeg;
 import net.bramp.ffmpeg.ProcessFunction;
 import net.bramp.ffmpeg.builder.ProcessOptions;
 import net.bramp.ffmpeg.lang.NewProcessAnswer;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class FFmpegGetInfoTest {
   @Mock ProcessFunction runFunc;
 
-  @Before
+  @BeforeEach
   public void before() throws IOException {
     when(runFunc.run(argThatHasItem("-version"), argThatIsInstanceOf(ProcessOptions.class)))
         .thenAnswer(new NewProcessAnswer("ffmpeg-version"));

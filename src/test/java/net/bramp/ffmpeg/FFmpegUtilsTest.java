@@ -1,16 +1,17 @@
 package net.bramp.ffmpeg;
 
 import static net.bramp.ffmpeg.FFmpegUtils.*;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.concurrent.TimeUnit;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class FFmpegUtilsTest {
 
-  @Test(expected = AssertionError.class)
+  @Test
   public void testAbstractUtilsClass() {
-    new FFmpegUtils();
+    assertThrows(AssertionError.class, () -> new FFmpegUtils());
   }
 
   @Test
@@ -23,16 +24,16 @@ public class FFmpegUtilsTest {
     assertEquals("00:00:00.001", millisecondsToString(1));
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   @SuppressWarnings("deprecation")
   public void testMillisecondsToStringNegative() {
-    millisecondsToString(-1);
+    assertThrows(IllegalArgumentException.class, () -> millisecondsToString(-1));
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   @SuppressWarnings("deprecation")
   public void testMillisecondsToStringNegativeMinValue() {
-    millisecondsToString(Long.MIN_VALUE);
+    assertThrows(IllegalArgumentException.class, () -> millisecondsToString(Long.MIN_VALUE));
   }
 
   @Test
@@ -62,13 +63,13 @@ public class FFmpegUtilsTest {
     assertEquals(-1, parseBitrate("N/A"));
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void testParseBitrateInvalidEmpty() {
-    parseBitrate("");
+    assertThrows(IllegalArgumentException.class, () -> parseBitrate(""));
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void testParseBitrateInvalidNumber() {
-    parseBitrate("12.3");
+    assertThrows(IllegalArgumentException.class, () -> parseBitrate("12.3"));
   }
 }

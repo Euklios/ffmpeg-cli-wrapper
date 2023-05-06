@@ -7,13 +7,13 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.util.List;
 import org.apache.commons.lang3.math.Fraction;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 public class FractionAdapterTest {
   static Gson gson;
 
-  @BeforeClass
+  @BeforeAll
   public static void setupGson() {
     GsonBuilder builder = new GsonBuilder();
     builder.registerTypeAdapter(Fraction.class, new FractionAdapter());

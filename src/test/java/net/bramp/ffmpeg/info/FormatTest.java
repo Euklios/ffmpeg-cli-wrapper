@@ -1,9 +1,10 @@
 package net.bramp.ffmpeg.info;
 
-import junit.framework.TestCase;
 import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.jupiter.api.Test;
 
-public class FormatTest extends TestCase {
+public class FormatTest {
+  @Test
   public void testFormatEqualsMethod() {
     EqualsVerifier.forClass(Format.class).verify();
   }

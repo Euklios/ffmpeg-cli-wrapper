@@ -2,7 +2,7 @@ package net.bramp.ffmpeg;
 
 import static net.bramp.ffmpeg.FFmpegTest.argThatHasItem;
 import static net.bramp.ffmpeg.FFmpegTest.argThatIsInstanceOf;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
@@ -13,25 +13,25 @@ import net.bramp.ffmpeg.builder.FFmpegBuilder;
 import net.bramp.ffmpeg.builder.FFmpegOutputBuilder;
 import net.bramp.ffmpeg.builder.ProcessOptions;
 import net.bramp.ffmpeg.lang.NewProcessAnswer;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
  * Ensures the examples in the Examples on github continue to work.
  * https://github.com/bramp/ffmpeg-cli-wrapper/wiki/Random-Examples
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class ExamplesTest {
 
   @Mock ProcessFunction runFunc;
 
   FFmpeg ffmpeg;
 
-  @Before
+  @BeforeEach
   public void before() throws IOException {
     when(runFunc.run(argThatHasItem("-version"), argThatIsInstanceOf(ProcessOptions.class)))
         .thenAnswer(new NewProcessAnswer("ffmpeg-version"));
@@ -148,7 +148,7 @@ public class ExamplesTest {
   }
 
   // Set the working directory of ffmpeg
-  @Ignore("because this test will invoke /path/to/ffmpeg.")
+  @Disabled("because this test will invoke /path/to/ffmpeg.")
   @Test
   public void testExample5() throws IOException {
     RunProcessFunction func = new RunProcessFunction();
@@ -323,7 +323,7 @@ public class ExamplesTest {
 
   // Directly use a Process instead of a FFmpegJob
   @Test
-  @Ignore("because this test will invoke /path/to/ffmpeg.")
+  @Disabled("because this test will invoke /path/to/ffmpeg.")
   public void testExample11() throws IOException, InterruptedException {
     FFmpegBuilder builder =
         new FFmpegBuilder().setInput("input").done().addOutput("output.mp4").done();

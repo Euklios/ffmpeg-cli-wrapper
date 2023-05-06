@@ -4,7 +4,7 @@ import static net.bramp.ffmpeg.Helper.combineResource;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.common.io.ByteStreams;
 import java.io.IOException;
@@ -14,7 +14,7 @@ import java.net.Socket;
 import java.net.URISyntaxException;
 import java.util.List;
 import net.bramp.ffmpeg.fixtures.Progresses;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TcpProgressParserTest extends AbstractProgressParserTest {
 
@@ -29,7 +29,7 @@ public class TcpProgressParserTest extends AbstractProgressParserTest {
     parser.start();
 
     Socket client = new Socket(uri.getHost(), uri.getPort());
-    assertTrue("Socket is connected", client.isConnected());
+    assertTrue(client.isConnected(), "Socket is connected");
 
     InputStream inputStream = combineResource(Progresses.allFiles);
     OutputStream outputStream = client.getOutputStream();

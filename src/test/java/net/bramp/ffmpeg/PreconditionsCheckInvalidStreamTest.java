@@ -1,37 +1,29 @@
 package net.bramp.ffmpeg;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-@RunWith(Parameterized.class)
 public class PreconditionsCheckInvalidStreamTest {
-
-  @Parameters(name = "{0}")
-  public static List<String> data() {
+  public static List<URI> data() {
     return Arrays.asList(
         // Illegal schemes
-        "http://www.example.com/",
-        "https://live.twitch.tv/app/live_",
-        "ftp://236.0.0.1:2000",
+        URI.create("http://www.example.com/"),
+        URI.create("https://live.twitch.tv/app/live_"),
+        URI.create("ftp://236.0.0.1:2000"),
 
         // Missing ports
-        "udp://10.1.0.102/",
-        "tcp://127.0.0.1/");
+        URI.create("udp://10.1.0.102/"),
+        URI.create("tcp://127.0.0.1/"));
   }
 
-  private final URI uri;
-
-  public PreconditionsCheckInvalidStreamTest(String url) {
-    this.uri = URI.create(url);
-  }
-
-  @Test(expected = IllegalArgumentException.class)
-  public void testUri() {
-    Preconditions.checkValidStream(uri);
+  @ParameterizedTest
+  @MethodSource("data")
+  public void testUri(URI uri) {
+    assertThrows(IllegalArgumentException.class, () -> Preconditions.checkValidStream(uri));
   }
 }

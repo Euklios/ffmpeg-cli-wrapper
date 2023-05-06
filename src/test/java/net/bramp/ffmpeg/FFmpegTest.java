@@ -2,7 +2,7 @@ package net.bramp.ffmpeg;
 
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.instanceOf;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 
@@ -13,28 +13,32 @@ import net.bramp.ffmpeg.fixtures.Codecs;
 import net.bramp.ffmpeg.fixtures.Formats;
 import net.bramp.ffmpeg.fixtures.PixelFormats;
 import net.bramp.ffmpeg.lang.NewProcessAnswer;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class FFmpegTest {
 
   @Mock ProcessFunction runFunc;
 
   FFmpeg ffmpeg;
 
-  @Before
+  @BeforeEach
   public void before() throws IOException {
-    when(runFunc.run(argThatHasItem("-version"), argThatIsInstanceOf(ProcessOptions.class)))
+    lenient()
+        .when(runFunc.run(argThatHasItem("-version"), argThatIsInstanceOf(ProcessOptions.class)))
         .thenAnswer(new NewProcessAnswer("ffmpeg-version"));
-    when(runFunc.run(argThatHasItem("-formats"), argThatIsInstanceOf(ProcessOptions.class)))
+    lenient()
+        .when(runFunc.run(argThatHasItem("-formats"), argThatIsInstanceOf(ProcessOptions.class)))
         .thenAnswer(new NewProcessAnswer("ffmpeg-formats"));
-    when(runFunc.run(argThatHasItem("-codecs"), argThatIsInstanceOf(ProcessOptions.class)))
+    lenient()
+        .when(runFunc.run(argThatHasItem("-codecs"), argThatIsInstanceOf(ProcessOptions.class)))
         .thenAnswer(new NewProcessAnswer("ffmpeg-codecs"));
-    when(runFunc.run(argThatHasItem("-pix_fmts"), argThatIsInstanceOf(ProcessOptions.class)))
+    lenient()
+        .when(runFunc.run(argThatHasItem("-pix_fmts"), argThatIsInstanceOf(ProcessOptions.class)))
         .thenAnswer(new NewProcessAnswer("ffmpeg-pix_fmts"));
 
     ffmpeg = new FFmpeg(runFunc);
