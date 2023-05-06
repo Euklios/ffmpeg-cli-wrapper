@@ -210,23 +210,35 @@ public class FFmpegBuilder {
 
   @CheckReturnValue
   public List<String> build() {
-    ImmutableListBuilder<String> args = new ImmutableListBuilder<>();
+    ImmutableListBuilder<String> globalArgs = new ImmutableListBuilder<>();
+    ImmutableListBuilder<List<String>> inputArguments = new ImmutableListBuilder<>();
+    ImmutableListBuilder<List<String>> outputArguments = new ImmutableListBuilder<>();
 
     checkArgument(!inputs.isEmpty(), "At least one input must be specified");
     checkArgument(!outputs.isEmpty(), "At least one output must be specified");
 
-    buildGlobalOptions(args);
+    buildGlobalOptions(globalArgs);
 
     for (FFmpegInputBuilder input : inputs) {
-      args.addAll(input.build(this));
+      inputArguments.add(input.build(this));
     }
 
     for (FFmpegOutputBuilder output : this.outputs) {
       output.setPass(this.pass);
       output.setPassPrefix(this.passPrefix);
       output.setPassDirectory(this.passDirectory);
-      args.addAll(output.build(this));
+      outputArguments.add(output.build(this));
     }
+
+    return assembleArguments(globalArgs.build(), inputArguments.build(), outputArguments.build());
+  }
+
+  protected List<String> assembleArguments(List<String> globalArgs, List<List<String>> inputArguments, List<List<String>> outputArguments) {
+    ImmutableListBuilder<String> args = new ImmutableListBuilder<>();
+
+    args.addAll(globalArgs);
+    inputArguments.forEach(args::addAll);
+    outputArguments.forEach(args::addAll);
 
     return args.build();
   }
