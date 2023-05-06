@@ -1,54 +1,49 @@
 package net.bramp.ffmpeg.info;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-
 /**
  * Information about supported Format
  *
  * @author bramp
  */
-public final class Format {
-  final String name;
-  final String longName;
-
-  final boolean canDemux;
-  final boolean canMux;
-
-  Format(String name, String longName, boolean canDemux, boolean canMux) {
-    this.name = name;
-    this.longName = longName;
-    this.canDemux = canDemux;
-    this.canMux = canMux;
-  }
-
+public record Format(
+        String name,
+        String longName,
+        boolean canDemux,
+        boolean canMux
+) {
   @Override
   public String toString() {
     return name + " " + longName;
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    return EqualsBuilder.reflectionEquals(this, obj);
-  }
-
-  @Override
-  public int hashCode() {
-    return HashCodeBuilder.reflectionHashCode(this);
-  }
-
+  /**
+   * @deprecated Use {@link Format#name()} instead
+   */
+  @Deprecated(forRemoval = true)
   public String getName() {
     return name;
   }
 
+  /**
+   * @deprecated Use {@link Format#longName()} instead
+   */
+  @Deprecated(forRemoval = true)
   public String getLongName() {
     return longName;
   }
 
+  /**
+   * @deprecated Use {@link Format#canDemux()} instead
+   */
+  @Deprecated(forRemoval = true)
   public boolean getCanDemux() {
     return canDemux;
   }
 
+  /**
+   * @deprecated Use {@link Format#canMux()} instead
+   */
+  @Deprecated(forRemoval = true)
   public boolean getCanMux() {
     return canMux;
   }
