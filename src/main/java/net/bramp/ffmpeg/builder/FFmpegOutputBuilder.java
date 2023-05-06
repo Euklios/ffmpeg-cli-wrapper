@@ -21,27 +21,27 @@ public class FFmpegOutputBuilder extends AbstractFFmpegStreamBuilder<FFmpegOutpu
 
   static final Pattern trailingZero = Pattern.compile("\\.0*$");
 
-  public Double constantRateFactor;
+  private Double constantRateFactor;
 
-  public String audioSampleFormat;
-  public long audioBitRate;
-  public Double audioQuality;
-  public String audioBitStreamFilter;
+  private String audioSampleFormat;
+  private long audioBitRate;
+  private Double audioQuality;
+  private String audioBitStreamFilter;
 
-  public long videoBitRate;
-  public Double videoQuality;
-  public String videoPreset;
-  public String videoBitStreamFilter;
+  private long videoBitRate;
+  private Double videoQuality;
+  private String videoPreset;
+  private String videoBitStreamFilter;
 
   // Filters
-  String audioFilter;
-  String videoFilter;
-  String complexFilter;
+  private String audioFilter;
+  private String videoFilter;
+  private String complexFilter;
 
   // Multi-pass encoding
-  int pass = 0;
-  String passDirectory = "";
-  String passPrefix;
+  private int pass = 0;
+  private String passDirectory = "";
+  private String passPrefix;
 
   public FFmpegOutputBuilder() {
     super();
@@ -274,13 +274,13 @@ public class FFmpegOutputBuilder extends AbstractFFmpegStreamBuilder<FFmpegOutpu
           "Target size, or video bitrate must be specified when using two-pass");
     }
     if (targetSize > 0) {
-      checkState(parent.inputs.size() == 1, "Target size does not support multiple inputs");
+      checkState(parent.getInputs().size() == 1, "Target size does not support multiple inputs");
 
       checkArgument(
           constantRateFactor == null, "Target size can not be used with constantRateFactor");
 
-      FFmpegInputBuilder firstInput = parent.inputs.iterator().next();
-      FFmpegProbeResult input = parent.inputProbes.get(firstInput.getFilename());
+      FFmpegInputBuilder firstInput = parent.getInputs().iterator().next();
+      FFmpegProbeResult input = parent.getInputProbes().get(firstInput.getFilename());
 
       checkState(input != null, "Target size must be used with setInput(FFmpegProbeResult)");
 
@@ -346,7 +346,8 @@ public class FFmpegOutputBuilder extends AbstractFFmpegStreamBuilder<FFmpegOutpu
     super.addGlobalFlags(parent, args);
 
     args.addArgIf(isNotNullOrEmpty(complexFilter), "-filter_complex", complexFilter);
-    args.addArgIf(constantRateFactor != null, "-crf", () -> formatDecimalInteger(constantRateFactor));
+    args.addArgIf(
+        constantRateFactor != null, "-crf", () -> formatDecimalInteger(constantRateFactor));
   }
 
   @Override
@@ -369,7 +370,7 @@ public class FFmpegOutputBuilder extends AbstractFFmpegStreamBuilder<FFmpegOutpu
 
     if (isNotNullOrEmpty(videoFilter)) {
       checkState(
-          parent.inputs.size() == 1,
+          parent.getInputs().size() == 1,
           "Video filter only works with one input, instead use setComplexVideoFilter(..)");
       args.add("-vf", videoFilter);
     }

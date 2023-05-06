@@ -20,24 +20,25 @@ import net.bramp.ffmpeg.probe.FFmpegProbeResult;
  */
 public class FFmpegBuilder {
   // Global Settings
-  boolean override = true;
-  Verbosity verbosity = Verbosity.ERROR;
-  URI progress;
-  String userAgent;
+  private boolean override = true;
+  private Verbosity verbosity = Verbosity.ERROR;
+  private URI progress;
+  private String userAgent;
 
-  // Pass configuration is technically not global, but given the current architecture of TwoPassFFmpegJob, the easiest approach is to simply forward the configuration to the FFmpegOutputStreams whenever build is called
-  int pass = 0;
-  String passDirectory = "";
-  String passPrefix;
+  // Pass configuration is technically not global, but given the current architecture of
+  // TwoPassFFmpegJob, the easiest approach is to simply forward the configuration to the
+  // FFmpegOutputStreams whenever build is called
+  private int pass = 0;
+  private String passDirectory = "";
+  private String passPrefix;
 
-  final List<FFmpegInputBuilder> inputs = new ArrayList<>();
-  final Map<String, FFmpegProbeResult> inputProbes = new TreeMap<>();
+  private final List<FFmpegInputBuilder> inputs = new ArrayList<>();
+  private final Map<String, FFmpegProbeResult> inputProbes = new TreeMap<>();
 
-
-  final List<String> extraArgs = new ArrayList<>();
+  private final List<String> extraArgs = new ArrayList<>();
 
   // Output
-  final List<FFmpegOutputBuilder> outputs = new ArrayList<>();
+  private final List<FFmpegOutputBuilder> outputs = new ArrayList<>();
 
   public FFmpegBuilder overrideOutputFiles(boolean override) {
     this.override = override;
@@ -46,6 +47,14 @@ public class FFmpegBuilder {
 
   public boolean getOverrideOutputFiles() {
     return this.override;
+  }
+
+  public List<FFmpegInputBuilder> getInputs() {
+    return List.copyOf(inputs);
+  }
+
+  public Map<String, FFmpegProbeResult> getInputProbes() {
+    return Map.copyOf(inputProbes);
   }
 
   public FFmpegBuilder setPass(int pass) {
@@ -233,7 +242,10 @@ public class FFmpegBuilder {
     return assembleArguments(globalArgs.build(), inputArguments.build(), outputArguments.build());
   }
 
-  protected List<String> assembleArguments(List<String> globalArgs, List<List<String>> inputArguments, List<List<String>> outputArguments) {
+  protected List<String> assembleArguments(
+      List<String> globalArgs,
+      List<List<String>> inputArguments,
+      List<List<String>> outputArguments) {
     ImmutableListBuilder<String> args = new ImmutableListBuilder<>();
 
     args.addAll(globalArgs);
