@@ -59,20 +59,20 @@ public class FFmpegBuilder {
   // Global Settings
   boolean override = true;
   int pass = 0;
-  String pass_directory = "";
-  String pass_prefix;
+  String passDirectory = "";
+  String passPrefix;
   Verbosity verbosity = Verbosity.ERROR;
   URI progress;
-  String user_agent;
+  String userAgent;
 
   // Input settings
   String format;
   Long startOffset; // in millis
-  boolean read_at_native_frame_rate = false;
+  boolean readAtNativeFrameRate = false;
   final List<FFmpegInputBuilder> inputs = new ArrayList<>();
   final Map<String, FFmpegProbeResult> inputProbes = new TreeMap<>();
 
-  final List<String> extra_args = new ArrayList<>();
+  final List<String> extraArgs = new ArrayList<>();
 
   // Output
   final List<FFmpegOutputBuilder> outputs = new ArrayList<>();
@@ -97,12 +97,12 @@ public class FFmpegBuilder {
   }
 
   public FFmpegBuilder setPassDirectory(String directory) {
-    this.pass_directory = checkNotNull(directory);
+    this.passDirectory = checkNotNull(directory);
     return this;
   }
 
   public FFmpegBuilder setPassPrefix(String prefix) {
-    this.pass_prefix = checkNotNull(prefix);
+    this.passPrefix = checkNotNull(prefix);
     return this;
   }
 
@@ -113,12 +113,12 @@ public class FFmpegBuilder {
   }
 
   public FFmpegBuilder setUserAgent(String userAgent) {
-    this.user_agent = checkNotNull(userAgent);
+    this.userAgent = checkNotNull(userAgent);
     return this;
   }
 
   public FFmpegBuilder readAtNativeFrameRate() {
-    this.read_at_native_frame_rate = true;
+    this.readAtNativeFrameRate = true;
     return this;
   }
 
@@ -243,7 +243,7 @@ public class FFmpegBuilder {
     checkNotEmpty(values[0], "first extra arg may not be empty");
 
     for (String value : values) {
-      extra_args.add(checkNotNull(value));
+      extraArgs.add(checkNotNull(value));
     }
     return this;
   }
@@ -319,8 +319,8 @@ public class FFmpegBuilder {
     if (pass > 0) {
       args.add("-pass", Integer.toString(pass));
 
-      if (pass_prefix != null) {
-        args.add("-passlogfile", pass_directory + pass_prefix);
+      if (passPrefix != null) {
+        args.add("-passlogfile", passDirectory + passPrefix);
       }
     }
 
@@ -350,8 +350,8 @@ public class FFmpegBuilder {
     args.add(override ? "-y" : "-n");
     args.add("-v", this.verbosity.toString());
 
-    if (user_agent != null) {
-      args.add("-user_agent", user_agent);
+    if (userAgent != null) {
+      args.add("-user_agent", userAgent);
     }
 
     // TODO: This is either an input or an output option and shouldn't be set here
@@ -367,7 +367,7 @@ public class FFmpegBuilder {
 
     // TODO: This is an input option and shouldn't be set here
     // Move to FFmpegInputBuilder
-    if (read_at_native_frame_rate) {
+    if (readAtNativeFrameRate) {
       args.add("-re");
     }
 
@@ -375,6 +375,6 @@ public class FFmpegBuilder {
       args.add("-progress", progress.toString());
     }
 
-    args.addAll(extra_args);
+    args.addAll(extraArgs);
   }
 }

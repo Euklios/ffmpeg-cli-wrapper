@@ -46,7 +46,7 @@ public class StreamSpecifier {
    */
   public static StreamSpecifier stream(StreamSpecifierType type, int index) {
     checkNotNull(type);
-    return new StreamSpecifier(type.toString() + ":" + index);
+    return new StreamSpecifier(type + ":" + index);
   }
 
   /**

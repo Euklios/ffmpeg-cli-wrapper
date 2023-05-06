@@ -23,17 +23,17 @@ public class FFmpegOutputBuilder extends AbstractFFmpegStreamBuilder<FFmpegOutpu
 
   public Double constantRateFactor;
 
-  public String audio_sample_format;
-  public long audio_bit_rate;
-  public Double audio_quality;
-  public String audio_bit_stream_filter;
-  public String audio_filter;
+  public String audioSampleFormat;
+  public long audioBitRate;
+  public Double audioQuality;
+  public String audioBitStreamFilter;
+  public String audioFilter;
 
-  public long video_bit_rate;
-  public Double video_quality;
-  public String video_preset;
-  public String video_filter;
-  public String video_bit_stream_filter;
+  public long videoBitRate;
+  public Double videoQuality;
+  public String videoPreset;
+  public String videoFilter;
+  public String videoBitStreamFilter;
 
   public FFmpegOutputBuilder() {
     super();
@@ -53,22 +53,22 @@ public class FFmpegOutputBuilder extends AbstractFFmpegStreamBuilder<FFmpegOutpu
     return this;
   }
 
-  public FFmpegOutputBuilder setVideoBitRate(long bit_rate) {
-    checkArgument(bit_rate > 0, "bit rate must be positive");
-    this.video_enabled = true;
-    this.video_bit_rate = bit_rate;
+  public FFmpegOutputBuilder setVideoBitRate(long bitRate) {
+    checkArgument(bitRate > 0, "bit rate must be positive");
+    this.videoEnabled = true;
+    this.videoBitRate = bitRate;
     return this;
   }
 
   public FFmpegOutputBuilder setVideoQuality(double quality) {
     checkArgument(quality > 0, "quality must be positive");
-    this.video_enabled = true;
-    this.video_quality = quality;
+    this.videoEnabled = true;
+    this.videoQuality = quality;
     return this;
   }
 
   public FFmpegOutputBuilder setVideoBitStreamFilter(String filter) {
-    this.video_bit_stream_filter = checkNotEmpty(filter, "filter must not be empty");
+    this.videoBitStreamFilter = checkNotEmpty(filter, "filter must not be empty");
     return this;
   }
 
@@ -81,8 +81,8 @@ public class FFmpegOutputBuilder extends AbstractFFmpegStreamBuilder<FFmpegOutpu
    * @return this
    */
   public FFmpegOutputBuilder setVideoPreset(String preset) {
-    this.video_enabled = true;
-    this.video_preset = checkNotEmpty(preset, "video preset must not be empty");
+    this.videoEnabled = true;
+    this.videoPreset = checkNotEmpty(preset, "video preset must not be empty");
     return this;
   }
 
@@ -95,15 +95,15 @@ public class FFmpegOutputBuilder extends AbstractFFmpegStreamBuilder<FFmpegOutpu
    * @return this
    */
   public FFmpegOutputBuilder setVideoFilter(String filter) {
-    this.video_enabled = true;
-    this.video_filter = checkNotEmpty(filter, "filter must not be empty");
+    this.videoEnabled = true;
+    this.videoFilter = checkNotEmpty(filter, "filter must not be empty");
     return this;
   }
 
   /**
    * Sets the audio bit depth.
    *
-   * @param bit_depth The sample format, one of the net.bramp.ffmpeg.FFmpeg#AUDIO_DEPTH_* constants.
+   * @param bitDepth The sample format, one of the net.bramp.ffmpeg.FFmpeg#AUDIO_DEPTH_* constants.
    * @return this
    * @see net.bramp.ffmpeg.FFmpeg#AUDIO_DEPTH_U8
    * @see net.bramp.ffmpeg.FFmpeg#AUDIO_DEPTH_S16
@@ -113,14 +113,14 @@ public class FFmpegOutputBuilder extends AbstractFFmpegStreamBuilder<FFmpegOutpu
    * @deprecated use {@link #setAudioSampleFormat} instead.
    */
   @Deprecated
-  public FFmpegOutputBuilder setAudioBitDepth(String bit_depth) {
-    return setAudioSampleFormat(bit_depth);
+  public FFmpegOutputBuilder setAudioBitDepth(String bitDepth) {
+    return setAudioSampleFormat(bitDepth);
   }
 
   /**
    * Sets the audio sample format.
    *
-   * @param sample_format The sample format, one of the net.bramp.ffmpeg.FFmpeg#AUDIO_FORMAT_*
+   * @param sampleFormat The sample format, one of the net.bramp.ffmpeg.FFmpeg#AUDIO_FORMAT_*
    *     constants.
    * @return this
    * @see net.bramp.ffmpeg.FFmpeg#AUDIO_FORMAT_U8
@@ -129,35 +129,35 @@ public class FFmpegOutputBuilder extends AbstractFFmpegStreamBuilder<FFmpegOutpu
    * @see net.bramp.ffmpeg.FFmpeg#AUDIO_FORMAT_FLT
    * @see net.bramp.ffmpeg.FFmpeg#AUDIO_FORMAT_DBL
    */
-  public FFmpegOutputBuilder setAudioSampleFormat(String sample_format) {
-    this.audio_enabled = true;
-    this.audio_sample_format = checkNotEmpty(sample_format, "sample format must not be empty");
+  public FFmpegOutputBuilder setAudioSampleFormat(String sampleFormat) {
+    this.audioEnabled = true;
+    this.audioSampleFormat = checkNotEmpty(sampleFormat, "sample format must not be empty");
     return this;
   }
 
   /**
    * Sets the Audio bit rate
    *
-   * @param bit_rate Audio bitrate in bits per second.
+   * @param bitRate Audio bitrate in bits per second.
    * @return this
    */
-  public FFmpegOutputBuilder setAudioBitRate(long bit_rate) {
-    checkArgument(bit_rate > 0, "bit rate must be positive");
-    this.audio_enabled = true;
-    this.audio_bit_rate = bit_rate;
+  public FFmpegOutputBuilder setAudioBitRate(long bitRate) {
+    checkArgument(bitRate > 0, "bit rate must be positive");
+    this.audioEnabled = true;
+    this.audioBitRate = bitRate;
     return this;
   }
 
   public FFmpegOutputBuilder setAudioQuality(double quality) {
     checkArgument(quality > 0, "quality must be positive");
-    this.audio_enabled = true;
-    this.audio_quality = quality;
+    this.audioEnabled = true;
+    this.audioQuality = quality;
     return this;
   }
 
   public FFmpegOutputBuilder setAudioBitStreamFilter(String filter) {
-    this.audio_enabled = true;
-    this.audio_bit_stream_filter = checkNotEmpty(filter, "filter must not be empty");
+    this.audioEnabled = true;
+    this.audioBitStreamFilter = checkNotEmpty(filter, "filter must not be empty");
     return this;
   }
 
@@ -170,8 +170,8 @@ public class FFmpegOutputBuilder extends AbstractFFmpegStreamBuilder<FFmpegOutpu
    * @return this
    */
   public FFmpegOutputBuilder setAudioFilter(String filter) {
-    this.audio_enabled = true;
-    this.audio_filter = checkNotEmpty(filter, "filter must not be empty");
+    this.audioEnabled = true;
+    this.audioFilter = checkNotEmpty(filter, "filter must not be empty");
     return this;
   }
 
@@ -191,23 +191,23 @@ public class FFmpegOutputBuilder extends AbstractFFmpegStreamBuilder<FFmpegOutpu
     return new EncodingOptions(
         new MainEncodingOptions(format, startOffset, duration),
         new AudioEncodingOptions(
-            audio_enabled,
-            audio_codec,
-            audio_channels,
-            audio_sample_rate,
-            audio_sample_format,
-            audio_bit_rate,
-            audio_quality),
+                audioEnabled,
+                audioCodec,
+                audioChannels,
+                audioSampleRate,
+                audioSampleFormat,
+                audioBitRate,
+                audioQuality),
         new VideoEncodingOptions(
-            video_enabled,
-            video_codec,
-            video_frame_rate,
-            video_width,
-            video_height,
-            video_bit_rate,
-            video_frames,
-            video_filter,
-            video_preset));
+                videoEnabled,
+                videoCodec,
+                videoFrameRate,
+                videoWidth,
+                videoHeight,
+                videoBitRate,
+                videoFrames,
+                videoFilter,
+                videoPreset));
   }
 
   @CheckReturnValue
@@ -238,7 +238,7 @@ public class FFmpegOutputBuilder extends AbstractFFmpegStreamBuilder<FFmpegOutpu
   protected List<String> build(FFmpegBuilder parent, int pass) {
     if (pass > 0) {
       checkArgument(
-          targetSize != 0 || video_bit_rate != 0,
+          targetSize != 0 || videoBitRate != 0,
           "Target size, or video bitrate must be specified when using two-pass");
     }
     if (targetSize > 0) {
@@ -256,17 +256,16 @@ public class FFmpegOutputBuilder extends AbstractFFmpegStreamBuilder<FFmpegOutpu
 
       double durationInSeconds = input.format().duration();
       long totalBitRate =
-          (long) Math.floor((targetSize * 8) / durationInSeconds) - pass_padding_bitrate;
+          (long) Math.floor((targetSize * 8) / durationInSeconds) - passPaddingBitrate;
 
       // TODO Calculate audioBitRate
 
-      if (video_enabled && video_bit_rate == 0) {
+      if (videoEnabled && videoBitRate == 0) {
         // Video (and possibly audio)
-        long audioBitRate = audio_enabled ? audio_bit_rate : 0;
-        video_bit_rate = totalBitRate - audioBitRate;
-      } else if (audio_enabled && audio_bit_rate == 0) {
+        videoBitRate = totalBitRate - (audioEnabled ? audioBitRate : 0);
+      } else if (audioEnabled && audioBitRate == 0) {
         // Just Audio
-        audio_bit_rate = totalBitRate;
+        audioBitRate = totalBitRate;
       }
     }
 
@@ -297,32 +296,32 @@ public class FFmpegOutputBuilder extends AbstractFFmpegStreamBuilder<FFmpegOutpu
   protected void addVideoFlags(FFmpegBuilder parent, ImmutableList.Builder<String> args) {
     super.addVideoFlags(parent, args);
 
-    if (video_bit_rate > 0 && video_quality != null) {
-      // I'm not sure, but it seems video_quality overrides video_bit_rate, so don't allow both
-      throw new IllegalStateException("Only one of video_bit_rate and video_quality can be set");
+    if (videoBitRate > 0 && videoQuality != null) {
+      // I'm not sure, but it seems videoQuality overrides videoBitRate, so don't allow both
+      throw new IllegalStateException("Only one of videoBitRate and videoQuality can be set");
     }
 
-    if (video_bit_rate > 0) {
-      args.add("-b:v", String.valueOf(video_bit_rate));
+    if (videoBitRate > 0) {
+      args.add("-b:v", String.valueOf(videoBitRate));
     }
 
-    if (video_quality != null) {
-      args.add("-qscale:v", formatDecimalInteger(video_quality));
+    if (videoQuality != null) {
+      args.add("-qscale:v", formatDecimalInteger(videoQuality));
     }
 
-    if (!Strings.isNullOrEmpty(video_preset)) {
-      args.add("-vpre", video_preset);
+    if (!Strings.isNullOrEmpty(videoPreset)) {
+      args.add("-vpre", videoPreset);
     }
 
-    if (!Strings.isNullOrEmpty(video_filter)) {
+    if (!Strings.isNullOrEmpty(videoFilter)) {
       checkState(
           parent.inputs.size() == 1,
           "Video filter only works with one input, instead use setComplexVideoFilter(..)");
-      args.add("-vf", video_filter);
+      args.add("-vf", videoFilter);
     }
 
-    if (!Strings.isNullOrEmpty(video_bit_stream_filter)) {
-      args.add("-bsf:v", video_bit_stream_filter);
+    if (!Strings.isNullOrEmpty(videoBitStreamFilter)) {
+      args.add("-bsf:v", videoBitStreamFilter);
     }
   }
 
@@ -330,29 +329,29 @@ public class FFmpegOutputBuilder extends AbstractFFmpegStreamBuilder<FFmpegOutpu
   protected void addAudioFlags(ImmutableList.Builder<String> args) {
     super.addAudioFlags(args);
 
-    if (!Strings.isNullOrEmpty(audio_sample_format)) {
-      args.add("-sample_fmt", audio_sample_format);
+    if (!Strings.isNullOrEmpty(audioSampleFormat)) {
+      args.add("-sample_fmt", audioSampleFormat);
     }
 
-    if (audio_bit_rate > 0 && audio_quality != null && throwWarnings) {
-      // I'm not sure, but it seems audio_quality overrides audio_bit_rate, so don't allow both
-      throw new IllegalStateException("Only one of audio_bit_rate and audio_quality can be set");
+    if (audioBitRate > 0 && audioQuality != null && throwWarnings) {
+      // I'm not sure, but it seems audioQuality overrides audioBitRate, so don't allow both
+      throw new IllegalStateException("Only one of audioBitRate and audioQuality can be set");
     }
 
-    if (audio_bit_rate > 0) {
-      args.add("-b:a", String.valueOf(audio_bit_rate));
+    if (audioBitRate > 0) {
+      args.add("-b:a", String.valueOf(audioBitRate));
     }
 
-    if (audio_quality != null) {
-      args.add("-qscale:a", formatDecimalInteger(audio_quality));
+    if (audioQuality != null) {
+      args.add("-qscale:a", formatDecimalInteger(audioQuality));
     }
 
-    if (!Strings.isNullOrEmpty(audio_bit_stream_filter)) {
-      args.add("-bsf:a", audio_bit_stream_filter);
+    if (!Strings.isNullOrEmpty(audioBitStreamFilter)) {
+      args.add("-bsf:a", audioBitStreamFilter);
     }
 
-    if (!Strings.isNullOrEmpty(audio_filter)) {
-      args.add("-af", audio_filter);
+    if (!Strings.isNullOrEmpty(audioFilter)) {
+      args.add("-af", audioFilter);
     }
   }
 
