@@ -5,6 +5,9 @@ package net.bramp.ffmpeg.info;
  *
  * @param canDecode Can I decode with this codec
  * @param canEncode Can I encode with this codec
+ * @param intraFrameOnly Is this an Intra frame-only codec
+ * @param lossyCompression Can I store using a lossy compression
+ * @param losslessCompression Can I store using a lossless compression
  * @param type What type of codec is this
  *
  * @author bramp
@@ -14,6 +17,9 @@ public record Codec(
         String longName,
         boolean canDecode,
         boolean canEncode,
+        boolean intraFrameOnly,
+        boolean lossyCompression,
+        boolean losslessCompression,
         CodecType type
 ) {
 

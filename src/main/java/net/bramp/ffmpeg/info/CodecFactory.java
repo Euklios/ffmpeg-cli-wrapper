@@ -33,6 +33,9 @@ public class CodecFactory {
 
         boolean canDecode = flags.charAt(0) == 'D';
         boolean canEncode = flags.charAt(1) == 'E';
+        boolean intraFrameOnly = flags.charAt(3) == 'I';
+        boolean lossyCompression = flags.charAt(4) == 'L';
+        boolean losslessCompression = flags.charAt(5) == 'S';
 
         CodecType type = switch (flags.charAt(2)) {
             case 'V' -> CodecType.VIDEO;
@@ -42,8 +45,6 @@ public class CodecFactory {
             default -> throw new IllegalArgumentException("Invalid codec type '" + flags.charAt(2) + "'");
         };
 
-        // TODO There are more flags to parse
-
-        return new Codec(name, longName, canDecode, canEncode, type);
+        return new Codec(name, longName, canDecode, canEncode, intraFrameOnly, lossyCompression, losslessCompression, type);
     }
 }
