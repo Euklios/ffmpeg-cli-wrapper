@@ -107,20 +107,13 @@ public class RawHandler {
                 + "'");
       }
 
-      switch (type) {
-        case 'S':
-          encoding = AudioFormat.Encoding.PCM_SIGNED;
-          break;
-        case 'U':
-          encoding = AudioFormat.Encoding.PCM_UNSIGNED;
-          break;
-        case 'F':
-          encoding = AudioFormat.Encoding.PCM_FLOAT;
-          break;
-        default:
-          throw new IllegalArgumentException(
-              "unknown fourcc '" + fourccToString(fourcc) + "' type: " + type);
-      }
+      encoding = switch (type) {
+        case 'S' -> AudioFormat.Encoding.PCM_SIGNED;
+        case 'U' -> AudioFormat.Encoding.PCM_UNSIGNED;
+        case 'F' -> AudioFormat.Encoding.PCM_FLOAT;
+        default -> throw new IllegalArgumentException("unknown fourcc '" + fourccToString(fourcc) + "' type: " + type);
+      };
+
     } else {
       throw new IllegalArgumentException("unknown fourcc value: '" + fourccToString(fourcc) + "'");
     }

@@ -126,63 +126,63 @@ public class Progress {
     final String value = checkNotNull(args[1]);
 
     switch (key) {
-      case "frame":
+      case "frame" -> {
         frame = Long.parseLong(value);
         return false;
-
-      case "fps":
+      }
+      case "fps" -> {
         fps = Fraction.getFraction(value);
         return false;
-
-      case "bitrate":
+      }
+      case "bitrate" -> {
         if (value.equals("N/A")) {
           bitrate = -1;
         } else {
           bitrate = FFmpegUtils.parseBitrate(value);
         }
         return false;
-
-      case "total_size":
+      }
+      case "total_size" -> {
         if (value.equals("N/A")) {
           total_size = -1;
         } else {
           total_size = Long.parseLong(value);
         }
         return false;
-
-      case "out_time_ms":
+      }
+      case "out_time_ms" -> {
         // This is a duplicate of the "out_time" field, but expressed as a int instead of string.
         // Note this value is in microseconds, not milliseconds, and is based on AV_TIME_BASE which
         // could change.
         // out_time_ns = Long.parseLong(value) * 1000;
         return false;
-
-      case "out_time":
+      }
+      case "out_time" -> {
         out_time_ns = fromTimecode(value);
         return false;
-
-      case "dup_frames":
+      }
+      case "dup_frames" -> {
         dup_frames = Long.parseLong(value);
         return false;
-
-      case "drop_frames":
+      }
+      case "drop_frames" -> {
         drop_frames = Long.parseLong(value);
         return false;
-
-      case "speed":
+      }
+      case "speed" -> {
         if (value.equals("N/A")) {
           speed = -1;
         } else {
           speed = Float.parseFloat(value.replace("x", ""));
         }
         return false;
-
-      case "progress":
+      }
+      case "progress" -> {
         // TODO After "end" stream is closed
         status = Status.of(value);
         return true; // The status field is always last in the record
-
-      default:
+      }
+      default -> {
         if (key.startsWith("stream_")) {
           // TODO handle stream_0_0_q=0.0:
           // stream_%d_%d_q= file_index, index, quality
@@ -192,8 +192,8 @@ public class Progress {
         } else {
           LOG.warn("skipping unhandled key: {} = {}", key, value);
         }
-
         return false; // Either way, not supported
+      }
     }
   }
 

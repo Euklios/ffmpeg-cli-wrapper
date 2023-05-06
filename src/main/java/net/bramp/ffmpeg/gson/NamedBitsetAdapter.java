@@ -48,13 +48,16 @@ public class NamedBitsetAdapter<T> extends TypeAdapter<T> {
   protected Optional<Boolean> readBoolean(JsonReader reader) throws IOException {
     JsonToken next = reader.peek();
     switch (next) {
-      case BOOLEAN:
+      case BOOLEAN -> {
         return Optional.of(reader.nextBoolean());
-      case NUMBER:
+      }
+      case NUMBER -> {
         return Optional.of(reader.nextInt() != 0);
-      default:
+      }
+      default -> {
         reader.skipValue();
         return Optional.empty();
+      }
     }
   }
 

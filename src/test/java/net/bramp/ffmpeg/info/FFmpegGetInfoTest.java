@@ -48,21 +48,11 @@ public class FFmpegGetInfoTest {
 
     for (Codec codec : ffmpeg.codecs()) {
       switch (codec.getType()) {
-        case VIDEO:
-          videoCodecs.add(codec);
-          break;
-        case AUDIO:
-          audioCodecs.add(codec);
-          break;
-        case SUBTITLE:
-          subtitleCodecs.add(codec);
-          break;
-        case DATA:
-          dataCodecs.add(codec);
-          break;
-        default:
-          otherCodecs.add(codec);
-
+        case VIDEO -> videoCodecs.add(codec);
+        case AUDIO -> audioCodecs.add(codec);
+        case SUBTITLE -> subtitleCodecs.add(codec);
+        case DATA -> dataCodecs.add(codec);
+        default -> otherCodecs.add(codec);
       }
     }
 

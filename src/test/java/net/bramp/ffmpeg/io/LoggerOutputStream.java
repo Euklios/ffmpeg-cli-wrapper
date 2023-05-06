@@ -23,23 +23,13 @@ public class LoggerOutputStream extends OutputStream {
   public void write(int b) throws IOException {
     buffer.write(b);
     if (b == '\n') {
-      String line = buffer.toString(StandardCharsets.UTF_8.name());
+      String line = buffer.toString(StandardCharsets.UTF_8);
       switch (level) {
-        case TRACE:
-          logger.trace(line);
-          break;
-        case DEBUG:
-          logger.debug(line);
-          break;
-        case INFO:
-          logger.info(line);
-          break;
-        case WARN:
-          logger.warn(line);
-          break;
-        case ERROR:
-          logger.error(line);
-          break;
+        case TRACE -> logger.trace(line);
+        case DEBUG -> logger.debug(line);
+        case INFO -> logger.info(line);
+        case WARN -> logger.warn(line);
+        case ERROR -> logger.error(line);
       }
       buffer.reset();
     }

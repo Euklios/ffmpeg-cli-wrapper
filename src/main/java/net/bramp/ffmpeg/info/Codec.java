@@ -56,22 +56,13 @@ public final class Codec {
     this.canDecode = flags.charAt(0) == 'D';
     this.canEncode = flags.charAt(1) == 'E';
 
-    switch (flags.charAt(2)) {
-      case 'V':
-        this.type = Type.VIDEO;
-        break;
-      case 'A':
-        this.type = Type.AUDIO;
-        break;
-      case 'S':
-        this.type = Type.SUBTITLE;
-        break;
-      case 'D':
-        this.type = Type.DATA;
-        break;
-      default:
-        throw new IllegalArgumentException("Invalid codec type '" + flags.charAt(2) + "'");
-    }
+    this.type = switch (flags.charAt(2)) {
+      case 'V' -> Type.VIDEO;
+      case 'A' -> Type.AUDIO;
+      case 'S' -> Type.SUBTITLE;
+      case 'D' -> Type.DATA;
+      default -> throw new IllegalArgumentException("Invalid codec type '" + flags.charAt(2) + "'");
+    };
 
     // TODO There are more flags to parse
   }
