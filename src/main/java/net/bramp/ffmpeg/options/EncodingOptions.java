@@ -5,29 +5,29 @@ import java.beans.ConstructorProperties;
 /**
  * @author bramp
  */
-public class EncodingOptions {
+public record EncodingOptions(MainEncodingOptions main, AudioEncodingOptions audio, VideoEncodingOptions video) {
 
-  public final MainEncodingOptions main;
-  public final AudioEncodingOptions audio;
-  public final VideoEncodingOptions video;
-
-  @ConstructorProperties({"main", "audio", "video"})
-  public EncodingOptions(
-      MainEncodingOptions main, AudioEncodingOptions audio, VideoEncodingOptions video) {
-    this.main = main;
-    this.audio = audio;
-    this.video = video;
-  }
-
+  /**
+   * @deprecated Use {@link EncodingOptions#main()} instead
+   */
+  @Deprecated(forRemoval = true)
   public MainEncodingOptions getMain() {
-    return main;
+    return main();
   }
 
+  /**
+   * @deprecated Use {@link EncodingOptions#audio()} instead
+   */
+  @Deprecated(forRemoval = true)
   public AudioEncodingOptions getAudio() {
-    return audio;
+    return audio();
   }
 
+  /**
+   * @deprecated Use {@link EncodingOptions#video()} instead
+   */
+  @Deprecated(forRemoval = true)
   public VideoEncodingOptions getVideo() {
-    return video;
+    return video();
   }
 }

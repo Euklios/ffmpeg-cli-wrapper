@@ -89,13 +89,13 @@ public class Mapper {
 
   public static <T extends AbstractFFmpegStreamBuilder<T>> void map(
       EncodingOptions opts, AbstractFFmpegStreamBuilder<T> dest) {
-    map(opts.getMain(), dest);
+    map(opts.main(), dest);
 
-    if (opts.getAudio().enabled) {
-      map(opts.getAudio(), dest);
+    if (opts.audio().enabled()) {
+      map(opts.audio(), dest);
     }
-    if (opts.getVideo().enabled) {
-      map(opts.getVideo(), dest);
+    if (opts.video().enabled()) {
+      map(opts.video(), dest);
     }
   }
 }

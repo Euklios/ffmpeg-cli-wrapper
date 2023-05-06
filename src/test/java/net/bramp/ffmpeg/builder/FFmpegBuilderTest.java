@@ -191,9 +191,9 @@ public class FFmpegBuilderTest {
             .useOptions(video)
             .buildOptions();
 
-    assertThat(main, reflectEquals(options.getMain()));
-    assertThat(audio, reflectEquals(options.getAudio()));
-    assertThat(video, reflectEquals(options.getVideo()));
+    assertThat(options.main(), reflectEquals(main));
+    assertThat(options.audio(), reflectEquals(audio));
+    assertThat(options.video(), reflectEquals(video));
   }
 
   @Test
