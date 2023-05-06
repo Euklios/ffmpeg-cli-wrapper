@@ -5,12 +5,7 @@ package net.bramp.ffmpeg.info;
  *
  * @author bramp
  */
-public record Format(
-        String name,
-        String longName,
-        boolean canDemux,
-        boolean canMux
-) {
+public record Format(String name, String longName, boolean canDemux, boolean canMux) {
   @Override
   public String toString() {
     return name + " " + longName;

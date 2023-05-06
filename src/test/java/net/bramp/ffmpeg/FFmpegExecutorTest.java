@@ -200,7 +200,8 @@ public class FFmpegExecutorTest {
             .setAudioChannels(1)
             .done();
 
-    List<String> newArgs = new ImmutableListBuilder<String>().add(ffmpeg.getPath()).addAll(builder.build()).build();
+    List<String> newArgs =
+        new ImmutableListBuilder<String>().add(ffmpeg.getPath()).addAll(builder.build()).build();
 
     // TODO Add support to the FFmpegJob to export the stream
     Process p = new ProcessBuilder(newArgs).start();

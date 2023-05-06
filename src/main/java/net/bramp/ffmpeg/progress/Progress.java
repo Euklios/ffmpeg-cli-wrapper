@@ -1,7 +1,7 @@
 package net.bramp.ffmpeg.progress;
 
-import static net.bramp.ffmpeg.Preconditions.checkNotNull;
 import static net.bramp.ffmpeg.FFmpegUtils.fromTimecode;
+import static net.bramp.ffmpeg.Preconditions.checkNotNull;
 
 import com.google.common.base.MoreObjects;
 import java.util.Objects;

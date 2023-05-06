@@ -54,17 +54,11 @@ public class Mapper {
     return mapper;
   }
 
-  /**
-   * Simple wrapper object, to inject the word "audio" in the property name
-   */
-    record AudioWrapper(AudioEncodingOptions audio) {
-  }
+  /** Simple wrapper object, to inject the word "audio" in the property name */
+  record AudioWrapper(AudioEncodingOptions audio) {}
 
-  /**
-   * Simple wrapper object, to inject the word "video" in the property name
-   */
-    record VideoWrapper(VideoEncodingOptions video) {
-  }
+  /** Simple wrapper object, to inject the word "video" in the property name */
+  record VideoWrapper(VideoEncodingOptions video) {}
 
   public static <T extends AbstractFFmpegStreamBuilder<T>> void map(
       MainEncodingOptions opts, AbstractFFmpegStreamBuilder<T> dest) {

@@ -33,8 +33,7 @@ public class NutReaderTest {
   @Rule public Timeout timeout = new Timeout(30, TimeUnit.SECONDS);
 
   @Test
-  public void testNutReader()
-      throws InterruptedException, IOException {
+  public void testNutReader() throws InterruptedException, IOException {
 
     List<String> args =
         new FFmpegBuilder()
@@ -49,7 +48,8 @@ public class NutReaderTest {
             .done()
             .build();
 
-    List<String> newArgs = new ImmutableListBuilder<String>().add(FFmpeg.DEFAULT_PATH).addAll(args).build();
+    List<String> newArgs =
+        new ImmutableListBuilder<String>().add(FFmpeg.DEFAULT_PATH).addAll(args).build();
 
     ProcessBuilder builder = new ProcessBuilder(newArgs);
     Process p = builder.start();

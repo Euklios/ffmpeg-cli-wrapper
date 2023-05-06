@@ -1,7 +1,3 @@
 package net.bramp.ffmpeg.probe;
 
-public record FFmpegError(
-        int code,
-        String string
-) {
-}
+public record FFmpegError(int code, String string) {}

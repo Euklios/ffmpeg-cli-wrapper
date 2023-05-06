@@ -1,9 +1,8 @@
 package net.bramp.ffmpeg;
 
-import net.bramp.ffmpeg.builder.ProcessOptions;
-
 import java.io.IOException;
 import java.util.List;
+import net.bramp.ffmpeg.builder.ProcessOptions;
 
 /**
  * Creates and starts a process, returning an object representing the newly spawned process

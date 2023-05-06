@@ -7,7 +7,6 @@ import java.net.URI;
 import java.util.List;
 import java.util.regex.Pattern;
 import javax.annotation.CheckReturnValue;
-
 import net.bramp.ffmpeg.helper.ImmutableListBuilder;
 import net.bramp.ffmpeg.options.AudioEncodingOptions;
 import net.bramp.ffmpeg.options.EncodingOptions;
@@ -190,23 +189,23 @@ public class FFmpegOutputBuilder extends AbstractFFmpegStreamBuilder<FFmpegOutpu
     return new EncodingOptions(
         new MainEncodingOptions(format, startOffset, duration),
         new AudioEncodingOptions(
-                audioEnabled,
-                audioCodec,
-                audioChannels,
-                audioSampleRate,
-                audioSampleFormat,
-                audioBitRate,
-                audioQuality),
+            audioEnabled,
+            audioCodec,
+            audioChannels,
+            audioSampleRate,
+            audioSampleFormat,
+            audioBitRate,
+            audioQuality),
         new VideoEncodingOptions(
-                videoEnabled,
-                videoCodec,
-                videoFrameRate,
-                videoWidth,
-                videoHeight,
-                videoBitRate,
-                videoFrames,
-                videoFilter,
-                videoPreset));
+            videoEnabled,
+            videoCodec,
+            videoFrameRate,
+            videoWidth,
+            videoHeight,
+            videoBitRate,
+            videoFrames,
+            videoFilter,
+            videoPreset));
   }
 
   @CheckReturnValue
@@ -286,7 +285,8 @@ public class FFmpegOutputBuilder extends AbstractFFmpegStreamBuilder<FFmpegOutpu
   protected void addGlobalFlags(FFmpegBuilder parent, ImmutableListBuilder<String> args) {
     super.addGlobalFlags(parent, args);
 
-    args.addArgIf(constantRateFactor != null, "-crf", () -> formatDecimalInteger(constantRateFactor));
+    args.addArgIf(
+        constantRateFactor != null, "-crf", () -> formatDecimalInteger(constantRateFactor));
   }
 
   @Override

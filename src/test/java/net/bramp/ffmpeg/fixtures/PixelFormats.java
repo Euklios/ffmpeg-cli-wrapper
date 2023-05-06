@@ -1,18 +1,16 @@
 package net.bramp.ffmpeg.fixtures;
 
+import java.util.List;
 import net.bramp.ffmpeg.helper.ImmutableListBuilder;
 import net.bramp.ffmpeg.info.PixelFormat;
 import net.bramp.ffmpeg.info.PixelFormatFactory;
 
-import java.util.List;
-
 /**
- * Class that contains all pixel formats as defined in the unit tests This should not be used as a concise
- * list of available pixel formats, as every install of ffmpeg is different. Call ffmpeg.pixelFormats() to
- * discover.
+ * Class that contains all pixel formats as defined in the unit tests This should not be used as a
+ * concise list of available pixel formats, as every install of ffmpeg is different. Call
+ * ffmpeg.pixelFormats() to discover.
  */
-public final class PixelFormats
-{
+public final class PixelFormats {
 
   private PixelFormats() {
     throw new AssertionError("No instances for you!");
@@ -213,7 +211,6 @@ public final class PixelFormats
               PixelFormatFactory.create("yuva444p12be", 4, 48, "IO..."),
               PixelFormatFactory.create("yuva444p12le", 4, 48, "IO..."),
               PixelFormatFactory.create("nv24", 3, 24, "IO..."),
-              PixelFormatFactory.create("nv42", 3, 24, "IO...")
-          )
+              PixelFormatFactory.create("nv42", 3, 24, "IO..."))
           .build();
 }

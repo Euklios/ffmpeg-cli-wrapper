@@ -61,9 +61,11 @@ public class FFmpeg extends FFcommon {
   public static final int AUDIO_SAMPLE_48000 = 48000;
   public static final int AUDIO_SAMPLE_96000 = 96000;
 
-  static final Pattern CODECS_REGEX = Pattern.compile("^ ([.D][.E][VASD][.I][.L][.S]) (\\S{2,})\\s+(.*)$");
+  static final Pattern CODECS_REGEX =
+      Pattern.compile("^ ([.D][.E][VASD][.I][.L][.S]) (\\S{2,})\\s+(.*)$");
   static final Pattern FORMATS_REGEX = Pattern.compile("^ ([ D][ E]) (\\S+)\\s+(.*)$");
-  static final Pattern PIXEL_FORMATS_REGEX = Pattern.compile("^([.I][.O][.H][.P][.B]) (\\S{2,})\\s+(\\d+)\\s+(\\d+)$");
+  static final Pattern PIXEL_FORMATS_REGEX =
+      Pattern.compile("^([.I][.O][.H][.P][.B]) (\\S{2,})\\s+(\\d+)\\s+(\\d+)$");
 
   /** Supported codecs */
   List<Codec> codecs = null;
@@ -183,15 +185,12 @@ public class FFmpeg extends FFcommon {
         String line;
         while ((line = r.readLine()) != null) {
           Matcher m = PIXEL_FORMATS_REGEX.matcher(line);
-          if (!m.matches())
-            continue;
+          if (!m.matches()) continue;
           String flags = m.group(1);
 
-          pixelFormats.add(PixelFormatFactory.create(
-              m.group(2),
-              Integer.parseInt(m.group(3)),
-              Integer.parseInt(m.group(4)),
-              flags));
+          pixelFormats.add(
+              PixelFormatFactory.create(
+                  m.group(2), Integer.parseInt(m.group(3)), Integer.parseInt(m.group(4)), flags));
         }
 
         throwOnError(p, processOptions);

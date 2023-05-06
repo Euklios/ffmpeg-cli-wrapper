@@ -1,5 +1,7 @@
 package net.bramp.ffmpeg;
 
+import static net.bramp.ffmpeg.Preconditions.*;
+
 import com.google.common.io.CharStreams;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -9,12 +11,9 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import javax.annotation.Nonnull;
-
 import net.bramp.error.handler.ExceptionParser;
 import net.bramp.ffmpeg.builder.ProcessOptions;
 import net.bramp.ffmpeg.helper.ImmutableListBuilder;
-
-import static net.bramp.ffmpeg.Preconditions.*;
 
 /** Private class to contain common methods for both FFmpeg and FFprobe. */
 abstract class FFcommon {
@@ -98,7 +97,8 @@ abstract class FFcommon {
    * @param args The arguments to pass to the binary.
    * @throws IOException If there is a problem executing the binary.
    */
-  public CompletableFuture<Process> asyncRun(List<String> args, ProcessOptions processOptions) throws IOException {
+  public CompletableFuture<Process> asyncRun(List<String> args, ProcessOptions processOptions)
+      throws IOException {
     return createAndStartProcess(args, processOptions).onExit();
   }
 
@@ -120,7 +120,8 @@ abstract class FFcommon {
     }
   }
 
-  protected Process createAndStartProcess(List<String> args, ProcessOptions processOptions) throws IOException {
+  protected Process createAndStartProcess(List<String> args, ProcessOptions processOptions)
+      throws IOException {
     checkNotNull(args);
     checkNotNull(processOptions);
 

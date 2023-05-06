@@ -129,7 +129,7 @@ public class ReadmeTest {
                 // Print out interesting information about the progress
                 System.out.printf(
                     locale,
-                        "[%.0f%%] status:%s frame:%d time:%s fps:%.0f speed:%.2fx%n",
+                    "[%.0f%%] status:%s frame:%d time:%s fps:%.0f speed:%.2fx%n",
                     percentage * 100,
                     progress.status,
                     progress.frame,

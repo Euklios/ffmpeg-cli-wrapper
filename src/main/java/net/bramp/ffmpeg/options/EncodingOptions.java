@@ -3,7 +3,8 @@ package net.bramp.ffmpeg.options;
 /**
  * @author bramp
  */
-public record EncodingOptions(MainEncodingOptions main, AudioEncodingOptions audio, VideoEncodingOptions video) {
+public record EncodingOptions(
+    MainEncodingOptions main, AudioEncodingOptions audio, VideoEncodingOptions video) {
 
   /**
    * @deprecated Use {@link EncodingOptions#main()} instead

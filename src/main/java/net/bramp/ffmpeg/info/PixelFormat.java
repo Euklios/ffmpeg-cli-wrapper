@@ -1,15 +1,14 @@
 package net.bramp.ffmpeg.info;
 
 public record PixelFormat(
-        String name,
-        int numberOfComponents,
-        int bitsPerPixel,
-        boolean canDecode,
-        boolean canEncode,
-        boolean hardwareAccelerated,
-        boolean palettedFormat,
-        boolean bitstreamFormat
-) {
+    String name,
+    int numberOfComponents,
+    int bitsPerPixel,
+    boolean canDecode,
+    boolean canEncode,
+    boolean hardwareAccelerated,
+    boolean palettedFormat,
+    boolean bitstreamFormat) {
   @Override
   public String toString() {
     return name;

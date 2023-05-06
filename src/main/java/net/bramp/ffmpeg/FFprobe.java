@@ -7,7 +7,6 @@ import java.io.Reader;
 import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import net.bramp.ffmpeg.builder.ProcessOptions;
 import net.bramp.ffmpeg.helper.ImmutableListBuilder;
 import net.bramp.ffmpeg.io.LoggingFilterReader;

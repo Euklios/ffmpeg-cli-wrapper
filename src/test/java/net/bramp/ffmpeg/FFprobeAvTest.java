@@ -8,7 +8,6 @@ import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 
 import com.google.gson.Gson;
 import java.io.IOException;
-
 import net.bramp.ffmpeg.builder.ProcessOptions;
 import net.bramp.ffmpeg.fixtures.Samples;
 import net.bramp.ffmpeg.lang.NewProcessAnswer;

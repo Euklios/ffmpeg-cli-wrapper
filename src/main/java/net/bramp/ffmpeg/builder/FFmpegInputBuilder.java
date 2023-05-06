@@ -1,10 +1,9 @@
 package net.bramp.ffmpeg.builder;
 
-import net.bramp.ffmpeg.options.EncodingOptions;
-import org.apache.commons.lang3.NotImplementedException;
-
 import java.net.URI;
 import java.util.List;
+import net.bramp.ffmpeg.options.EncodingOptions;
+import org.apache.commons.lang3.NotImplementedException;
 
 public class FFmpegInputBuilder extends AbstractFFmpegStreamBuilder<FFmpegInputBuilder> {
   public FFmpegInputBuilder() {
@@ -18,6 +17,7 @@ public class FFmpegInputBuilder extends AbstractFFmpegStreamBuilder<FFmpegInputB
   protected FFmpegInputBuilder(FFmpegBuilder parent, URI uri) {
     super(parent, uri);
   }
+
   @Override
   protected FFmpegInputBuilder getThis() {
     return this;
@@ -25,7 +25,8 @@ public class FFmpegInputBuilder extends AbstractFFmpegStreamBuilder<FFmpegInputB
 
   @Override
   public EncodingOptions buildOptions() {
-  throw new NotImplementedException("The function AbstractFFmpegStreamBuilder#buildOptions() has not yet been implemented for FFmpegInputBuilder");
+    throw new NotImplementedException(
+        "The function AbstractFFmpegStreamBuilder#buildOptions() has not yet been implemented for FFmpegInputBuilder");
   }
 
   @Override

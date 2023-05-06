@@ -1,5 +1,7 @@
 package net.bramp.ffmpeg.modelmapper;
 
+import static org.junit.Assert.*;
+
 import net.bramp.ffmpeg.builder.FFmpegOutputBuilder;
 import net.bramp.ffmpeg.options.AudioEncodingOptions;
 import net.bramp.ffmpeg.options.EncodingOptions;
@@ -7,8 +9,6 @@ import net.bramp.ffmpeg.options.MainEncodingOptions;
 import net.bramp.ffmpeg.options.VideoEncodingOptions;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 public class MapperTest {
 
@@ -33,11 +33,14 @@ public class MapperTest {
 
   @Test
   public void unmodifiedFFmpegOutputBuildersDoEqual() {
-    assertTrue(EqualsBuilder.reflectionEquals(new FFmpegOutputBuilder(), new FFmpegOutputBuilder()));
+    assertTrue(
+        EqualsBuilder.reflectionEquals(new FFmpegOutputBuilder(), new FFmpegOutputBuilder()));
   }
 
   @Test
   public void unmodifiedEncodingOptionsDoEqual() {
-    assertTrue(EqualsBuilder.reflectionEquals(new FFmpegOutputBuilder().buildOptions(), new FFmpegOutputBuilder().buildOptions()));
+    assertTrue(
+        EqualsBuilder.reflectionEquals(
+            new FFmpegOutputBuilder().buildOptions(), new FFmpegOutputBuilder().buildOptions()));
   }
 }

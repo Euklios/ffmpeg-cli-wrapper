@@ -9,19 +9,17 @@ package net.bramp.ffmpeg.info;
  * @param lossyCompression Can I store using a lossy compression
  * @param losslessCompression Can I store using a lossless compression
  * @param type What type of codec is this
- *
  * @author bramp
  */
 public record Codec(
-        String name,
-        String longName,
-        boolean canDecode,
-        boolean canEncode,
-        boolean intraFrameOnly,
-        boolean lossyCompression,
-        boolean losslessCompression,
-        CodecType type
-) {
+    String name,
+    String longName,
+    boolean canDecode,
+    boolean canEncode,
+    boolean intraFrameOnly,
+    boolean lossyCompression,
+    boolean losslessCompression,
+    CodecType type) {
 
   @Override
   public String toString() {

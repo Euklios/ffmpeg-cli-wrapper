@@ -1,15 +1,14 @@
 package net.bramp.ffmpeg;
 
+import static net.bramp.ffmpeg.Preconditions.checkArgument;
+import static net.bramp.ffmpeg.Preconditions.checkNotNull;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-
 import net.bramp.ffmpeg.builder.ProcessOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static net.bramp.ffmpeg.Preconditions.checkArgument;
-import static net.bramp.ffmpeg.Preconditions.checkNotNull;
 
 /**
  * Simple function that creates a Process with the arguments, and returns a BufferedReader reading

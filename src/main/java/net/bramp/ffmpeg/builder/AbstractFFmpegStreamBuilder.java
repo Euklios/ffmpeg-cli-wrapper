@@ -9,7 +9,6 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
 import net.bramp.ffmpeg.helper.ImmutableListBuilder;
 import net.bramp.ffmpeg.modelmapper.Mapper;
 import net.bramp.ffmpeg.options.AudioEncodingOptions;
@@ -574,7 +573,6 @@ public abstract class AbstractFFmpegStreamBuilder<T extends AbstractFFmpegStream
       args.add("-an");
     }
 
-
     if (subtitleEnabled) {
       args.addArgIf(isNotNullOrEmpty(subtitleCodec), "-scodec", subtitleCodec);
       args.addArgIf(isNotNullOrEmpty(subtitlePreset), "-spre", subtitlePreset);
@@ -591,8 +589,7 @@ public abstract class AbstractFFmpegStreamBuilder<T extends AbstractFFmpegStream
     return args.build();
   }
 
-  protected void checkBuildPreconditions(FFmpegBuilder parent, int pass) {
-  }
+  protected void checkBuildPreconditions(FFmpegBuilder parent, int pass) {}
 
   protected List<String> buildFileNameArgument(int pass) {
     if (pass == 1) {

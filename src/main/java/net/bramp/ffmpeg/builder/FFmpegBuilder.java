@@ -1,8 +1,8 @@
 package net.bramp.ffmpeg.builder;
 
 import static net.bramp.ffmpeg.Preconditions.checkArgument;
-import static net.bramp.ffmpeg.Preconditions.checkNotNull;
 import static net.bramp.ffmpeg.Preconditions.checkNotEmpty;
+import static net.bramp.ffmpeg.Preconditions.checkNotNull;
 import static net.bramp.ffmpeg.helper.Expressions.isNotNullOrEmpty;
 
 import java.net.URI;
@@ -346,7 +346,10 @@ public class FFmpegBuilder {
     args.addArgIf(userAgent != null, "-user_agent", userAgent);
 
     // TODO: This is either an input or an output option and shouldn't be set here
-    args.addArgIf(startOffset != null, "-ss", () -> FFmpegUtils.toTimecode(startOffset, TimeUnit.MILLISECONDS));
+    args.addArgIf(
+        startOffset != null,
+        "-ss",
+        () -> FFmpegUtils.toTimecode(startOffset, TimeUnit.MILLISECONDS));
 
     // TODO: Format is an input or output option and shouldn't be set here
     // In this case, it only acts as an input option and should be removed entirely

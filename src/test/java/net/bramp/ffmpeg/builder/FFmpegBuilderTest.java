@@ -110,8 +110,7 @@ public class FFmpegBuilderTest {
             .done()
             .build();
 
-    assertEquals(
-        args, List.of("-y", "-v", "error", "-i", "input", "-vn", "-an", "-sn", "output"));
+    assertEquals(args, List.of("-y", "-v", "error", "-i", "input", "-vn", "-an", "-sn", "output"));
   }
 
   @Test
@@ -247,8 +246,7 @@ public class FFmpegBuilderTest {
 
     assertEquals(
         args,
-        List.of(
-            "-y", "-v", "error", "-i", "input", "-s", "320x240", "udp://10.1.0.102:1234"));
+        List.of("-y", "-v", "error", "-i", "input", "-s", "320x240", "udp://10.1.0.102:1234"));
   }
 
   @Test(expected = IllegalStateException.class)
@@ -271,7 +269,13 @@ public class FFmpegBuilderTest {
   @Test(expected = IllegalArgumentException.class)
   public void testSetEmptyFilename() {
     List<String> unused =
-        new FFmpegBuilder().setInput("input").done().addOutput("output").setFilename("").done().build();
+        new FFmpegBuilder()
+            .setInput("input")
+            .done()
+            .addOutput("output")
+            .setFilename("")
+            .done()
+            .build();
   }
 
   @Test
@@ -376,8 +380,7 @@ public class FFmpegBuilderTest {
 
     assertEquals(
         args,
-        List.of(
-            "-y", "-v", "error", "-a", "b", "-i", "input", "-an", "-sn", "-c", "d", "output"));
+        List.of("-y", "-v", "error", "-a", "b", "-i", "input", "-an", "-sn", "-c", "d", "output"));
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -397,8 +400,7 @@ public class FFmpegBuilderTest {
             .done()
             .build();
 
-    assertEquals(
-        args, List.of("-y", "-v", "error", "-i", "input1", "-i", "input2", "output"));
+    assertEquals(args, List.of("-y", "-v", "error", "-i", "input1", "-i", "input2", "output"));
   }
 
   @Test

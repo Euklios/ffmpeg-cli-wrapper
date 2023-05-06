@@ -1,7 +1,7 @@
 package net.bramp.ffmpeg;
 
-import static net.bramp.ffmpeg.Preconditions.checkArgument;
 import static java.util.concurrent.TimeUnit.*;
+import static net.bramp.ffmpeg.Preconditions.checkArgument;
 import static net.bramp.ffmpeg.Preconditions.checkNotEmpty;
 
 import com.google.common.base.CharMatcher;

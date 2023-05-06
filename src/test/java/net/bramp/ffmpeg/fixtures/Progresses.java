@@ -1,8 +1,7 @@
 package net.bramp.ffmpeg.fixtures;
 
-import net.bramp.ffmpeg.progress.Progress;
-
 import java.util.List;
+import net.bramp.ffmpeg.progress.Progress;
 
 public final class Progresses {
 

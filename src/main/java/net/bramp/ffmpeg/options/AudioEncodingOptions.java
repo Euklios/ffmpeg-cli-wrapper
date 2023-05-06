@@ -6,11 +6,10 @@ package net.bramp.ffmpeg.options;
  * @author bramp
  */
 public record AudioEncodingOptions(
-        boolean enabled,
-        String codec,
-        int channels,
-        int sampleRate,
-        String sampleFormat,
-        long bitRate,
-        Double quality) {
-}
+    boolean enabled,
+    String codec,
+    int channels,
+    int sampleRate,
+    String sampleFormat,
+    long bitRate,
+    Double quality) {}

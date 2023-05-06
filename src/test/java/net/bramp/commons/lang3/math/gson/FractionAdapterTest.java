@@ -20,8 +20,7 @@ public class FractionAdapterTest {
     gson = builder.create();
   }
 
-  private record TestData(String s, Fraction f) {
-  }
+  private record TestData(String s, Fraction f) {}
 
   static final List<TestData> readTests =
       List.of(
@@ -39,8 +38,7 @@ public class FractionAdapterTest {
 
   // Divide by zero
   static final List<TestData> zerosTests =
-      List.of(
-          new TestData("\"0/0\"", Fraction.ZERO), new TestData("\"1/0\"", Fraction.ZERO));
+      List.of(new TestData("\"0/0\"", Fraction.ZERO), new TestData("\"1/0\"", Fraction.ZERO));
 
   static final List<TestData> writeTests =
       List.of(
