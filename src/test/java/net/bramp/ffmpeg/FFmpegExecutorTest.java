@@ -18,6 +18,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import net.bramp.ffmpeg.builder.FFmpegBuilder;
+import net.bramp.ffmpeg.builder.Strict;
+import net.bramp.ffmpeg.builder.Verbosity;
 import net.bramp.ffmpeg.fixtures.Samples;
 import net.bramp.ffmpeg.helper.ImmutableListBuilder;
 import net.bramp.ffmpeg.job.FFmpegJob;
@@ -78,7 +80,7 @@ public class FFmpegExecutorTest {
   public void testNormal() throws InterruptedException, ExecutionException, IOException {
     FFmpegBuilder builder =
         new FFmpegBuilder()
-            .setVerbosity(FFmpegBuilder.Verbosity.DEBUG)
+            .setVerbosity(Verbosity.DEBUG)
             .setUserAgent(
                 "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.82 Safari/537.36")
             .setInput(getWebserverRoot() + Samples.base_big_buck_bunny_720p_1mb)
@@ -103,7 +105,7 @@ public class FFmpegExecutorTest {
             // .setVideoPixelFormat("yuv420p")
             // .setVideoBitStreamFilter("noise")
             .setVideoQuality(2)
-            .setStrict(FFmpegBuilder.Strict.EXPERIMENTAL)
+            .setStrict(Strict.EXPERIMENTAL)
             .done();
 
     FFmpegJob job = ffExecutor.createJob(builder);
@@ -263,7 +265,7 @@ public class FFmpegExecutorTest {
             .setVideoCodec("libx264")
             .setVideoFrameRate(24, 1)
             .setVideoResolution(640, 480)
-            .setStrict(FFmpegBuilder.Strict.EXPERIMENTAL) // Allow FFmpeg to use experimental specs
+            .setStrict(Strict.EXPERIMENTAL) // Allow FFmpeg to use experimental specs
             .done();
 
     // Run a one-pass encode

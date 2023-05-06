@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 import net.bramp.ffmpeg.builder.FFmpegBuilder;
 import net.bramp.ffmpeg.builder.FFmpegOutputBuilder;
 import net.bramp.ffmpeg.builder.ProcessOptions;
+import net.bramp.ffmpeg.builder.Verbosity;
 import net.bramp.ffmpeg.lang.NewProcessAnswer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -252,7 +253,7 @@ public class ExamplesTest {
   public void testExample9() throws IOException {
     FFmpegBuilder builder =
         new FFmpegBuilder()
-            .setVerbosity(FFmpegBuilder.Verbosity.DEBUG)
+            .setVerbosity(Verbosity.DEBUG)
             .setInput("input.mp3")
             .done()
             .overrideOutputFiles(true) // Override the output if it exists

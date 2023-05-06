@@ -22,39 +22,6 @@ import net.bramp.ffmpeg.probe.FFmpegProbeResult;
  * @author bramp
  */
 public class FFmpegBuilder {
-
-  public enum Strict {
-    VERY, // strictly conform to a older more strict version of the specifications or reference
-    // software
-    STRICT, // strictly conform to all the things in the specificiations no matter what consequences
-    NORMAL, // normal
-    UNOFFICIAL, // allow unofficial extensions
-    EXPERIMENTAL;
-
-    // ffmpeg command line requires these options in lower case
-    @Override
-    public String toString() {
-      return name().toLowerCase();
-    }
-  }
-
-  /** Log level options: https://ffmpeg.org/ffmpeg.html#Generic-options */
-  public enum Verbosity {
-    QUIET,
-    PANIC,
-    FATAL,
-    ERROR,
-    WARNING,
-    INFO,
-    VERBOSE,
-    DEBUG;
-
-    @Override
-    public String toString() {
-      return name().toLowerCase();
-    }
-  }
-
   // Global Settings
   boolean override = true;
   int pass = 0;
