@@ -44,7 +44,7 @@ public class FFmpegInputBuilder extends AbstractFFmpegStreamBuilder<FFmpegInputB
   }
 
   @Override
-  protected List<String> buildFileNameArgument(int pass) {
+  protected List<String> buildFileNameArgument() {
     if (filename != null) {
       return List.of("-i", filename);
     } else if (uri != null) {

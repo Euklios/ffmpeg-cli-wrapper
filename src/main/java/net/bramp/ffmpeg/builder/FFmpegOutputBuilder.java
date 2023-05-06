@@ -13,9 +13,11 @@ import net.bramp.ffmpeg.options.EncodingOptions;
 import net.bramp.ffmpeg.options.MainEncodingOptions;
 import net.bramp.ffmpeg.options.VideoEncodingOptions;
 import net.bramp.ffmpeg.probe.FFmpegProbeResult;
+import org.apache.commons.lang3.SystemUtils;
 
 /** Builds a representation of a single output/encoding setting */
 public class FFmpegOutputBuilder extends AbstractFFmpegStreamBuilder<FFmpegOutputBuilder> {
+  private static final String DEVNULL = SystemUtils.IS_OS_WINDOWS ? "NUL" : "/dev/null";
 
   static final Pattern trailingZero = Pattern.compile("\\.0*$");
 
@@ -31,11 +33,15 @@ public class FFmpegOutputBuilder extends AbstractFFmpegStreamBuilder<FFmpegOutpu
   public String videoPreset;
   public String videoBitStreamFilter;
 
-
   // Filters
   String audioFilter;
   String videoFilter;
   String complexFilter;
+
+  // Multi-pass encoding
+  int pass = 0;
+  String passDirectory = "";
+  String passPrefix;
 
   public FFmpegOutputBuilder() {
     super();
@@ -188,6 +194,21 @@ public class FFmpegOutputBuilder extends AbstractFFmpegStreamBuilder<FFmpegOutpu
     return this;
   }
 
+  FFmpegOutputBuilder setPass(int pass) {
+    this.pass = pass;
+    return this;
+  }
+
+  FFmpegOutputBuilder setPassDirectory(String directory) {
+    this.passDirectory = directory;
+    return this;
+  }
+
+  FFmpegOutputBuilder setPassPrefix(String prefix) {
+    this.passPrefix = prefix;
+    return this;
+  }
+
   /**
    * Returns a representation of this Builder that can be safely serialised.
    *
@@ -225,13 +246,13 @@ public class FFmpegOutputBuilder extends AbstractFFmpegStreamBuilder<FFmpegOutpu
 
   @CheckReturnValue
   @Override
-  protected List<String> build(int pass) {
+  protected List<String> build() {
     checkState(parent != null, "Can not build without parent being set");
-    return build(parent, pass);
+    return build(parent);
   }
 
   @Override
-  protected void checkBuildPreconditions(FFmpegBuilder parent, int pass) {
+  protected void checkBuildPreconditions(FFmpegBuilder parent) {
     if (pass > 0) {
       // TODO Write a test for this:
       checkArgument(format != null, "Format must be specified when using two-pass");
@@ -242,13 +263,11 @@ public class FFmpegOutputBuilder extends AbstractFFmpegStreamBuilder<FFmpegOutpu
    * Builds the arguments
    *
    * @param parent The parent FFmpegBuilder
-   * @param pass The particular pass. For one-pass this value will be zero, for multi-pass, it will
-   *     be 1 for the first pass, 2 for the second, and so on.
    * @return The arguments
    */
   @CheckReturnValue
   @Override
-  protected List<String> build(FFmpegBuilder parent, int pass) {
+  protected List<String> build(FFmpegBuilder parent) {
     if (pass > 0) {
       checkArgument(
           targetSize != 0 || videoBitRate != 0,
@@ -282,7 +301,33 @@ public class FFmpegOutputBuilder extends AbstractFFmpegStreamBuilder<FFmpegOutpu
       }
     }
 
-    return super.build(parent, pass);
+    ImmutableListBuilder<String> args = new ImmutableListBuilder<>();
+
+    if (pass > 0) {
+      args.add("-pass", Integer.toString(pass));
+
+      if (passPrefix != null) {
+        args.add("-passlogfile", passDirectory + passPrefix);
+      }
+    }
+
+    args.addAll(super.build(parent));
+
+    return args.build();
+  }
+
+  @Override
+  protected List<String> buildFileNameArgument() {
+    if (pass == 1) {
+      return List.of(DEVNULL);
+    } else if (filename != null) {
+      return List.of(filename);
+    } else if (uri != null) {
+      return List.of(uri.toString());
+    } else {
+      assert (false);
+      return List.of();
+    }
   }
 
   /**
@@ -306,6 +351,11 @@ public class FFmpegOutputBuilder extends AbstractFFmpegStreamBuilder<FFmpegOutpu
 
   @Override
   protected void addVideoFlags(FFmpegBuilder parent, ImmutableListBuilder<String> args) {
+    if (!videoEnabled) {
+      args.add("-vn");
+      return;
+    }
+
     super.addVideoFlags(parent, args);
 
     if (videoBitRate > 0 && videoQuality != null) {
@@ -329,6 +379,11 @@ public class FFmpegOutputBuilder extends AbstractFFmpegStreamBuilder<FFmpegOutpu
 
   @Override
   protected void addAudioFlags(ImmutableListBuilder<String> args) {
+    if (!audioEnabled || pass == 1) {
+      args.add("-an");
+      return;
+    }
+
     super.addAudioFlags(args);
 
     args.addArgIf(isNotNullOrEmpty(audioSampleFormat), "-sample_fmt", audioSampleFormat);

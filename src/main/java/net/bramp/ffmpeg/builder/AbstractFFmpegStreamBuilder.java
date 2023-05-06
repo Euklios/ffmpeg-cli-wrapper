@@ -15,7 +15,6 @@ import net.bramp.ffmpeg.options.AudioEncodingOptions;
 import net.bramp.ffmpeg.options.EncodingOptions;
 import net.bramp.ffmpeg.options.MainEncodingOptions;
 import net.bramp.ffmpeg.options.VideoEncodingOptions;
-import org.apache.commons.lang3.SystemUtils;
 import org.apache.commons.lang3.math.Fraction;
 
 /**
@@ -50,9 +49,6 @@ import org.apache.commons.lang3.math.Fraction;
  * @param <T> A concrete class that extends from the AbstractFFmpegStreamBuilder
  */
 public abstract class AbstractFFmpegStreamBuilder<T extends AbstractFFmpegStreamBuilder<T>> {
-
-  private static final String DEVNULL = SystemUtils.IS_OS_WINDOWS ? "NUL" : "/dev/null";
-
   final FFmpegBuilder parent;
 
   /** Output filename or uri. Only one may be set */
@@ -531,47 +527,35 @@ public abstract class AbstractFFmpegStreamBuilder<T extends AbstractFFmpegStream
    */
   public abstract EncodingOptions buildOptions();
 
-  protected List<String> build(int pass) {
+  protected List<String> build() {
     checkState(parent != null, "Can not build without parent being set");
-    return build(parent, pass);
+    return build(parent);
   }
 
   /**
    * Builds the arguments
    *
    * @param parent The parent FFmpegBuilder
-   * @param pass The particular pass. For one-pass this value will be zero, for multi-pass, it will
-   *     be 1 for the first pass, 2 for the second, and so on.
    * @return The arguments
    */
-  protected List<String> build(FFmpegBuilder parent, int pass) {
+  protected List<String> build(FFmpegBuilder parent) {
     checkNotNull(parent);
-    checkBuildPreconditions(parent, pass);
+    checkBuildPreconditions(parent);
 
     ImmutableListBuilder<String> args = new ImmutableListBuilder<>();
 
-    args.addAll(buildInputOutputOptions(parent, pass));
-    args.addAll(buildFileNameArgument(pass));
+    args.addAll(buildInputOutputOptions(parent));
+    args.addAll(buildFileNameArgument());
 
     return args.build();
   }
 
-  protected List<String> buildInputOutputOptions(FFmpegBuilder parent, int pass) {
+  protected List<String> buildInputOutputOptions(FFmpegBuilder parent) {
     ImmutableListBuilder<String> args = new ImmutableListBuilder<>();
 
     addGlobalFlags(parent, args);
-
-    if (videoEnabled) {
-      addVideoFlags(parent, args);
-    } else {
-      args.add("-vn");
-    }
-
-    if (audioEnabled && pass != 1) {
-      addAudioFlags(args);
-    } else {
-      args.add("-an");
-    }
+    addVideoFlags(parent, args);
+    addAudioFlags(args);
 
     if (subtitleEnabled) {
       args.addArgIf(isNotNullOrEmpty(subtitleCodec), "-scodec", subtitleCodec);
@@ -589,20 +573,9 @@ public abstract class AbstractFFmpegStreamBuilder<T extends AbstractFFmpegStream
     return args.build();
   }
 
-  protected void checkBuildPreconditions(FFmpegBuilder parent, int pass) {}
+  protected void checkBuildPreconditions(FFmpegBuilder parent) {}
 
-  protected List<String> buildFileNameArgument(int pass) {
-    if (pass == 1) {
-      return List.of(DEVNULL);
-    } else if (filename != null) {
-      return List.of(filename);
-    } else if (uri != null) {
-      return List.of(uri.toString());
-    } else {
-      assert (false);
-      return List.of();
-    }
-  }
+  protected abstract List<String> buildFileNameArgument();
 
   protected void addGlobalFlags(FFmpegBuilder parent, ImmutableListBuilder<String> args) {
     args.addArgIf(strict != Strict.NORMAL, "-strict", strict.toString());
@@ -616,6 +589,11 @@ public abstract class AbstractFFmpegStreamBuilder<T extends AbstractFFmpegStream
   }
 
   protected void addAudioFlags(ImmutableListBuilder<String> args) {
+    if (!audioEnabled) {
+      args.add("-an");
+      return;
+    }
+
     args.addArgIf(isNotNullOrEmpty(audioCodec), "-acodec", audioCodec);
     args.addArgIf(audioChannels > 0, "-ac", String.valueOf(audioChannels));
     args.addArgIf(audioSampleRate > 0, "-ar", String.valueOf(audioSampleRate));
@@ -623,6 +601,11 @@ public abstract class AbstractFFmpegStreamBuilder<T extends AbstractFFmpegStream
   }
 
   protected void addVideoFlags(FFmpegBuilder parent, ImmutableListBuilder<String> args) {
+    if (!videoEnabled) {
+      args.add("-vn");
+      return;
+    }
+
     args.addArgIf(videoFrames != null, "-vframes", () -> videoFrames.toString());
     args.addArgIf(isNotNullOrEmpty(videoCodec), "-vcodec", videoCodec);
     args.addArgIf(isNotNullOrEmpty(videoPixelFormat), "-pix_fmt", videoPixelFormat);

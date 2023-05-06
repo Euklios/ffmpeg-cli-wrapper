@@ -21,12 +21,14 @@ import net.bramp.ffmpeg.probe.FFmpegProbeResult;
 public class FFmpegBuilder {
   // Global Settings
   boolean override = true;
-  int pass = 0;
-  String passDirectory = "";
-  String passPrefix;
   Verbosity verbosity = Verbosity.ERROR;
   URI progress;
   String userAgent;
+
+  // Pass configuration is technically not global, but given the current architecture of TwoPassFFmpegJob, the easiest approach is to simply forward the configuration to the FFmpegOutputStreams whenever build is called
+  int pass = 0;
+  String passDirectory = "";
+  String passPrefix;
 
   final List<FFmpegInputBuilder> inputs = new ArrayList<>();
   final Map<String, FFmpegProbeResult> inputProbes = new TreeMap<>();
@@ -216,20 +218,14 @@ public class FFmpegBuilder {
     buildGlobalOptions(args);
 
     for (FFmpegInputBuilder input : inputs) {
-      args.addAll(input.build(this, pass));
-    }
-
-    // TODO: -pass and -passlogfile are output options and shouldn't be set here
-    if (pass > 0) {
-      args.add("-pass", Integer.toString(pass));
-
-      if (passPrefix != null) {
-        args.add("-passlogfile", passDirectory + passPrefix);
-      }
+      args.addAll(input.build(this));
     }
 
     for (FFmpegOutputBuilder output : this.outputs) {
-      args.addAll(output.build(this, pass));
+      output.setPass(this.pass);
+      output.setPassPrefix(this.passPrefix);
+      output.setPassDirectory(this.passDirectory);
+      args.addAll(output.build(this));
     }
 
     return args.build();
