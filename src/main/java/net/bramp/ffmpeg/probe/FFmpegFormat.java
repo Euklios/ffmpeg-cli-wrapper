@@ -1,12 +1,15 @@
 package net.bramp.ffmpeg.probe;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import java.util.Map;
 
 @SuppressFBWarnings(
     value = {"UUF_UNUSED_PUBLIC_OR_PROTECTED_FIELD", "UWF_UNWRITTEN_PUBLIC_OR_PROTECTED_FIELD"},
     justification = "POJO objects where the fields are populated by gson")
-public class FFmpegFormat {
+public final class FFmpegFormat {
   public String filename;
   public int nb_streams;
   public int nb_programs;
@@ -28,4 +31,14 @@ public class FFmpegFormat {
   public int probe_score;
 
   public Map<String, String> tags;
+
+  @Override
+  public boolean equals(Object obj) {
+    return EqualsBuilder.reflectionEquals(this, obj);
+  }
+
+  @Override
+  public int hashCode() {
+    return HashCodeBuilder.reflectionHashCode(this);
+  }
 }

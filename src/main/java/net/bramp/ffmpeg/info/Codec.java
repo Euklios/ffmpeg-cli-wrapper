@@ -11,7 +11,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * @author bramp
  */
 @Immutable
-public class Codec {
+public final class Codec {
 
   public enum Type {
     VIDEO,

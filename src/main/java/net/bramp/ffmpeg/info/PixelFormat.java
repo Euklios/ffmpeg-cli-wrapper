@@ -3,7 +3,7 @@ package net.bramp.ffmpeg.info;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-public class PixelFormat {
+public final class PixelFormat {
   private final String name;
   private final int numberOfComponents;
   private final int bitsPerPixel;

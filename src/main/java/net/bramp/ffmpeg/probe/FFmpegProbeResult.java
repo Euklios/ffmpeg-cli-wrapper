@@ -2,6 +2,9 @@ package net.bramp.ffmpeg.probe;
 
 import com.google.common.collect.ImmutableList;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -9,7 +12,7 @@ import java.util.List;
 @SuppressFBWarnings(
     value = {"UUF_UNUSED_PUBLIC_OR_PROTECTED_FIELD"},
     justification = "POJO objects where the fields are populated by gson")
-public class FFmpegProbeResult {
+public final class FFmpegProbeResult {
   public FFmpegError error;
   public FFmpegFormat format;
   public List<FFmpegStream> streams;
@@ -35,5 +38,15 @@ public class FFmpegProbeResult {
   public List<FFmpegChapter> getChapters() {
     if (chapters == null) return Collections.emptyList();
     return ImmutableList.copyOf(chapters);
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    return EqualsBuilder.reflectionEquals(this, obj);
+  }
+
+  @Override
+  public int hashCode() {
+    return HashCodeBuilder.reflectionHashCode(this);
   }
 }

@@ -11,7 +11,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * @author bramp
  */
 @Immutable
-public class Format {
+public final class Format {
   final String name;
   final String longName;
 
