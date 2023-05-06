@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.Mockito.*;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import java.io.IOException;
 import net.bramp.ffmpeg.builder.ProcessOptions;
 import net.bramp.ffmpeg.fixtures.Samples;
@@ -183,36 +184,38 @@ public class FFprobeTest {
   }
 
   @Test
-  public void chaptersCannotBeNull() {
-    FFmpegProbeResult result = FFmpegUtils.getGson().fromJson("{}", FFmpegProbeResult.class);
+  public void chaptersCannotBeNull() throws JsonProcessingException {
+    FFmpegProbeResult result =
+        FFmpegUtils.getObjectMapper().readValue("{}", FFmpegProbeResult.class);
 
     assertThat(result.chapters(), is(not(nullValue())));
   }
 
   @Test
-  public void streamsCannotBeNull() {
-    FFmpegProbeResult result = FFmpegUtils.getGson().fromJson("{}", FFmpegProbeResult.class);
+  public void streamsCannotBeNull() throws JsonProcessingException {
+    FFmpegProbeResult result =
+        FFmpegUtils.getObjectMapper().readValue("{}", FFmpegProbeResult.class);
 
     assertThat(result.streams(), is(not(nullValue())));
   }
 
   @Test
-  public void sideDataCannotBeNull() {
-    FFmpegStream result = FFmpegUtils.getGson().fromJson("{}", FFmpegStream.class);
+  public void sideDataCannotBeNull() throws JsonProcessingException {
+    FFmpegStream result = FFmpegUtils.getObjectMapper().readValue("{}", FFmpegStream.class);
 
     assertThat(result.sideData(), is(not(nullValue())));
   }
 
   @Test
-  public void streamTagsCannotBeNull() {
-    FFmpegStream result = FFmpegUtils.getGson().fromJson("{}", FFmpegStream.class);
+  public void streamTagsCannotBeNull() throws JsonProcessingException {
+    FFmpegStream result = FFmpegUtils.getObjectMapper().readValue("{}", FFmpegStream.class);
 
     assertThat(result.tags(), is(not(nullValue())));
   }
 
   @Test
-  public void formatTagsCannotBeNull() {
-    FFmpegFormat result = FFmpegUtils.getGson().fromJson("{}", FFmpegFormat.class);
+  public void formatTagsCannotBeNull() throws JsonProcessingException {
+    FFmpegFormat result = FFmpegUtils.getObjectMapper().readValue("{}", FFmpegFormat.class);
 
     assertThat(result.tags(), is(not(nullValue())));
   }

@@ -1,12 +1,12 @@
 package net.bramp.ffmpeg.probe;
 
-import com.google.gson.annotations.SerializedName;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public record FFmpegChapter(
     int id,
-    @SerializedName("time_base") String timeBase,
+    @JsonProperty("time_base") String timeBase,
     long start,
-    @SerializedName("start_time") String startTime,
+    @JsonProperty("start_time") String startTime,
     long end,
-    @SerializedName("end_time") String endTime,
+    @JsonProperty("end_time") String endTime,
     FFmpegChapterTag tags) {}

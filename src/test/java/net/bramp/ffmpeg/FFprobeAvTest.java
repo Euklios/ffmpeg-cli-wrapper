@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 
-import com.google.gson.Gson;
 import java.io.IOException;
 import net.bramp.ffmpeg.builder.ProcessOptions;
 import net.bramp.ffmpeg.fixtures.Samples;
@@ -25,8 +24,6 @@ public class FFprobeAvTest {
   @Mock ProcessFunction runFunc;
 
   FFprobe ffprobe;
-
-  static final Gson gson = FFmpegUtils.getGson();
 
   @BeforeEach
   public void before() throws IOException {

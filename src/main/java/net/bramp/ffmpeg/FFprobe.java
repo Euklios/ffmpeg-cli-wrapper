@@ -1,7 +1,7 @@
 package net.bramp.ffmpeg;
 
+import com.fasterxml.jackson.databind.*;
 import com.google.common.base.MoreObjects;
-import com.google.gson.Gson;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.List;
@@ -26,7 +26,7 @@ public class FFprobe extends FFcommon {
   static final String FFPROBE = "ffprobe";
   static final String DEFAULT_PATH = MoreObjects.firstNonNull(System.getenv("FFPROBE"), FFPROBE);
 
-  static final Gson gson = FFmpegUtils.getGson();
+  static final ObjectMapper objectMapper = FFmpegUtils.getObjectMapper();
 
   public FFprobe() throws IOException {
     this(DEFAULT_PATH, new RunProcessFunction());
@@ -108,7 +108,8 @@ public class FFprobe extends FFcommon {
         reader = new LoggingFilterReader(reader, LOG);
       }
 
-      FFmpegProbeResult result = gson.fromJson(reader, FFmpegProbeResult.class);
+      FFmpegProbeResult result = objectMapper.readValue(reader, FFmpegProbeResult.class);
+      // FFmpegProbeResult result = gson.fromJson(reader, FFmpegProbeResult.class);
 
       throwOnError(p, processOptions);
 

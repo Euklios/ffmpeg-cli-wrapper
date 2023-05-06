@@ -4,20 +4,28 @@ import static java.util.concurrent.TimeUnit.*;
 import static net.bramp.ffmpeg.Preconditions.checkArgument;
 import static net.bramp.ffmpeg.Preconditions.checkNotEmpty;
 
+import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.Module;
+import com.fasterxml.jackson.databind.deser.BeanDeserializerModifier;
+import com.fasterxml.jackson.databind.deser.std.CollectionDeserializer;
+import com.fasterxml.jackson.databind.deser.std.MapDeserializer;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.type.CollectionType;
+import com.fasterxml.jackson.databind.type.MapType;
 import com.google.common.base.CharMatcher;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import net.bramp.commons.lang3.math.gson.FractionAdapter;
-import net.bramp.ffmpeg.gson.LowercaseEnumTypeAdapterFactory;
+import net.bramp.ffmpeg.jackson.FractionDeserializer;
+import net.bramp.ffmpeg.jackson.FractionSerializer;
+import net.bramp.ffmpeg.jackson.ImmutableListDeserializer;
+import net.bramp.ffmpeg.jackson.ImmutableMapDeserializer;
 import org.apache.commons.lang3.math.Fraction;
 
 /** Helper class with commonly used methods */
 public final class FFmpegUtils {
+  static final ObjectMapper objectMapper = FFmpegUtils.setupObjectMapper();
 
-  static final Gson gson = FFmpegUtils.setupGson();
   static final Pattern BITRATE_REGEX = Pattern.compile("(\\d+(?:\\.\\d+)?)kbits/s");
   static final Pattern TIME_REGEX = Pattern.compile("(\\d+):(\\d+):(\\d+(?:\\.\\d+)?)");
   static final CharMatcher ZERO = CharMatcher.is('0');
@@ -106,16 +114,47 @@ public final class FFmpegUtils {
     return (long) (Float.parseFloat(m.group(1)) * 1000);
   }
 
-  static Gson getGson() {
-    return gson;
+  static ObjectMapper getObjectMapper() {
+    return objectMapper;
   }
 
-  private static Gson setupGson() {
-    GsonBuilder builder = new GsonBuilder();
+  private static ObjectMapper setupObjectMapper() {
+    final var mapper = new ObjectMapper();
 
-    builder.registerTypeAdapterFactory(new LowercaseEnumTypeAdapterFactory());
-    builder.registerTypeAdapter(Fraction.class, new FractionAdapter());
+    mapper.registerModule(setupObjectMapperModule());
+    mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true);
 
-    return builder.create();
+    return mapper;
+  }
+
+  private static Module setupObjectMapperModule() {
+    SimpleModule simpleModule = new SimpleModule();
+
+    simpleModule.addSerializer(Fraction.class, new FractionSerializer());
+    simpleModule.addDeserializer(Fraction.class, new FractionDeserializer());
+
+    simpleModule.setDeserializerModifier(
+        new BeanDeserializerModifier() {
+          @Override
+          public JsonDeserializer<?> modifyCollectionDeserializer(
+              DeserializationConfig config,
+              CollectionType type,
+              BeanDescription beanDesc,
+              JsonDeserializer<?> deserializer) {
+            return new ImmutableListDeserializer((CollectionDeserializer) deserializer);
+          }
+
+          @Override
+          public JsonDeserializer<?> modifyMapDeserializer(
+              DeserializationConfig config,
+              MapType type,
+              BeanDescription beanDesc,
+              JsonDeserializer<?> deserializer) {
+            return new ImmutableMapDeserializer((MapDeserializer) deserializer);
+          }
+        });
+
+    return simpleModule;
   }
 }

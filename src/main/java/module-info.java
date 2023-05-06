@@ -7,6 +7,9 @@ module ffmpeg_cli_wrapper {
   requires org.apache.commons.lang3;
   requires com.google.common;
   requires java.desktop;
+  requires com.fasterxml.jackson.core;
+  requires com.fasterxml.jackson.annotation;
+  requires com.fasterxml.jackson.databind;
 
   exports net.bramp.ffmpeg;
   exports net.bramp.ffmpeg.builder;
@@ -28,7 +31,8 @@ module ffmpeg_cli_wrapper {
   opens net.bramp.ffmpeg.options to
       org.apache.commons.lang3;
   opens net.bramp.ffmpeg.probe to
-      org.apache.commons.lang3;
+      org.apache.commons.lang3,
+      com.fasterxml.jackson.databind;
   opens net.bramp.ffmpeg.builder to
       org.apache.commons.lang3;
 }

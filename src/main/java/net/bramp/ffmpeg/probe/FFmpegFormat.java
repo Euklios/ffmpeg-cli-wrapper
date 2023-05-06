@@ -1,7 +1,7 @@
 package net.bramp.ffmpeg.probe;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.gson.annotations.JsonAdapter;
-import com.google.gson.annotations.SerializedName;
 import java.util.Map;
 import net.bramp.ffmpeg.gson.ImmutableMapAdapter;
 
@@ -20,14 +20,14 @@ import net.bramp.ffmpeg.gson.ImmutableMapAdapter;
  */
 public record FFmpegFormat(
     String filename,
-    @SerializedName("nb_streams") int nbStreams,
-    @SerializedName("nb_programs") int nbPrograms,
-    @SerializedName("format_name") String formatName,
-    @SerializedName("format_long_name") String formatLongName,
-    @SerializedName("start_time") double startTime,
+    @JsonProperty("nb_streams") int nbStreams,
+    @JsonProperty("nb_programs") int nbPrograms,
+    @JsonProperty("format_name") String formatName,
+    @JsonProperty("format_long_name") String formatLongName,
+    @JsonProperty("start_time") double startTime,
     // TODO Change this to java.time.Duration
     double duration,
     long size,
-    @SerializedName("bit_rate") long bitRate,
-    @SerializedName("probe_score") int probeScore,
+    @JsonProperty("bit_rate") long bitRate,
+    @JsonProperty("probe_score") int probeScore,
     @JsonAdapter(value = ImmutableMapAdapter.class, nullSafe = false) Map<String, String> tags) {}

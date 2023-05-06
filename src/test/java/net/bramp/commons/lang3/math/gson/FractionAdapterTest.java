@@ -3,21 +3,27 @@ package net.bramp.commons.lang3.math.gson;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import java.util.List;
+import net.bramp.ffmpeg.jackson.FractionDeserializer;
+import net.bramp.ffmpeg.jackson.FractionSerializer;
 import org.apache.commons.lang3.math.Fraction;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 public class FractionAdapterTest {
-  static Gson gson;
+  static ObjectMapper objectMapper;
 
   @BeforeAll
   public static void setupGson() {
-    GsonBuilder builder = new GsonBuilder();
-    builder.registerTypeAdapter(Fraction.class, new FractionAdapter());
-    gson = builder.create();
+    SimpleModule module = new SimpleModule();
+    module.addDeserializer(Fraction.class, new FractionDeserializer());
+    module.addSerializer(Fraction.class, new FractionSerializer());
+
+    objectMapper = new ObjectMapper();
+    objectMapper.registerModule(module);
   }
 
   private record TestData(String s, Fraction f) {}
@@ -49,32 +55,32 @@ public class FractionAdapterTest {
           new TestData("1 1/2", Fraction.getFraction(1, 1, 2)));
 
   @Test
-  public void testRead() {
+  public void testRead() throws JsonProcessingException {
     for (TestData test : readTests) {
-      Fraction f = gson.fromJson(test.s, Fraction.class);
+      Fraction f = objectMapper.readValue(test.s, Fraction.class);
       assertThat(f, equalTo(test.f));
     }
   }
 
   @Test
-  public void testZerosRead() {
+  public void testZerosRead() throws JsonProcessingException {
     for (TestData test : zerosTests) {
-      Fraction f = gson.fromJson(test.s, Fraction.class);
+      Fraction f = objectMapper.readValue(test.s, Fraction.class);
       assertThat(f, equalTo(test.f));
     }
   }
 
   @Test
-  public void testWrites() {
+  public void testWrites() throws JsonProcessingException {
     for (TestData test : writeTests) {
-      String json = gson.toJson(test.f);
+      String json = objectMapper.writeValueAsString(test.f);
       assertThat(json, equalTo('"' + test.s + '"'));
     }
   }
 
   @Test
-  public void testWriteNull() {
-    String json = gson.toJson(null);
+  public void testWriteNull() throws JsonProcessingException {
+    String json = objectMapper.writeValueAsString(null);
     assertThat(json, equalTo("null"));
   }
 }

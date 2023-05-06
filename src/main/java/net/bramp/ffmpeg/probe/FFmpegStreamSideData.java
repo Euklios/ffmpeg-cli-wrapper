@@ -1,6 +1,6 @@
 package net.bramp.ffmpeg.probe;
 
-import com.google.gson.annotations.SerializedName;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public record FFmpegStreamSideData(
-    @SerializedName("side_data_type") String sideDataType, String displaymatrix, int rotation) {}
+    @JsonProperty("side_data_type") String sideDataType, String displaymatrix, int rotation) {}

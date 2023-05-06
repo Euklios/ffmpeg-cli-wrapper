@@ -1,15 +1,13 @@
 package net.bramp.ffmpeg.probe;
 
-import com.google.gson.annotations.JsonAdapter;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
-import net.bramp.ffmpeg.gson.ImmutableListAdapter;
 
 public record FFmpegProbeResult(
-    FFmpegError error,
-    FFmpegFormat format,
-    @JsonAdapter(value = ImmutableListAdapter.class, nullSafe = false) List<FFmpegStream> streams,
-    @JsonAdapter(value = ImmutableListAdapter.class, nullSafe = false)
-        List<FFmpegChapter> chapters) {
+    @JsonProperty("error") FFmpegError error,
+    @JsonProperty("format") FFmpegFormat format,
+    @JsonProperty("streams") List<FFmpegStream> streams,
+    @JsonProperty("chapters") List<FFmpegChapter> chapters) {
   public FFmpegError getError() {
     return error();
   }
