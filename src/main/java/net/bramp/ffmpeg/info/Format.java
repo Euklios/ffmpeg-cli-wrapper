@@ -1,7 +1,5 @@
 package net.bramp.ffmpeg.info;
 
-import com.google.common.base.Preconditions;
-import com.google.errorprone.annotations.Immutable;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -10,7 +8,6 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  *
  * @author bramp
  */
-@Immutable
 public final class Format {
   final String name;
   final String longName;
@@ -18,23 +15,11 @@ public final class Format {
   final boolean canDemux;
   final boolean canMux;
 
-  /**
-   * @param name short format name
-   * @param longName long format name
-   * @param flags is expected to be in the following format:
-   *     <pre>
-   * D. = Demuxing supported
-   * .E = Muxing supported
-   * </pre>
-   */
-  public Format(String name, String longName, String flags) {
-    this.name = Preconditions.checkNotNull(name).trim();
-    this.longName = Preconditions.checkNotNull(longName).trim();
-
-    Preconditions.checkNotNull(flags);
-    Preconditions.checkArgument(flags.length() == 2, "Format flags is invalid '{}'", flags);
-    canDemux = flags.charAt(0) == 'D';
-    canMux = flags.charAt(1) == 'E';
+  Format(String name, String longName, boolean canDemux, boolean canMux) {
+    this.name = name;
+    this.longName = longName;
+    this.canDemux = canDemux;
+    this.canMux = canMux;
   }
 
   @Override

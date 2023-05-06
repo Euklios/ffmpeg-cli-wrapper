@@ -16,9 +16,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.bramp.ffmpeg.builder.FFmpegBuilder;
 import net.bramp.ffmpeg.builder.ProcessOptions;
-import net.bramp.ffmpeg.info.Codec;
-import net.bramp.ffmpeg.info.Format;
-import net.bramp.ffmpeg.info.PixelFormat;
+import net.bramp.ffmpeg.info.*;
 import net.bramp.ffmpeg.progress.ProgressListener;
 import net.bramp.ffmpeg.progress.ProgressParser;
 import net.bramp.ffmpeg.progress.TcpProgressParser;
@@ -133,7 +131,7 @@ public class FFmpeg extends FFcommon {
           Matcher m = CODECS_REGEX.matcher(line);
           if (!m.matches()) continue;
 
-          codecs.add(new Codec(m.group(2), m.group(3), m.group(1)));
+          codecs.add(CodecFactory.create(m.group(2), m.group(3), m.group(1)));
         }
 
         throwOnError(p, processOptions);
@@ -161,7 +159,7 @@ public class FFmpeg extends FFcommon {
           Matcher m = FORMATS_REGEX.matcher(line);
           if (!m.matches()) continue;
 
-          formats.add(new Format(m.group(2), m.group(3), m.group(1)));
+          formats.add(FormatFactory.create(m.group(2), m.group(3), m.group(1)));
         }
 
         throwOnError(p, processOptions);
@@ -190,7 +188,7 @@ public class FFmpeg extends FFcommon {
             continue;
           String flags = m.group(1);
 
-          pixelFormats.add(new PixelFormat(
+          pixelFormats.add(PixelFormatFactory.create(
               m.group(2),
               Integer.parseInt(m.group(3)),
               Integer.parseInt(m.group(4)),

@@ -14,16 +14,15 @@ public final class PixelFormat {
   private final boolean palettedFormat;
   private final boolean bitstreamFormat;
 
-  public PixelFormat(String name, int numberOfComponents, int bitsPerPixel, String flags) {
+  PixelFormat(String name, int numberOfComponents, int bitsPerPixel, boolean canDecode, boolean canEncode, boolean hardwareAccelerated, boolean palettedFormat, boolean bitstreamFormat) {
     this.name = name;
     this.numberOfComponents = numberOfComponents;
     this.bitsPerPixel = bitsPerPixel;
-
-    this.canDecode = flags.charAt(0) == 'I';
-    this.canEncode = flags.charAt(1) == 'O';
-    this.hardwareAccelerated = flags.charAt(2) == 'H';
-    this.palettedFormat = flags.charAt(3) == 'P';
-    this.bitstreamFormat = flags.charAt(4) == 'B';
+    this.canDecode = canDecode;
+    this.canEncode = canEncode;
+    this.hardwareAccelerated = hardwareAccelerated;
+    this.palettedFormat = palettedFormat;
+    this.bitstreamFormat = bitstreamFormat;
   }
 
   @Override

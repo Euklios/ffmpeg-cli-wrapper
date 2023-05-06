@@ -1,7 +1,5 @@
 package net.bramp.ffmpeg.info;
 
-import com.google.common.base.Preconditions;
-import com.google.errorprone.annotations.Immutable;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -10,16 +8,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  *
  * @author bramp
  */
-@Immutable
 public final class Codec {
-
-  public enum Type {
-    VIDEO,
-    AUDIO,
-    SUBTITLE,
-    DATA
-  }
-
   final String name;
   final String longName;
 
@@ -30,41 +19,14 @@ public final class Codec {
   final boolean canEncode;
 
   /** What type of codec is this */
-  final Type type;
+  final CodecType type;
 
-  /**
-   * @param name short codec name
-   * @param longName long codec name
-   * @param flags is expected to be in the following format:
-   *     <pre>
-   * D..... = Decoding supported
-   * .E.... = Encoding supported
-   * ..V... = Video codec
-   * ..A... = Audio codec
-   * ..S... = Subtitle codec
-   * ...I.. = Intra frame-only codec
-   * ....L. = Lossy compression
-   * .....S = Lossless compression
-   * </pre>
-   */
-  public Codec(String name, String longName, String flags) {
-    this.name = Preconditions.checkNotNull(name).trim();
-    this.longName = Preconditions.checkNotNull(longName).trim();
-
-    Preconditions.checkNotNull(flags);
-    Preconditions.checkArgument(flags.length() == 6, "Format flags is invalid '{}'", flags);
-    this.canDecode = flags.charAt(0) == 'D';
-    this.canEncode = flags.charAt(1) == 'E';
-
-    this.type = switch (flags.charAt(2)) {
-      case 'V' -> Type.VIDEO;
-      case 'A' -> Type.AUDIO;
-      case 'S' -> Type.SUBTITLE;
-      case 'D' -> Type.DATA;
-      default -> throw new IllegalArgumentException("Invalid codec type '" + flags.charAt(2) + "'");
-    };
-
-    // TODO There are more flags to parse
+  Codec(String name, String longName, boolean canDecode, boolean canEncode, CodecType type) {
+    this.name = name;
+    this.longName = longName;
+    this.canDecode = canDecode;
+    this.canEncode = canEncode;
+    this.type = type;
   }
 
   @Override
@@ -98,7 +60,7 @@ public final class Codec {
     return canEncode;
   }
 
-  public Type getType() {
+  public CodecType getType() {
     return type;
   }
 }
