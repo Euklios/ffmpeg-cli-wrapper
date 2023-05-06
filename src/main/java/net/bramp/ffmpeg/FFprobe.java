@@ -41,8 +41,9 @@ public class FFprobe extends FFcommon {
     this(path, new RunProcessFunction());
   }
 
-  public FFprobe(@Nonnull String path, @Nonnull ProcessFunction runFunction) {
+  public FFprobe(@Nonnull String path, @Nonnull ProcessFunction runFunction) throws IOException {
     super(path, runFunction);
+    version();
   }
 
   public FFmpegProbeResult probe(String mediaPath) throws IOException {
