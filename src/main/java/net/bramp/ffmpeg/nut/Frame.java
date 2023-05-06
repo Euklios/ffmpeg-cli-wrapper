@@ -32,7 +32,7 @@ public class Frame {
   Map<String, Object> metaData;
 
   protected Map<String, Object> readMetaData(NutDataInputStream in) throws IOException {
-    Map<String, Object> data = new TreeMap<String, Object>();
+    Map<String, Object> data = new TreeMap<>();
     long count = in.readVarLong();
     for (int i = 0; i < count; i++) {
       String name = new String(in.readVarArray(), StandardCharsets.UTF_8);

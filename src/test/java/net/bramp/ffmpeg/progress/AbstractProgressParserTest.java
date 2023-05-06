@@ -18,18 +18,12 @@ public abstract class AbstractProgressParserTest {
 
   @Rule public Timeout timeout = new Timeout(10, TimeUnit.SECONDS);
 
-  final List<Progress> progesses = Collections.synchronizedList(new ArrayList<Progress>());
+  final List<Progress> progesses = Collections.synchronizedList(new ArrayList<>());
 
   ProgressParser parser;
   URI uri;
 
-  final ProgressListener listener =
-      new ProgressListener() {
-        @Override
-        public void progress(Progress p) {
-          progesses.add(p);
-        }
-      };
+  final ProgressListener listener = progesses::add;
 
   @Before
   public void setupParser() throws IOException, URISyntaxException {

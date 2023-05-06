@@ -83,7 +83,7 @@ public class FFprobe extends FFcommon {
   public FFmpegProbeResult probe(String mediaPath, @Nullable String userAgent) throws IOException {
     checkIfFFprobe();
 
-    ImmutableList.Builder<String> args = new ImmutableList.Builder<String>();
+    ImmutableList.Builder<String> args = new ImmutableList.Builder<>();
 
     // TODO Add:
     // .add("--show_packets")

@@ -304,7 +304,7 @@ public class FFmpegBuilder {
 
   @CheckReturnValue
   public List<String> build() {
-    ImmutableList.Builder<String> args = new ImmutableList.Builder<String>();
+    ImmutableList.Builder<String> args = new ImmutableList.Builder<>();
 
     Preconditions.checkArgument(!inputs.isEmpty(), "At least one input must be specified");
     Preconditions.checkArgument(!outputs.isEmpty(), "At least one output must be specified");

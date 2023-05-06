@@ -7,7 +7,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
 import static org.junit.Assert.assertEquals;
@@ -43,7 +42,7 @@ public class ExceptionParserTest {
       processOptions.setRedirectErrorStreamToOutputStream(false);
       processOptions.setErrorStreamRedirect(ProcessBuilder.Redirect.to(tmpFile));
 
-      Files.write(tmpFile.toPath(), "This is a test message".getBytes(StandardCharsets.UTF_8));
+      Files.writeString(tmpFile.toPath(), "This is a test message");
 
       assertEquals("/path/to/ffmpeg returned non-zero exit status.\nThis is a test message",
               ExceptionParser.loadException("/path/to/ffmpeg", processOptions).getMessage());

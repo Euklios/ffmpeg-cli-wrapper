@@ -80,7 +80,7 @@ public class LowercaseEnumTypeAdapterFactory implements TypeAdapterFactory {
       lowercaseToEnum.put(toLowercase(constant), constant);
     }
 
-    return new MyTypeAdapter<T>(lowercaseToEnum);
+    return new MyTypeAdapter<>(lowercaseToEnum);
   }
 
   @CheckReturnValue
