@@ -1,73 +1,64 @@
 package net.bramp.ffmpeg.info;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-
-public final class PixelFormat {
-  private final String name;
-  private final int numberOfComponents;
-  private final int bitsPerPixel;
-
-  private final boolean canDecode;
-  private final boolean canEncode;
-  private final boolean hardwareAccelerated;
-  private final boolean palettedFormat;
-  private final boolean bitstreamFormat;
-
-  PixelFormat(String name, int numberOfComponents, int bitsPerPixel, boolean canDecode, boolean canEncode, boolean hardwareAccelerated, boolean palettedFormat, boolean bitstreamFormat) {
-    this.name = name;
-    this.numberOfComponents = numberOfComponents;
-    this.bitsPerPixel = bitsPerPixel;
-    this.canDecode = canDecode;
-    this.canEncode = canEncode;
-    this.hardwareAccelerated = hardwareAccelerated;
-    this.palettedFormat = palettedFormat;
-    this.bitstreamFormat = bitstreamFormat;
-  }
-
+public record PixelFormat(
+        String name,
+        int numberOfComponents,
+        int bitsPerPixel,
+        boolean canDecode,
+        boolean canEncode,
+        boolean hardwareAccelerated,
+        boolean palettedFormat,
+        boolean bitstreamFormat
+) {
   @Override
   public String toString() {
     return name;
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    return EqualsBuilder.reflectionEquals(this, obj);
-  }
-
-  @Override
-  public int hashCode() {
-    return HashCodeBuilder.reflectionHashCode(this);
-  }
-
+  /**
+   * @deprecated Use {@link PixelFormat#name()} instead
+   */
+  @Deprecated(forRemoval = true)
   public String getName() {
     return name;
   }
 
+  /**
+   * @deprecated Use {@link PixelFormat#bitsPerPixel()} instead
+   */
+  @Deprecated(forRemoval = true)
   public int getBitsPerPixel() {
     return bitsPerPixel;
   }
 
+  /**
+   * @deprecated Use {@link PixelFormat#numberOfComponents()} instead
+   */
+  @Deprecated(forRemoval = true)
   public int getNumberOfComponents() {
     return numberOfComponents;
   }
 
-  public boolean canEncode() {
-    return canEncode;
-  }
-
-  public boolean canDecode() {
-    return canDecode;
-  }
-
+  /**
+   * @deprecated Use {@link PixelFormat#hardwareAccelerated()} instead
+   */
+  @Deprecated(forRemoval = true)
   public boolean isHardwareAccelerated() {
     return hardwareAccelerated;
   }
 
+  /**
+   * @deprecated Use {@link PixelFormat#palettedFormat()} instead
+   */
+  @Deprecated(forRemoval = true)
   public boolean isPalettedFormat() {
     return palettedFormat;
   }
 
+  /**
+   * @deprecated Use {@link PixelFormat#bitstreamFormat()} instead
+   */
+  @Deprecated(forRemoval = true)
   public boolean isBitstreamFormat() {
     return bitstreamFormat;
   }
