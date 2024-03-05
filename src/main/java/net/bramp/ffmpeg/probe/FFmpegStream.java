@@ -1,6 +1,10 @@
 package net.bramp.ffmpeg.probe;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.math.Fraction;
 
@@ -72,5 +76,169 @@ public class FFmpegStream {
     public String side_data_type;
     public String displaymatrix;
     public int rotation;
+
+    public String getSideDataType() {
+      return side_data_type;
+    }
+
+    public String getDisplaymatrix() {
+      return displaymatrix;
+    }
+
+    public int getRotation() {
+      return rotation;
+    }
+  }
+
+  public int getIndex() {
+    return index;
+  }
+
+  public String getCodecName() {
+    return codec_name;
+  }
+
+  public String getCodecLongName() {
+    return codec_long_name;
+  }
+
+  public String getProfile() {
+    return profile;
+  }
+
+  public CodecType getCodecType() {
+    return codec_type;
+  }
+
+  public Fraction getCodecTimeBase() {
+    return codec_time_base;
+  }
+
+  public String getCodecTagString() {
+    return codec_tag_string;
+  }
+
+  public String getCodecTag() {
+    return codec_tag;
+  }
+
+  public int getWidth() {
+    return width;
+  }
+
+  public int getHeight() {
+    return height;
+  }
+
+  public int getHasBFrames() {
+    return has_b_frames;
+  }
+
+  public String getSampleAspectRatio() {
+    return sample_aspect_ratio;
+  }
+
+  public String getDisplayAspectRatio() {
+    return display_aspect_ratio;
+  }
+
+  public String getPixFmt() {
+    return pix_fmt;
+  }
+
+  public int getLevel() {
+    return level;
+  }
+
+  public String getChromaLocation() {
+    return chroma_location;
+  }
+
+  public int getRefs() {
+    return refs;
+  }
+
+  public String getIsAvc() {
+    return is_avc;
+  }
+
+  public String getNalLengthSize() {
+    return nal_length_size;
+  }
+
+  public Fraction getRFrameRate() {
+    return r_frame_rate;
+  }
+
+  public Fraction getAvgFrameRate() {
+    return avg_frame_rate;
+  }
+
+  public Fraction getTimeBase() {
+    return time_base;
+  }
+
+  public long getStartPts() {
+    return start_pts;
+  }
+
+  public double getStartTime() {
+    return start_time;
+  }
+
+  public long getDurationTs() {
+    return duration_ts;
+  }
+
+  public double getDuration() {
+    return duration;
+  }
+
+  public long getBitRate() {
+    return bit_rate;
+  }
+
+  public long getMaxBitRate() {
+    return max_bit_rate;
+  }
+
+  public int getBitsPerRawSample() {
+    return bits_per_raw_sample;
+  }
+
+  public int getBitsPerSample() {
+    return bits_per_sample;
+  }
+
+  public long getNbFrames() {
+    return nb_frames;
+  }
+
+  public String getSampleFmt() {
+    return sample_fmt;
+  }
+
+  public int getSampleRate() {
+    return sample_rate;
+  }
+
+  public int getChannels() {
+    return channels;
+  }
+
+  public String getChannelLayout() {
+    return channel_layout;
+  }
+
+  public FFmpegDisposition getDisposition() {
+    return disposition;
+  }
+
+  public Map<String, String> getTags() {
+    return Collections.unmodifiableMap(tags);
+  }
+
+  public List<SideData> getSideDataList() {
+    return Arrays.asList(side_data_list);
   }
 }
