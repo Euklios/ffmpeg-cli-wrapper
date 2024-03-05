@@ -14,4 +14,32 @@ public class FFmpegChapter {
   public long end;
   public String end_time;
   public FFmpegChapterTag tags;
+
+  public int getId() {
+    return id;
+  }
+
+  public String getTimeBase() {
+    return time_base;
+  }
+
+  public long getStart() {
+    return start;
+  }
+
+  public String getStartTime() {
+    return start_time;
+  }
+
+  public long getEnd() {
+    return end;
+  }
+
+  public String getEndTime() {
+    return end_time;
+  }
+
+  public FFmpegChapterTag getTags() {
+    return tags;
+  }
 }
