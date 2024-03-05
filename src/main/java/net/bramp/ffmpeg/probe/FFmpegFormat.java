@@ -1,6 +1,8 @@
 package net.bramp.ffmpeg.probe;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+import java.util.Collections;
 import java.util.Map;
 
 @SuppressFBWarnings(
@@ -28,4 +30,48 @@ public class FFmpegFormat {
   public int probe_score;
 
   public Map<String, String> tags;
+
+  public String getFilename() {
+    return filename;
+  }
+
+  public int getNbStreams() {
+    return nb_streams;
+  }
+
+  public int getNbPrograms() {
+    return nb_programs;
+  }
+
+  public String getFormatName() {
+    return format_name;
+  }
+
+  public String getFormatLongName() {
+    return format_long_name;
+  }
+
+  public double getStartTime() {
+    return start_time;
+  }
+
+  public double getDuration() {
+    return duration;
+  }
+
+  public long getSize() {
+    return size;
+  }
+
+  public long getBitRate() {
+    return bit_rate;
+  }
+
+  public int getProbeScore() {
+    return probe_score;
+  }
+
+  public Map<String, String> getTags() {
+    return Collections.unmodifiableMap(tags);
+  }
 }
