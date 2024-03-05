@@ -241,4 +241,40 @@ public class Progress {
         .add("status", status)
         .toString();
   }
+
+  public long getFrame() {
+    return frame;
+  }
+
+  public Fraction getFps() {
+    return fps;
+  }
+
+  public long getBitrate() {
+    return bitrate;
+  }
+
+  public long getTotalSize() {
+    return total_size;
+  }
+
+  public long getOutTimeNs() {
+    return out_time_ns;
+  }
+
+  public long getDupFrames() {
+    return dup_frames;
+  }
+
+  public long getDropFrames() {
+    return drop_frames;
+  }
+
+  public float getSpeed() {
+    return speed;
+  }
+
+  public Status getStatus() {
+    return status;
+  }
 }
