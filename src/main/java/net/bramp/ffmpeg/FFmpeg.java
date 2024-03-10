@@ -7,11 +7,8 @@ import com.google.common.collect.ImmutableList;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -61,13 +58,6 @@ public class FFmpeg extends FFcommon {
   public static final int AUDIO_SAMPLE_44100 = 44100;
   public static final int AUDIO_SAMPLE_48000 = 48000;
   public static final int AUDIO_SAMPLE_96000 = 96000;
-
-  static final Pattern CODECS_REGEX =
-      Pattern.compile("^ ([.D][.E][VASD][.I][.L][.S]) (\\S{2,})\\s+(.*)$");
-  static final Pattern FORMATS_REGEX = Pattern.compile("^ ([ D][ E]) (\\S+)\\s+(.*)$");
-  static final Pattern PIXEL_FORMATS_REGEX =
-      Pattern.compile("^([.I][.O][.H][.P][.B]) (\\S{2,})\\s+(\\d+)\\s+(\\d+)$");
-  static final Pattern FILTERS_REGEX = Pattern.compile("^\\s*(?<timelinesupport>[T.])(?<slicethreading>[S.])(?<commandsupport>[C.])\\s(?<name>[A-Za-z0-9_]+)\\s+(?<inputpattern>[AVN|]+)->(?<outputpattern>[AVN|]+)\\s+(?<description>.*)$");
 
   /** Supported codecs */
   List<Codec> codecs = null;
@@ -130,24 +120,7 @@ public class FFmpeg extends FFcommon {
     checkIfFFmpeg();
 
     if (this.codecs == null) {
-      codecs = new ArrayList<>();
-
-      Process p = runFunc.run(ImmutableList.of(path, "-codecs"));
-      try {
-        BufferedReader r = wrapInReader(p);
-        String line;
-        while ((line = r.readLine()) != null) {
-          Matcher m = CODECS_REGEX.matcher(line);
-          if (!m.matches()) continue;
-
-          codecs.add(new Codec(m.group(2), m.group(3), m.group(1)));
-        }
-
-        throwOnError(p);
-        this.codecs = ImmutableList.copyOf(codecs);
-      } finally {
-        p.destroy();
-      }
+      this.codecs = InfoParser.parseCodecs(this);
     }
 
     return codecs;
@@ -157,34 +130,7 @@ public class FFmpeg extends FFcommon {
     checkIfFFmpeg();
 
     if (this.filters == null) {
-      filters = new ArrayList<>();
-
-      Process p = runFunc.run(ImmutableList.of(path, "-filters"));
-      try {
-        BufferedReader r = wrapInReader(p);
-        String line;
-        while ((line = r.readLine()) != null) {
-          Matcher m = FILTERS_REGEX.matcher(line);
-          if (!m.matches()) continue;
-
-          // (?<inputpattern>[AVN|]+)->(?<outputpattern>[AVN|]+)\s+(?<description>.*)$
-
-          filters.add(new Filter(
-                  m.group("timelinesupport").equals("T"),
-                  m.group("slicethreading").equals("S"),
-                  m.group("commandsupport").equals("C"),
-                  m.group("name"),
-                  new FilterPattern(m.group("inputpattern")),
-                  new FilterPattern(m.group("outputpattern")),
-                  m.group("description")
-          ));
-        }
-
-        throwOnError(p);
-        this.filters = ImmutableList.copyOf(filters);
-      } finally {
-        p.destroy();
-      }
+      this.filters = InfoParser.parseFilters(this);
     }
 
     return this.filters;
@@ -194,25 +140,9 @@ public class FFmpeg extends FFcommon {
     checkIfFFmpeg();
 
     if (this.formats == null) {
-      formats = new ArrayList<>();
-
-      Process p = runFunc.run(ImmutableList.of(path, "-formats"));
-      try {
-        BufferedReader r = wrapInReader(p);
-        String line;
-        while ((line = r.readLine()) != null) {
-          Matcher m = FORMATS_REGEX.matcher(line);
-          if (!m.matches()) continue;
-
-          formats.add(new Format(m.group(2), m.group(3), m.group(1)));
-        }
-
-        throwOnError(p);
-        this.formats = ImmutableList.copyOf(formats);
-      } finally {
-        p.destroy();
-      }
+      this.formats = InfoParser.parseFormats(this);
     }
+
     return formats;
   }
 
@@ -220,27 +150,7 @@ public class FFmpeg extends FFcommon {
     checkIfFFmpeg();
 
     if (this.pixelFormats == null) {
-      pixelFormats = new ArrayList<>();
-
-      Process p = runFunc.run(ImmutableList.of(path, "-pix_fmts"));
-      try {
-        BufferedReader r = wrapInReader(p);
-        String line;
-        while ((line = r.readLine()) != null) {
-          Matcher m = PIXEL_FORMATS_REGEX.matcher(line);
-          if (!m.matches()) continue;
-          String flags = m.group(1);
-
-          pixelFormats.add(
-              new PixelFormat(
-                  m.group(2), Integer.parseInt(m.group(3)), Integer.parseInt(m.group(4)), flags));
-        }
-
-        throwOnError(p);
-        this.pixelFormats = ImmutableList.copyOf(pixelFormats);
-      } finally {
-        p.destroy();
-      }
+      pixelFormats = InfoParser.parsePixelFormats(this);
     }
 
     return pixelFormats;
@@ -303,10 +213,5 @@ public class FFmpeg extends FFcommon {
   @CheckReturnValue
   public FFmpegBuilder builder() {
     return new FFmpegBuilder();
-  }
-
-  @Override
-  public String getPath() {
-    return path;
   }
 }

@@ -140,4 +140,8 @@ abstract class FFcommon {
       p.destroy();
     }
   }
+
+  public ProcessFunction getRunFunction() {
+    return runFunc;
+  }
 }
