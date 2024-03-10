@@ -7,13 +7,12 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-import com.google.gson.Gson;
 import java.io.IOException;
 import net.bramp.ffmpeg.fixtures.Samples;
 import net.bramp.ffmpeg.lang.NewProcessAnswer;
 import net.bramp.ffmpeg.probe.FFmpegChapter;
 import net.bramp.ffmpeg.probe.FFmpegProbeResult;
-import net.bramp.ffmpeg.probe.FFmpegStream;
+import net.bramp.ffmpeg.shared.CodecType;
 import org.apache.commons.lang3.math.Fraction;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,8 +27,6 @@ public class FFprobeTest {
 
   FFprobe ffprobe;
 
-  static final Gson gson = FFmpegUtils.getGson();
-
   @Before
   public void before() throws IOException {
     when(runFunc.run(argThatHasItem("-version")))
@@ -39,7 +36,7 @@ public class FFprobeTest {
         .thenAnswer(new NewProcessAnswer("ffprobe-big_buck_bunny_720p_1mb.mp4"));
 
     when(runFunc.run(argThatHasItem(Samples.always_on_my_mind)))
-        .thenAnswer(new NewProcessAnswer("ffprobe-Always On My Mind [Program Only] - Adelén.mp4"));
+        .thenAnswer(new NewProcessAnswer("ffprobe-Always On My Mind [Program Only] - Adelen.mp4"));
 
     when(runFunc.run(argThatHasItem(Samples.start_pts_test)))
         .thenAnswer(new NewProcessAnswer("ffprobe-start_pts_test"));
@@ -73,8 +70,8 @@ public class FFprobeTest {
 
     // Only a quick sanity check until we do something better
     assertThat(info.getStreams(), hasSize(2));
-    assertThat(info.getStreams().get(0).getCodecType(), is(FFmpegStream.CodecType.VIDEO));
-    assertThat(info.getStreams().get(1).getCodecType(), is(FFmpegStream.CodecType.AUDIO));
+    assertThat(info.getStreams().get(0).getCodecType(), is(CodecType.VIDEO));
+    assertThat(info.getStreams().get(1).getCodecType(), is(CodecType.AUDIO));
 
     assertThat(info.getStreams().get(1).getChannels(), is(6));
     assertThat(info.getStreams().get(1).getSampleRate(), is(48_000));
@@ -113,8 +110,8 @@ public class FFprobeTest {
 
     // Only a quick sanity check until we do something better
     assertThat(info.getStreams(), hasSize(2));
-    assertThat(info.getStreams().get(0).getCodecType(), is(FFmpegStream.CodecType.VIDEO));
-    assertThat(info.getStreams().get(1).getCodecType(), is(FFmpegStream.CodecType.AUDIO));
+    assertThat(info.getStreams().get(0).getCodecType(), is(CodecType.VIDEO));
+    assertThat(info.getStreams().get(1).getCodecType(), is(CodecType.AUDIO));
 
     assertThat(info.getStreams().get(1).getChannels(), is(2));
     assertThat(info.getStreams().get(1).getSampleRate(), is(48_000));
