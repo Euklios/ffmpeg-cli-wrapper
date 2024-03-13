@@ -1,5 +1,7 @@
 package net.bramp.ffmpeg.lang;
 
+import org.apache.commons.io.input.NullInputStream;
+
 import java.io.InputStream;
 import java.io.OutputStream;
 
@@ -16,7 +18,7 @@ class MockProcess extends Process {
   public MockProcess(InputStream stdout) {
     this.stdin = null; // TODO make this something
     this.stdout = stdout;
-    this.stderr = null; // TODO make this return nothing.
+    this.stderr = new NullInputStream(0);
   }
 
   public MockProcess(OutputStream stdin, InputStream stdout, InputStream stderr) {

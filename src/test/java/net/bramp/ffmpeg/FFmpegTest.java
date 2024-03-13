@@ -8,6 +8,7 @@ import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import java.io.IOException;
 import java.util.List;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import net.bramp.ffmpeg.fixtures.Codecs;
 import net.bramp.ffmpeg.fixtures.Filters;
@@ -19,6 +20,8 @@ import net.bramp.ffmpeg.lang.NewProcessAnswer;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
@@ -26,6 +29,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 public class FFmpegTest {
 
   @Mock ProcessFunction runFunc;
+  @Captor
+  ArgumentCaptor<List<String>> argumentCaptor;
 
   FFmpeg ffmpeg;
 
@@ -125,5 +130,14 @@ public class FFmpegTest {
     assertEquals(ChannelLayouts.CHANNEL_LAYOUTS, ffmpeg.channelLayouts());
 
     verify(runFunc, times(1)).run(argThatHasItem("-layouts"));
+  }
+
+  @Test
+  public void testRunPassesOptionsToRunFunc() throws IOException {
+    ffmpeg.run(ImmutableList.of("-codecs"));
+
+    verify(runFunc, times(2)).run(argumentCaptor.capture());
+
+    assertEquals(ImmutableList.of("ffmpeg", "-codecs"), argumentCaptor.getValue());
   }
 }
