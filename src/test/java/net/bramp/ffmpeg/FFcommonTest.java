@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
+import org.mockito.stubbing.Answer;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -39,6 +40,8 @@ public abstract class FFcommonTest {
 
     abstract FFcommon getFFcommon(ProcessFunction processFunction) throws IOException;
 
+    abstract Answer<Process> getVersionProcessAnswer();
+
     @Before
     public void setUp() throws IOException {
         executor = Executors.newCachedThreadPool();
@@ -48,9 +51,12 @@ public abstract class FFcommonTest {
         args = Collections.emptyList();
 
         lenient().when(runFunc.run(argThatHasItem("-version")))
-                .thenAnswer(new NewProcessAnswer("ffmpeg-version"));
+                .thenAnswer(getVersionProcessAnswer());
 
         asyncRunner = getFFcommon(runFunc);
+
+        // Ensure the version is cached
+        asyncRunner.version();
     }
 
     @After

@@ -16,6 +16,7 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.stubbing.Answer;
 
 import java.io.IOException;
 import java.util.List;
@@ -754,5 +755,10 @@ public class FFprobeTest extends FFcommonTest {
   @Override
   FFcommon getFFcommon(ProcessFunction runFunc) throws IOException {
     return new FFprobe(runFunc);
+  }
+
+  @Override
+  Answer<Process> getVersionProcessAnswer() {
+    return new NewProcessAnswer("ffprobe-version");
   }
 }

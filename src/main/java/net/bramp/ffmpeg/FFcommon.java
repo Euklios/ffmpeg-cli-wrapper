@@ -139,24 +139,29 @@ abstract class FFcommon {
    * @throws IOException If there is a problem executing the binary.
    */
   public void run(List<String> args) throws IOException {
-      try {
-          runAsync(args).get();
-      } catch (InterruptedException e) {
-          Thread.currentThread().interrupt();
-      } catch (ExecutionException e) {
-        if (e.getCause() instanceof IOException) {
-          throw (IOException) e.getCause();
-        }
-
-        throw new RuntimeException(e);
-      }
+    unwrapFutureException(runAsync(args));
   }
 
-  public Future<Void> runAsync(List<String> args) {
+  protected <T> T unwrapFutureException(Future<T> tFuture) throws IOException {
+    try {
+      return tFuture.get();
+    } catch (ExecutionException e) {
+      if (e.getCause() instanceof IOException) {
+        throw (IOException) e.getCause();
+      }
+
+      throw new RuntimeException(e);
+    } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+        throw new RuntimeException(e);
+    }
+  }
+
+  public Future<Void> runAsync(List<String> args) throws IOException {
     return this.runAsync(args, ForkJoinPool.commonPool());
   }
 
-  public Future<Void> runAsync(List<String> args, ExecutorService executor) {
+  public Future<Void> runAsync(List<String> args, ExecutorService executor) throws IOException {
     requireNonNull(args);
 
     AtomicReference<Process> processReference = new AtomicReference<>();

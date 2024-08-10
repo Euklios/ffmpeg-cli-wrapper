@@ -14,6 +14,8 @@ import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -79,6 +81,18 @@ public class FFprobe extends FFcommon {
   public void run(List<String> args) throws IOException {
     checkIfFFprobe();
     super.run(args);
+  }
+
+  @Override
+  public Future<Void> runAsync(List<String> args) throws IOException {
+    checkIfFFprobe();
+    return super.runAsync(args);
+  }
+
+  @Override
+  public Future<Void> runAsync(List<String> args, ExecutorService executor) throws IOException {
+    checkIfFFprobe();
+    return super.runAsync(args, executor);
   }
 
   public FFmpegProbeResult probe(String mediaPath, @Nullable String userAgent) throws IOException {

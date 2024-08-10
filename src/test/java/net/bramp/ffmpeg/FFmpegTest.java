@@ -23,6 +23,7 @@ import org.junit.runner.RunWith;
 import org.mockito.AdditionalMatchers;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.stubbing.Answer;
 
 @RunWith(MockitoJUnitRunner.class)
 public class FFmpegTest extends FFcommonTest {
@@ -149,5 +150,10 @@ public class FFmpegTest extends FFcommonTest {
   @Override
   FFcommon getFFcommon(ProcessFunction runFunc) throws IOException {
     return new FFmpeg(runFunc);
+  }
+
+  @Override
+  Answer<Process> getVersionProcessAnswer() {
+    return new NewProcessAnswer("ffmpeg-version");
   }
 }
