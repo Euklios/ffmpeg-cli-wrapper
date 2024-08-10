@@ -30,7 +30,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class FFprobeTest {
+public class FFprobeTest extends FFcommonTest {
 
   @Mock ProcessFunction runFunc;
   @Mock Process mockProcess;
@@ -749,5 +749,10 @@ public class FFprobeTest {
     assertEquals(1024, frame.getNbSamples());
     assertEquals(6, frame.getChannels());
     assertEquals("5.1", frame.getChannelLayout());
+  }
+
+  @Override
+  FFcommon getFFcommon(ProcessFunction runFunc) throws IOException {
+    return new FFprobe(runFunc);
   }
 }

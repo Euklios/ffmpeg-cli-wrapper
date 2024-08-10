@@ -1,6 +1,7 @@
 package net.bramp.ffmpeg;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
@@ -16,8 +17,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicReference;
 import javax.annotation.Nonnull;
 
 /** Private class to contain common methods for both FFmpeg and FFprobe. */
@@ -138,21 +139,63 @@ abstract class FFcommon {
    * @throws IOException If there is a problem executing the binary.
    */
   public void run(List<String> args) throws IOException {
-    checkNotNull(args);
+      try {
+          runAsync(args).get();
+      } catch (InterruptedException e) {
+          Thread.currentThread().interrupt();
+      } catch (ExecutionException e) {
+        if (e.getCause() instanceof IOException) {
+          throw (IOException) e.getCause();
+        }
 
-    Process p = runFunc.run(path(args));
-    assert (p != null);
+        throw new RuntimeException(e);
+      }
+  }
 
-    try {
-      // TODO Move the copy onto a thread, so that FFmpegProgressListener can be on this thread.
+  public Future<Void> runAsync(List<String> args) {
+    return this.runAsync(args, ForkJoinPool.commonPool());
+  }
 
-      // Now block reading ffmpeg's stdout. We are effectively throwing away the output.
-      CharStreams.copy(wrapInReader(p), processOutputStream);
-      CharStreams.copy(wrapErrorInReader(p), processErrorStream);
-      throwOnError(p);
+  public Future<Void> runAsync(List<String> args, ExecutorService executor) {
+    requireNonNull(args);
 
-    } finally {
-      p.destroy();
-    }
+    AtomicReference<Process> processReference = new AtomicReference<>();
+    CompletableFuture<Void> future = new CompletableFuture<>();
+
+    executor.submit(() -> {
+      try {
+        final Process p = runFunc.run(path(args));
+        assert (p != null);
+        processReference.set(p);
+
+        CompletableFuture<Void> outputCopy = copyInputStreamAsync(p.getInputStream(), processOutputStream, executor);
+        CompletableFuture<Void> errorCopy = copyInputStreamAsync(p.getErrorStream(), processErrorStream, executor);
+
+        CompletableFuture.allOf(outputCopy, errorCopy).join();
+        throwOnError(p);
+
+        future.complete(null);
+
+      } catch (IOException e) {
+        future.completeExceptionally(e);
+      } finally {
+        Process p = processReference.get();
+        if (p != null) {
+          p.destroy();
+        }
+      }
+    });
+
+    return future;
+  }
+
+  protected CompletableFuture<Void> copyInputStreamAsync(InputStream inStream, Appendable outStream, ExecutorService executor) {
+    return CompletableFuture.runAsync(() -> {
+      try {
+        CharStreams.copy(new InputStreamReader(inStream), outStream);
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      }
+    }, executor);
   }
 }
