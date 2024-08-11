@@ -10,6 +10,9 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.Future;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.annotation.CheckReturnValue;
@@ -281,23 +284,52 @@ public class FFmpeg extends FFcommon {
     super.run(args);
   }
 
+  @Override
+  public Future<Void> runAsync(List<String> args, ExecutorService executor) throws IOException {
+    checkIfFFmpeg();
+    return super.runAsync(args, executor);
+  }
+
   public void run(FFmpegBuilder builder) throws IOException {
-    run(builder, null);
+    unwrapFutureException(runAsync(builder));
   }
 
   public void run(FFmpegBuilder builder, @Nullable ProgressListener listener) throws IOException {
+    unwrapFutureException(runAsync(builder, listener));
+  }
+
+  public Future<Void> runAsync(FFmpegBuilder builder) throws IOException {
+    return runAsync(builder, ForkJoinPool.commonPool());
+  }
+
+  public Future<Void> runAsync(FFmpegBuilder builder, ProgressListener listener) throws IOException {
+    return runAsync(builder, listener, ForkJoinPool.commonPool());
+  }
+
+  public Future<Void> runAsync(FFmpegBuilder builder, ExecutorService executor) throws IOException {
     checkNotNull(builder);
 
-    if (listener != null) {
+    return runAsync(builder.build(), executor);
+  }
+
+  public Future<Void> runAsync(final FFmpegBuilder builder, ProgressListener listener, ExecutorService executor) throws IOException {
+    checkNotNull(builder);
+    checkNotNull(executor);
+
+    if (listener == null) {
+      return runAsync(builder.build(), executor);
+    }
+
+    return executor.submit(() -> {
       try (ProgressParser progressParser = createProgressParser(listener)) {
         progressParser.start();
-        builder = builder.addProgress(progressParser.getUri());
+        FFmpegBuilder withProgress = builder.addProgress(progressParser.getUri());
 
-        run(builder.build());
+        return runAsync(withProgress.build()).get();
+      } catch (IOException e) {
+          throw new RuntimeException(e);
       }
-    } else {
-      run(builder.build());
-    }
+    });
   }
 
   @CheckReturnValue

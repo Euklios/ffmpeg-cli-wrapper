@@ -7,6 +7,7 @@ import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import com.google.common.collect.Lists;
 import net.bramp.ffmpeg.fixtures.Codecs;
@@ -19,11 +20,13 @@ import net.bramp.ffmpeg.lang.NewProcessAnswer;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.AdditionalMatchers;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.stubbing.Answer;
 
 @RunWith(MockitoJUnitRunner.class)
-public class FFmpegTest {
+public class FFmpegTest extends FFcommonTest {
 
   @Mock ProcessFunction runFunc;
 
@@ -51,6 +54,10 @@ public class FFmpegTest {
   @SuppressWarnings("unchecked")
   public static <T> List<T> argThatHasItem(T s) {
     return (List<T>) argThat(hasItem(s));
+  }
+
+  public static <T> List<T> argThatNotHasItem(T s) {
+    return AdditionalMatchers.not(argThatHasItem(s));
   }
 
   @Test
@@ -81,15 +88,28 @@ public class FFmpegTest {
 
   @Test
   public void testReadProcessStreams() throws IOException {
-    // process input stream
     Appendable processInputStream = mock(Appendable.class);
     ffmpeg.setProcessOutputStream(processInputStream);
-    // process error stream
+
     Appendable processErrStream = mock(Appendable.class);
     ffmpeg.setProcessErrorStream(processErrStream);
-    // run ffmpeg with non existing file
+
     ffmpeg.run(Lists.newArrayList("-i", "toto.mp4"));
-    // check calls to Appendables
+
+    verify(processInputStream, times(1)).append(any(CharSequence.class));
+    verify(processErrStream, times(1)).append(any(CharSequence.class));
+  }
+
+  @Test
+  public void testReadProcessStreamsAsync() throws IOException, ExecutionException, InterruptedException {
+    Appendable processInputStream = mock(Appendable.class);
+    ffmpeg.setProcessOutputStream(processInputStream);
+
+    Appendable processErrStream = mock(Appendable.class);
+    ffmpeg.setProcessErrorStream(processErrStream);
+
+    ffmpeg.runAsync(Lists.newArrayList("-i", "toto.mp4")).get();
+
     verify(processInputStream, times(1)).append(any(CharSequence.class));
     verify(processErrStream, times(1)).append(any(CharSequence.class));
   }
@@ -125,5 +145,15 @@ public class FFmpegTest {
     assertEquals(ChannelLayouts.CHANNEL_LAYOUTS, ffmpeg.channelLayouts());
 
     verify(runFunc, times(1)).run(argThatHasItem("-layouts"));
+  }
+
+  @Override
+  FFcommon getFFcommon(ProcessFunction runFunc) throws IOException {
+    return new FFmpeg(runFunc);
+  }
+
+  @Override
+  Answer<Process> getVersionProcessAnswer() {
+    return new NewProcessAnswer("ffmpeg-version");
   }
 }

@@ -1,6 +1,7 @@
 package net.bramp.ffmpeg;
 
 import com.google.common.base.MoreObjects;
+import com.google.errorprone.annotations.InlineMe;
 import com.google.gson.Gson;
 import net.bramp.ffmpeg.builder.FFprobeBuilder;
 import net.bramp.ffmpeg.io.LoggingFilterReader;
@@ -14,6 +15,9 @@ import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.Future;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -47,10 +51,6 @@ public class FFprobe extends FFcommon {
     super(path, runFunction);
   }
 
-  public FFmpegProbeResult probe(String mediaPath) throws IOException {
-    return probe(mediaPath, null);
-  }
-
   /**
    * Returns true if the binary we are using is the true ffprobe. This is to avoid conflict with
    * avprobe (from the libav project), that some symlink to ffprobe.
@@ -81,43 +81,102 @@ public class FFprobe extends FFcommon {
     super.run(args);
   }
 
-  public FFmpegProbeResult probe(String mediaPath, @Nullable String userAgent) throws IOException {
+  @Override
+  public Future<Void> runAsync(List<String> args) throws IOException {
+    checkIfFFprobe();
+    return super.runAsync(args);
+  }
+
+  @Override
+  public Future<Void> runAsync(List<String> args, ExecutorService executor) throws IOException {
+    checkIfFFprobe();
+    return super.runAsync(args, executor);
+  }
+
+  public FFmpegProbeResult probe(String mediaPath) throws IOException {
+    return probe(this.builder().setInput(mediaPath));
+  }
+
+  /**
+   * Probes the given media and parses the result
+   *
+   * @param mediaPath Path or uri to the media file
+   * @param userAgent The user agent string for web requests
+   * @return FFmpegProbeResult
+   * @throws IOException if the process communication fails
+   * @deprecated Use {@link FFprobeBuilder#setUserAgent(String)} instead
+   */
+  @Deprecated
+  @InlineMe(replacement = "this.probe(this.builder().setInput(mediaPath).setUserAgent(userAgent))")
+  public final FFmpegProbeResult probe(String mediaPath, @Nullable String userAgent) throws IOException {
     return probe(this.builder().setInput(mediaPath).setUserAgent(userAgent));
   }
 
   public FFmpegProbeResult probe(FFprobeBuilder builder) throws IOException {
-    checkNotNull(builder);
-    return probe(builder.build());
+    return unwrapFutureException(probeAsync(builder));
   }
 
-  public FFmpegProbeResult probe(String mediaPath, @Nullable String userAgent, @Nullable String... extraArgs) throws IOException {
+  public Future<FFmpegProbeResult> probeAsync(FFprobeBuilder builder) throws IOException {
+    return probeAsync(builder, ForkJoinPool.commonPool());
+  }
+
+  public Future<FFmpegProbeResult> probeAsync(FFprobeBuilder builder, ExecutorService executor) throws IOException {
+    checkNotNull(builder);
+    return probeAsync(builder.build(), executor);
+  }
+
+  /**
+   * Probes the given media and parses the result
+   *
+   * @param mediaPath Path or uri to the media file
+   * @param userAgent The user agent string for web requests
+   * @param extraArgs Additional arguments passed to ffprobe
+   * @return FFmpegProbeResult
+   * @throws IOException if the process communication fails
+   * @deprecated Use {@link FFprobeBuilder#setUserAgent(String)} and {@link FFprobeBuilder#addExtraArgs(String...)} instead
+   */
+  @Deprecated
+  @InlineMe(replacement = "this.probe(this.builder().setInput(mediaPath).setUserAgent(userAgent).addExtraArgs(extraArgs).build())")
+  public final FFmpegProbeResult probe(String mediaPath, @Nullable String userAgent, @Nullable String... extraArgs) throws IOException {
     return probe(this.builder().setInput(mediaPath).setUserAgent(userAgent).addExtraArgs(extraArgs).build());
   }
 
-  // TODO Add Probe Inputstream
   public FFmpegProbeResult probe(List<String> args) throws IOException {
+    return unwrapFutureException(probeAsync(args));
+  }
+
+  public Future<FFmpegProbeResult> probeAsync(List<String> args) throws IOException {
+    return probeAsync(args, ForkJoinPool.commonPool());
+  }
+
+  // TODO Add Probe Inputstream
+  public Future<FFmpegProbeResult> probeAsync(List<String> args, ExecutorService executor) throws IOException {
     checkIfFFprobe();
 
     Process p = runFunc.run(path(args));
-    try {
-      Reader reader = wrapInReader(p);
-      if (LOG.isDebugEnabled()) {
-        reader = new LoggingFilterReader(reader, LOG);
+
+    return executor.submit(() -> {
+      try {
+        Reader reader = wrapInReader(p);
+        if (LOG.isDebugEnabled()) {
+          reader = new LoggingFilterReader(reader, LOG);
+        }
+
+        FFmpegProbeResult result = gson.fromJson(reader, FFmpegProbeResult.class);
+
+        throwOnError(p, result);
+
+        if (result == null) {
+          throw new IllegalStateException("Gson returned null, which shouldn't happen :(");
+        }
+
+        return result;
+      } catch (FFmpegException e) {
+        throw new FFmpegAsyncException(e);
+      } finally {
+        p.destroy();
       }
-
-      FFmpegProbeResult result = gson.fromJson(reader, FFmpegProbeResult.class);
-
-      throwOnError(p, result);
-
-      if (result == null) {
-        throw new IllegalStateException("Gson returned null, which shouldn't happen :(");
-      }
-
-      return result;
-
-    } finally {
-      p.destroy();
-    }
+    });
   }
 
   @CheckReturnValue

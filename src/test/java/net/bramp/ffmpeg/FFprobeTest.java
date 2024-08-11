@@ -16,6 +16,7 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.stubbing.Answer;
 
 import java.io.IOException;
 import java.util.List;
@@ -30,7 +31,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class FFprobeTest {
+public class FFprobeTest extends FFcommonTest {
 
   @Mock ProcessFunction runFunc;
   @Mock Process mockProcess;
@@ -495,7 +496,7 @@ public class FFprobeTest {
 
   @Test
   public void testProbeProbeExtraArgs() throws IOException {
-    ffprobe.probe(Samples.always_on_my_mind, null, "-rw_timeout", "0");
+    ffprobe.probe(ffprobe.builder().setInput(Samples.always_on_my_mind).addExtraArgs("-rw_timeout", "0").build());
 
     verify(runFunc, times(2)).run(argsCaptor.capture());
 
@@ -509,7 +510,7 @@ public class FFprobeTest {
 
   @Test
   public void testProbeProbeUserAgent() throws IOException {
-    ffprobe.probe(Samples.always_on_my_mind, "ffmpeg-cli-wrapper");
+    ffprobe.probe(ffprobe.builder().setInput(Samples.always_on_my_mind).setUserAgent("ffmpeg-cli-wrapper").build());
 
     verify(runFunc, times(2)).run(argsCaptor.capture());
 
@@ -749,5 +750,15 @@ public class FFprobeTest {
     assertEquals(1024, frame.getNbSamples());
     assertEquals(6, frame.getChannels());
     assertEquals("5.1", frame.getChannelLayout());
+  }
+
+  @Override
+  FFcommon getFFcommon(ProcessFunction runFunc) throws IOException {
+    return new FFprobe(runFunc);
+  }
+
+  @Override
+  Answer<Process> getVersionProcessAnswer() {
+    return new NewProcessAnswer("ffprobe-version");
   }
 }

@@ -1,6 +1,7 @@
 package net.bramp.ffmpeg;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
@@ -16,8 +17,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicReference;
 import javax.annotation.Nonnull;
 
 /** Private class to contain common methods for both FFmpeg and FFprobe. */
@@ -64,10 +65,6 @@ abstract class FFcommon {
 
   protected BufferedReader wrapInReader(Process p) {
     return _wrapInReader(p.getInputStream());
-  }
-
-  protected BufferedReader wrapErrorInReader(Process p) {
-    return _wrapInReader(p.getErrorStream());
   }
 
   protected void throwOnError(Process p) throws IOException {
@@ -138,21 +135,95 @@ abstract class FFcommon {
    * @throws IOException If there is a problem executing the binary.
    */
   public void run(List<String> args) throws IOException {
-    checkNotNull(args);
+    unwrapFutureException(runAsync(args));
+  }
 
-    Process p = runFunc.run(path(args));
-    assert (p != null);
+  protected <T> T unwrapFutureException(Future<T> tFuture) throws IOException {
+    try {
+      return tFuture.get();
+    } catch (ExecutionException e) {
+      unwrapException(e);
+      throw new IllegalStateException("Expected exception to be thrown, but wasn't", e);
+    } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+        throw new RuntimeException(e);
+    }
+  }
+
+  protected void unwrapException(Throwable e) throws IOException {
+    if (e instanceof IOException) {
+      throw (IOException) e;
+    }
+
+    if (e instanceof FFmpegAsyncException) {
+      unwrapException(e.getCause());
+    }
+
+    if (e instanceof RuntimeException) {
+      throw (RuntimeException) e;
+    }
+
+    if (e instanceof ExecutionException) {
+      unwrapException(e.getCause());
+    }
+
+    throw new RuntimeException(e);
+  }
+
+  public Future<Void> runAsync(List<String> args) throws IOException {
+    return this.runAsync(args, ForkJoinPool.commonPool());
+  }
+
+  public Future<Void> runAsync(List<String> args, ExecutorService executor) throws IOException {
+    requireNonNull(args);
+
+    CompletableFuture<Void> future = new CompletableFuture<>();
+    final AtomicReference<Process> processRef = new AtomicReference<>();
 
     try {
-      // TODO Move the copy onto a thread, so that FFmpegProgressListener can be on this thread.
-
-      // Now block reading ffmpeg's stdout. We are effectively throwing away the output.
-      CharStreams.copy(wrapInReader(p), processOutputStream);
-      CharStreams.copy(wrapErrorInReader(p), processErrorStream);
-      throwOnError(p);
-
-    } finally {
-      p.destroy();
+      Process p = runFunc.run(path(args));
+      assert (p != null);
+      processRef.set(p);
+    } catch (IOException e) {
+      future.completeExceptionally(e);
+      return future;
     }
+
+    Future<?> taskFuture = executor.submit(() -> {
+      try {
+        Process p = processRef.get();
+        CompletableFuture<Void> outputCopy = copyInputStreamAsync(p.getInputStream(), processOutputStream, executor);
+        CompletableFuture<Void> errorCopy = copyInputStreamAsync(p.getErrorStream(), processErrorStream, executor);
+
+        CompletableFuture.allOf(outputCopy, errorCopy).join();
+        throwOnError(p);
+
+        future.complete(null);
+
+      } catch (IOException e) {
+        future.completeExceptionally(e);
+      } finally {
+        Process p = processRef.get();
+        p.destroy();
+      }
+    });
+
+    return future.whenComplete((result, throwable) -> {
+      if (future.isCancelled()) {
+        Process p = processRef.get();
+        p.destroy();
+        taskFuture.cancel(true);
+      }
+    });
+  }
+
+  protected CompletableFuture<Void> copyInputStreamAsync(InputStream inStream, Appendable outStream, ExecutorService executor) {
+    return CompletableFuture.runAsync(() -> {
+      try {
+        CharStreams.copy(_wrapInReader(inStream), outStream);
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      }
+    }, executor);
   }
 }
