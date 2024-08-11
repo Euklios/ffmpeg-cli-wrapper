@@ -67,10 +67,6 @@ abstract class FFcommon {
     return _wrapInReader(p.getInputStream());
   }
 
-  protected BufferedReader wrapErrorInReader(Process p) {
-    return _wrapInReader(p.getErrorStream());
-  }
-
   protected void throwOnError(Process p) throws IOException {
     try {
       if (ProcessUtils.waitForWithTimeout(p, 1, TimeUnit.SECONDS) != 0) {

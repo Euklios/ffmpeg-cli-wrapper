@@ -15,7 +15,6 @@ import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.Future;
@@ -123,7 +122,7 @@ public class FFprobe extends FFcommon {
 
   public Future<FFmpegProbeResult> probeAsync(FFprobeBuilder builder, ExecutorService executor) throws IOException {
     checkNotNull(builder);
-    return probeAsync(builder.build());
+    return probeAsync(builder.build(), executor);
   }
 
   /**
