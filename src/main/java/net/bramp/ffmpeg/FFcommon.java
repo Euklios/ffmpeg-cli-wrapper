@@ -214,7 +214,7 @@ abstract class FFcommon {
   protected CompletableFuture<Void> copyInputStreamAsync(InputStream inStream, Appendable outStream, ExecutorService executor) {
     return CompletableFuture.runAsync(() -> {
       try {
-        CharStreams.copy(new InputStreamReader(inStream), outStream);
+        CharStreams.copy(_wrapInReader(inStream), outStream);
       } catch (IOException e) {
         throw new RuntimeException(e);
       }
