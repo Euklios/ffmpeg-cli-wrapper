@@ -1,6 +1,7 @@
 package net.bramp.ffmpeg;
 
 import com.google.common.base.MoreObjects;
+import com.google.errorprone.annotations.InlineMe;
 import com.google.gson.Gson;
 import net.bramp.ffmpeg.builder.FFprobeBuilder;
 import net.bramp.ffmpeg.io.LoggingFilterReader;
@@ -107,7 +108,8 @@ public class FFprobe extends FFcommon {
    * @deprecated Use {@link FFprobeBuilder#setUserAgent(String)} instead
    */
   @Deprecated
-  public FFmpegProbeResult probe(String mediaPath, @Nullable String userAgent) throws IOException {
+  @InlineMe(replacement = "this.probe(this.builder().setInput(mediaPath).setUserAgent(userAgent))")
+  public final FFmpegProbeResult probe(String mediaPath, @Nullable String userAgent) throws IOException {
     return probe(this.builder().setInput(mediaPath).setUserAgent(userAgent));
   }
 
@@ -135,7 +137,8 @@ public class FFprobe extends FFcommon {
    * @deprecated Use {@link FFprobeBuilder#setUserAgent(String)} and {@link FFprobeBuilder#addExtraArgs(String...)} instead
    */
   @Deprecated
-  public FFmpegProbeResult probe(String mediaPath, @Nullable String userAgent, @Nullable String... extraArgs) throws IOException {
+  @InlineMe(replacement = "this.probe(this.builder().setInput(mediaPath).setUserAgent(userAgent).addExtraArgs(extraArgs).build())")
+  public final FFmpegProbeResult probe(String mediaPath, @Nullable String userAgent, @Nullable String... extraArgs) throws IOException {
     return probe(this.builder().setInput(mediaPath).setUserAgent(userAgent).addExtraArgs(extraArgs).build());
   }
 
