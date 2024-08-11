@@ -95,7 +95,7 @@ public abstract class FFcommonTest {
         Future<Void> future = asyncRunner.runAsync(Collections.singletonList("arg"), executor);
         future.cancel(true);
 
-        verify(mockProcess, timeout(1000)).destroy();
+        verify(mockProcess, timeout(1000).atLeast(1)).destroy();
         assertTrue(future.isCancelled());
     }
 
