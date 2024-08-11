@@ -146,15 +146,32 @@ abstract class FFcommon {
     try {
       return tFuture.get();
     } catch (ExecutionException e) {
-      if (e.getCause() instanceof IOException) {
-        throw (IOException) e.getCause();
-      }
-
-      throw new RuntimeException(e);
+      unwrapException(e);
+      throw new IllegalStateException("Expected exception to be thrown, but wasn't", e);
     } catch (InterruptedException e) {
         Thread.currentThread().interrupt();
         throw new RuntimeException(e);
     }
+  }
+
+  protected void unwrapException(Throwable e) throws IOException {
+    if (e instanceof IOException) {
+      throw (IOException) e;
+    }
+
+    if (e instanceof FFmpegAsyncException) {
+      unwrapException(e.getCause());
+    }
+
+    if (e instanceof RuntimeException) {
+      throw (RuntimeException) e;
+    }
+
+    if (e instanceof ExecutionException) {
+      unwrapException(e.getCause());
+    }
+
+    throw new RuntimeException(e);
   }
 
   public Future<Void> runAsync(List<String> args) throws IOException {
