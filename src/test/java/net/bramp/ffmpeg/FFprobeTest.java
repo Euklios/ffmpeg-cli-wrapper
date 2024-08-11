@@ -496,7 +496,7 @@ public class FFprobeTest extends FFcommonTest {
 
   @Test
   public void testProbeProbeExtraArgs() throws IOException {
-    ffprobe.probe(Samples.always_on_my_mind, null, "-rw_timeout", "0");
+    ffprobe.probe(ffprobe.builder().setInput(Samples.always_on_my_mind).addExtraArgs("-rw_timeout", "0").build());
 
     verify(runFunc, times(2)).run(argsCaptor.capture());
 
@@ -510,7 +510,7 @@ public class FFprobeTest extends FFcommonTest {
 
   @Test
   public void testProbeProbeUserAgent() throws IOException {
-    ffprobe.probe(Samples.always_on_my_mind, "ffmpeg-cli-wrapper");
+    ffprobe.probe(ffprobe.builder().setInput(Samples.always_on_my_mind).setUserAgent("ffmpeg-cli-wrapper").build());
 
     verify(runFunc, times(2)).run(argsCaptor.capture());
 

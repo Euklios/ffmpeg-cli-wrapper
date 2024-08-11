@@ -49,10 +49,6 @@ public class FFprobe extends FFcommon {
     super(path, runFunction);
   }
 
-  public FFmpegProbeResult probe(String mediaPath) throws IOException {
-    return probe(mediaPath, null);
-  }
-
   /**
    * Returns true if the binary we are using is the true ffprobe. This is to avoid conflict with
    * avprobe (from the libav project), that some symlink to ffprobe.
@@ -95,6 +91,20 @@ public class FFprobe extends FFcommon {
     return super.runAsync(args, executor);
   }
 
+  public FFmpegProbeResult probe(String mediaPath) throws IOException {
+    return probe(this.builder().setInput(mediaPath));
+  }
+
+  /**
+   * Probes the given media and parses the result
+   *
+   * @param mediaPath Path or uri to the media file
+   * @param userAgent The user agent string for web requests
+   * @return FFmpegProbeResult
+   * @throws IOException if the process communication fails
+   * @deprecated Use {@link FFprobeBuilder#setUserAgent(String)} instead
+   */
+  @Deprecated
   public FFmpegProbeResult probe(String mediaPath, @Nullable String userAgent) throws IOException {
     return probe(this.builder().setInput(mediaPath).setUserAgent(userAgent));
   }
@@ -104,6 +114,17 @@ public class FFprobe extends FFcommon {
     return probe(builder.build());
   }
 
+  /**
+   * Probes the given media and parses the result
+   *
+   * @param mediaPath Path or uri to the media file
+   * @param userAgent The user agent string for web requests
+   * @param extraArgs Additional arguments passed to ffprobe
+   * @return FFmpegProbeResult
+   * @throws IOException if the process communication fails
+   * @deprecated Use {@link FFprobeBuilder#setUserAgent(String)} and {@link FFprobeBuilder#addExtraArgs(String...)} instead
+   */
+  @Deprecated
   public FFmpegProbeResult probe(String mediaPath, @Nullable String userAgent, @Nullable String... extraArgs) throws IOException {
     return probe(this.builder().setInput(mediaPath).setUserAgent(userAgent).addExtraArgs(extraArgs).build());
   }
