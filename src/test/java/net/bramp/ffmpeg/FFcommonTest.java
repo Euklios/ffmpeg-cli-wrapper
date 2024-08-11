@@ -1,12 +1,8 @@
 package net.bramp.ffmpeg;
 
-import net.bramp.ffmpeg.io.ProcessUtils;
-import net.bramp.ffmpeg.lang.NewProcessAnswer;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 
 import java.io.ByteArrayInputStream;
@@ -19,7 +15,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import static net.bramp.ffmpeg.FFmpegTest.argThatHasItem;
 import static net.bramp.ffmpeg.FFmpegTest.argThatNotHasItem;
@@ -92,8 +87,8 @@ public abstract class FFcommonTest {
     @Test
     public void testRunAsyncCancellation() throws Exception {
         Process mockProcess = mock(Process.class);
-        when(mockProcess.getInputStream()).thenReturn(mock(InputStream.class));
-        when(mockProcess.getErrorStream()).thenReturn(mock(InputStream.class));
+        lenient().when(mockProcess.getInputStream()).thenReturn(mock(InputStream.class));
+        lenient().when(mockProcess.getErrorStream()).thenReturn(mock(InputStream.class));
 
         when(runFunc.run(any())).thenReturn(mockProcess);
 
@@ -102,7 +97,6 @@ public abstract class FFcommonTest {
 
         verify(mockProcess, timeout(1000)).destroy();
         assertTrue(future.isCancelled());
-
     }
 
     @Test

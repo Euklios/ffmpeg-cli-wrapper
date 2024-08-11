@@ -181,15 +181,21 @@ abstract class FFcommon {
   public Future<Void> runAsync(List<String> args, ExecutorService executor) throws IOException {
     requireNonNull(args);
 
-    AtomicReference<Process> processReference = new AtomicReference<>();
     CompletableFuture<Void> future = new CompletableFuture<>();
+    final AtomicReference<Process> processRef = new AtomicReference<>();
 
-    executor.submit(() -> {
+    try {
+      Process p = runFunc.run(path(args));
+      assert (p != null);
+      processRef.set(p);
+    } catch (IOException e) {
+      future.completeExceptionally(e);
+      return future;
+    }
+
+    Future<?> taskFuture = executor.submit(() -> {
       try {
-        final Process p = runFunc.run(path(args));
-        assert (p != null);
-        processReference.set(p);
-
+        Process p = processRef.get();
         CompletableFuture<Void> outputCopy = copyInputStreamAsync(p.getInputStream(), processOutputStream, executor);
         CompletableFuture<Void> errorCopy = copyInputStreamAsync(p.getErrorStream(), processErrorStream, executor);
 
@@ -201,14 +207,18 @@ abstract class FFcommon {
       } catch (IOException e) {
         future.completeExceptionally(e);
       } finally {
-        Process p = processReference.get();
-        if (p != null) {
-          p.destroy();
-        }
+        Process p = processRef.get();
+        p.destroy();
       }
     });
 
-    return future;
+    return future.whenComplete((result, throwable) -> {
+      if (future.isCancelled()) {
+        Process p = processRef.get();
+        p.destroy();
+        taskFuture.cancel(true);
+      }
+    });
   }
 
   protected CompletableFuture<Void> copyInputStreamAsync(InputStream inStream, Appendable outStream, ExecutorService executor) {
