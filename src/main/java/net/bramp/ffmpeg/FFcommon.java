@@ -6,6 +6,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
+import com.google.common.io.ByteStreams;
 import com.google.common.io.CharStreams;
 import net.bramp.ffmpeg.io.ProcessUtils;
 import net.bramp.ffmpeg.probe.FFmpegError;
@@ -15,6 +16,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.concurrent.*;
@@ -33,11 +35,14 @@ abstract class FFcommon {
   /** Version string */
   String version = null;
 
-  /** Process input stream */
+  /** Process output stream */
   Appendable processOutputStream = System.out;
 
   /** Process error stream */
   Appendable processErrorStream = System.err;
+
+  /** Process input stream */
+  private InputStream processInputStream;
 
   public FFcommon(@Nonnull String path) {
     this(path, new RunProcessFunction());
@@ -57,6 +62,11 @@ abstract class FFcommon {
   public void setProcessErrorStream(@Nonnull Appendable processErrorStream) {
     Preconditions.checkNotNull(processErrorStream);
     this.processErrorStream = processErrorStream;
+  }
+
+  public void setProcessInputStream(InputStream processInputStream) {
+    Preconditions.checkNotNull(processInputStream);
+    this.processInputStream = processInputStream;
   }
 
   private BufferedReader _wrapInReader(final InputStream inputStream) {
@@ -194,8 +204,9 @@ abstract class FFcommon {
         Process p = processRef.get();
         CompletableFuture<Void> outputCopy = copyInputStreamAsync(p.getInputStream(), processOutputStream, executor);
         CompletableFuture<Void> errorCopy = copyInputStreamAsync(p.getErrorStream(), processErrorStream, executor);
+        CompletableFuture<Void> inputCopy = copyOutputStreamAsync(p.getOutputStream(), processInputStream, executor);
 
-        CompletableFuture.allOf(outputCopy, errorCopy).join();
+        CompletableFuture.allOf(outputCopy, errorCopy, inputCopy).join();
         throwOnError(p);
 
         future.complete(null);
@@ -223,6 +234,23 @@ abstract class FFcommon {
         CharStreams.copy(_wrapInReader(inStream), outStream);
       } catch (IOException e) {
         throw new RuntimeException(e);
+      }
+    }, executor);
+  }
+
+  protected CompletableFuture<Void> copyOutputStreamAsync(OutputStream outStream, InputStream inputStream, ExecutorService executor) {
+    if (outStream == null || inputStream == null) {
+      CompletableFuture<Void> future = new CompletableFuture<>();
+      future.complete(null);
+      return future;
+    }
+
+    return CompletableFuture.runAsync(() -> {
+      try {
+        ByteStreams.copy(inputStream, outStream);
+        outStream.close();
+      } catch (IOException e) {
+          throw new RuntimeException(e);
       }
     }, executor);
   }

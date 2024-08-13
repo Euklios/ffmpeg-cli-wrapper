@@ -2,21 +2,29 @@ package net.bramp.ffmpeg;
 
 import static org.hamcrest.Matchers.hasItem;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.*;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 
 import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import com.google.common.collect.Lists;
+import net.bramp.ffmpeg.builder.FFmpegBuilder;
 import net.bramp.ffmpeg.fixtures.Codecs;
 import net.bramp.ffmpeg.fixtures.Filters;
 import net.bramp.ffmpeg.fixtures.Formats;
 import net.bramp.ffmpeg.fixtures.ChannelLayouts;
 import net.bramp.ffmpeg.fixtures.PixelFormats;
+import net.bramp.ffmpeg.fixtures.Samples;
 import net.bramp.ffmpeg.info.Filter;
 import net.bramp.ffmpeg.lang.NewProcessAnswer;
+import net.bramp.ffmpeg.probe.FFmpegProbeResult;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -146,6 +154,20 @@ public class FFmpegTest extends FFcommonTest {
 
     verify(runFunc, times(1)).run(argThatHasItem("-layouts"));
   }
+
+@Test
+public void testProcessInputStream() throws IOException {
+  FFmpeg ffmpeg = new FFmpeg();
+  FFprobe probe = new FFprobe();
+  Files.deleteIfExists(Paths.get(Samples.output_mp4));
+
+  ffmpeg.setProcessInputStream(Files.newInputStream(Paths.get(Samples.big_buck_bunny_720p_1mb)));
+  FFmpegBuilder builder = ffmpeg.builder().addInput("pipe:").addOutput(Samples.output_mp4).done();
+  ffmpeg.run(builder);
+
+  FFmpegProbeResult probeResult = probe.probe(Samples.output_mp4);
+  assertNull(probeResult.getError());
+}
 
   @Override
   FFcommon getFFcommon(ProcessFunction runFunc) throws IOException {
