@@ -20,4 +20,12 @@ public class FFmpegError implements Serializable {
   public String getString() {
     return string;
   }
+
+  @Override
+  public String toString() {
+    return "FFmpegError{" +
+            "code=" + code +
+              ", string='" + string + '\'' +
+            '}';
+  }
 }

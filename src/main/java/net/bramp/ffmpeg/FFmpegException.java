@@ -17,4 +17,13 @@ public class FFmpegException extends IOException {
     public FFmpegError getError() {
         return error;
     }
+
+    @Override
+    public String getMessage() {
+        if (error != null) {
+            return super.getMessage() + "(" + error + ")";
+        } else {
+            return super.getMessage();
+        }
+    }
 }
