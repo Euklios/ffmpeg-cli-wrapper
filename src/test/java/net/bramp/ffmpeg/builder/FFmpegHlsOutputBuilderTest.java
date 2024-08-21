@@ -90,6 +90,7 @@ public class FFmpegHlsOutputBuilderTest {
         cleanupTmp();
 
         List<String> command = new FFmpegBuilder()
+                .setVerbosity(FFmpegBuilder.Verbosity.DEBUG)
                 .setInput(Samples.TEST_PREFIX + Samples.base_big_buck_bunny_720p_1mb)
                 .addHlsOutput("tmp/output.m3u8")
                 .setHlsTime(1, TimeUnit.SECONDS)
@@ -111,6 +112,7 @@ public class FFmpegHlsOutputBuilderTest {
         cleanupTmp();
 
         List<String> command = new FFmpegBuilder()
+                .setVerbosity(FFmpegBuilder.Verbosity.DEBUG)
                 .setInput(Samples.TEST_PREFIX + Samples.base_big_buck_bunny_720p_1mb)
                 .addHlsOutput("tmp/output.m3u8")
                 .setHlsTime(500, TimeUnit.MILLISECONDS)
