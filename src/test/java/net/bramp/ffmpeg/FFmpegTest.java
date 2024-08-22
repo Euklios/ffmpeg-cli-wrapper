@@ -9,6 +9,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -181,19 +182,35 @@ public class FFmpegTest extends FFcommonTest {
     verify(runFunc, times(1)).run(argThatHasItem("-layouts"));
   }
 
-@Test
-public void testProcessInputStream() throws IOException {
-  FFmpeg ffmpeg = new FFmpeg();
-  FFprobe probe = new FFprobe();
-  Files.deleteIfExists(Paths.get(Samples.output_mp4));
+  @Test
+  public void testProcessInputStream() throws IOException {
+    FFmpeg ffmpeg = new FFmpeg();
+    FFprobe probe = new FFprobe();
+    Files.deleteIfExists(Paths.get(Samples.output_mp4));
 
-  ffmpeg.setProcessInputStream(Files.newInputStream(Paths.get(Samples.big_buck_bunny_720p_1mb)));
-  FFmpegBuilder builder = ffmpeg.builder().addInput("pipe:").done().addOutput(Samples.output_mp4).done();
-  ffmpeg.run(builder);
+    ffmpeg.setProcessInputStream(Files.newInputStream(Paths.get(Samples.big_buck_bunny_720p_1mb)));
+    FFmpegBuilder builder = ffmpeg.builder().addInput("pipe:").done().addOutput(Samples.output_mp4).done();
+    ffmpeg.run(builder);
 
-  FFmpegProbeResult probeResult = probe.probe(Samples.output_mp4);
-  assertNull(probeResult.getError());
-}
+    FFmpegProbeResult probeResult = probe.probe(Samples.output_mp4);
+    assertNull(probeResult.getError());
+  }
+
+  @Test
+  public void testProcessOutputStream() throws IOException {
+    Path outPath = Paths.get(Samples.output_mp4);
+
+    FFmpeg ffmpeg = new FFmpeg();
+    FFprobe probe = new FFprobe();
+    Files.deleteIfExists(outPath);
+
+    ffmpeg.setProcessOutputStream(Files.newOutputStream(outPath));
+    FFmpegBuilder builder = ffmpeg.builder().addInput(Samples.big_buck_bunny_720p_1mb).done().addStdoutOutput().setFormat("ismv").done();
+    ffmpeg.run(builder);
+
+    FFmpegProbeResult probeResult = probe.probe(Samples.output_mp4);
+    assertNull(probeResult.getError());
+  }
 
   @Override
   FFcommon getFFcommon(ProcessFunction runFunc) throws IOException {
