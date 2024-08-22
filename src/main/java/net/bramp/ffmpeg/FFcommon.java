@@ -54,16 +54,49 @@ abstract class FFcommon {
     this.path = path;
   }
 
+  /**
+   * Sets the output stream for the process that will be used in the ffmpeg process.
+   * This stream will be used to capture the standard output (stdout) of the process.
+   *
+   * <p><b>Note:</b> The provided processOutputStream is not closed by this method.
+   * It is the responsibility of the user to close the stream when it is no longer needed.</p>
+   *
+   * @param processOutputStream the {@link Appendable} stream to which the process's
+   *                            standard output will be written. Must not be null.
+   * @throws NullPointerException if processOutputStream is null.
+   */
   public void setProcessOutputStream(@Nonnull Appendable processOutputStream) {
     Preconditions.checkNotNull(processOutputStream);
     this.processOutputStream = processOutputStream;
   }
 
+  /**
+   * Sets the error stream for the process that will be used in the ffmpeg process.
+   * This stream will be used to capture the standard error (stderr) of the process.
+   *
+   * <p><b>Note:</b> The provided processErrorStream is not closed by this method.
+   * It is the responsibility of the user to close the stream when it is no longer needed.</p>
+   *
+   * @param processErrorStream the {@link Appendable} stream to which the process's
+   *                           standard error output will be written. Must not be null.
+   * @throws NullPointerException if processErrorStream is null.
+   */
   public void setProcessErrorStream(@Nonnull Appendable processErrorStream) {
     Preconditions.checkNotNull(processErrorStream);
     this.processErrorStream = processErrorStream;
   }
 
+  /**
+   * Sets the input stream for the process that will be used in the ffmpeg process.
+   * This stream will be used to supply input data (stdin) to the process.
+   *
+   * <p><b>Note:</b> The provided processInputStream is not closed by this method.
+   * It is the responsibility of the user to close the stream when it is no longer needed.</p>
+   *
+   * @param processInputStream the {@link InputStream} from which the process will read its
+   *                           standard input. Must not be null.
+   * @throws NullPointerException if processInputStream is null.
+   */
   public void setProcessInputStream(InputStream processInputStream) {
     Preconditions.checkNotNull(processInputStream);
     this.processInputStream = processInputStream;
