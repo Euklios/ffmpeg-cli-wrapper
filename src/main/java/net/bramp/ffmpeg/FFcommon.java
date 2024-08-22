@@ -11,6 +11,7 @@ import com.google.common.io.CharStreams;
 import net.bramp.ffmpeg.io.ProcessUtils;
 import net.bramp.ffmpeg.probe.FFmpegError;
 import net.bramp.ffmpeg.probe.FFmpegProbeResult;
+import org.apache.commons.io.output.NullPrintStream;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -36,7 +37,7 @@ abstract class FFcommon {
   String version = null;
 
   /** Process output stream */
-  Appendable processOutputStream = System.out;
+  OutputStream processOutputStream = System.out;
 
   /** Process error stream */
   Appendable processErrorStream = System.err;
@@ -49,7 +50,7 @@ abstract class FFcommon {
   }
 
   protected FFcommon(@Nonnull String path, @Nonnull ProcessFunction runFunction) {
-    Preconditions.checkArgument(!Strings.isNullOrEmpty(path));
+    Preconditions.checkArgument(!Strings.isNullOrEmpty(path));  
     this.runFunc = checkNotNull(runFunction);
     this.path = path;
   }
@@ -65,7 +66,7 @@ abstract class FFcommon {
    *                            standard output will be written. Must not be null.
    * @throws NullPointerException if processOutputStream is null.
    */
-  public void setProcessOutputStream(@Nonnull Appendable processOutputStream) {
+  public void setProcessOutputStream(@Nonnull OutputStream processOutputStream) {
     Preconditions.checkNotNull(processOutputStream);
     this.processOutputStream = processOutputStream;
   }
@@ -236,14 +237,13 @@ abstract class FFcommon {
       try {
         Process p = processRef.get();
         CompletableFuture<Void> outputCopy = copyInputStreamAsync(p.getInputStream(), processOutputStream, executor);
-        CompletableFuture<Void> errorCopy = copyInputStreamAsync(p.getErrorStream(), processErrorStream, executor);
+        CompletableFuture<Void> errorCopy = copyErrorStreamAsync(p.getErrorStream(), processErrorStream, executor);
         CompletableFuture<Void> inputCopy = copyOutputStreamAsync(p.getOutputStream(), processInputStream, executor);
 
         CompletableFuture.allOf(outputCopy, errorCopy, inputCopy).join();
         throwOnError(p);
 
         future.complete(null);
-
       } catch (IOException e) {
         future.completeExceptionally(e);
       } finally {
@@ -252,14 +252,28 @@ abstract class FFcommon {
       }
     });
 
-    return future.whenComplete((result, throwable) -> {
+    // It seems like returning this future causes java to interrupt it as well
+    // If we just attach it and return the original, it is
+    future.whenComplete((result, throwable) -> {
       Process p = processRef.get();
       p.destroy();
       taskFuture.cancel(true);
     });
+
+    return future;
   }
 
-  protected CompletableFuture<Void> copyInputStreamAsync(InputStream inStream, Appendable outStream, ExecutorService executor) {
+  protected CompletableFuture<Void> copyInputStreamAsync(InputStream inStream, OutputStream outStream, ExecutorService executor) {
+    return CompletableFuture.runAsync(() -> {
+      try {
+        ByteStreams.copy(inStream, outStream);
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      }
+    }, executor);
+  }
+
+  protected CompletableFuture<Void> copyErrorStreamAsync(InputStream inStream, Appendable outStream, ExecutorService executor) {
     return CompletableFuture.runAsync(() -> {
       try {
         CharStreams.copy(_wrapInReader(inStream), outStream);

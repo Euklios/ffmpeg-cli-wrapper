@@ -1,13 +1,13 @@
 package net.bramp.ffmpeg;
 
 import static org.hamcrest.Matchers.hasItem;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
@@ -122,7 +122,7 @@ public class FFmpegTest extends FFcommonTest {
 
   @Test
   public void testReadProcessStreams() throws IOException {
-    Appendable processInputStream = mock(Appendable.class);
+    OutputStream processInputStream = new ByteArrayOutputStream();
     ffmpeg.setProcessOutputStream(processInputStream);
 
     Appendable processErrStream = mock(Appendable.class);
@@ -130,13 +130,13 @@ public class FFmpegTest extends FFcommonTest {
 
     ffmpeg.run(Lists.newArrayList("-i", "toto.mp4"));
 
-    verify(processInputStream, times(1)).append(any(CharSequence.class));
+    assertFalse(processInputStream.toString().isEmpty());
     verify(processErrStream, times(1)).append(any(CharSequence.class));
   }
 
   @Test
   public void testReadProcessStreamsAsync() throws IOException, ExecutionException, InterruptedException {
-    Appendable processInputStream = mock(Appendable.class);
+    ByteArrayOutputStream processInputStream = new ByteArrayOutputStream();
     ffmpeg.setProcessOutputStream(processInputStream);
 
     Appendable processErrStream = mock(Appendable.class);
@@ -144,7 +144,7 @@ public class FFmpegTest extends FFcommonTest {
 
     ffmpeg.runAsync(Lists.newArrayList("-i", "toto.mp4")).get();
 
-    verify(processInputStream, times(1)).append(any(CharSequence.class));
+    assertFalse(processInputStream.toString().isEmpty());
     verify(processErrStream, times(1)).append(any(CharSequence.class));
   }
 
