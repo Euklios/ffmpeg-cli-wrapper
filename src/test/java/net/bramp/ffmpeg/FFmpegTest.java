@@ -8,11 +8,11 @@ import static org.mockito.Mockito.*;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 import com.google.common.collect.Lists;
 import net.bramp.ffmpeg.builder.FFmpegBuilder;
@@ -74,6 +74,32 @@ public class FFmpegTest extends FFcommonTest {
     assertEquals("ffmpeg version 0.10.9-7:0.10.9-1~raring1", ffmpeg.version());
 
     verify(runFunc, times(1)).run(argThatHasItem("-version"));
+  }
+
+  @Test
+  public void testStartOffsetOption() throws Exception {
+    FFmpeg ffmpeg = new FFmpeg();
+
+    FFmpegBuilder builder = ffmpeg.builder().addInput(Samples.big_buck_bunny_720p_1mb).setStartOffset(1, TimeUnit.SECONDS).done().addOutput(Samples.output_mp4).done();
+
+    try {
+      ffmpeg.run(builder);
+    } catch (Throwable t) {
+      fail(t.getClass().getSimpleName() + " was thrown");
+    }
+  }
+
+  @Test
+  public void testDurationOption() throws Exception {
+    FFmpeg ffmpeg = new FFmpeg();
+
+    FFmpegBuilder builder = ffmpeg.builder().addInput(Samples.big_buck_bunny_720p_1mb).setDuration(1, TimeUnit.SECONDS).done().addOutput(Samples.output_mp4).done();
+
+    try {
+      ffmpeg.run(builder);
+    } catch (Throwable t) {
+      fail(t.getClass().getSimpleName() + " was thrown");
+    }
   }
 
   @Test
@@ -162,7 +188,7 @@ public void testProcessInputStream() throws IOException {
   Files.deleteIfExists(Paths.get(Samples.output_mp4));
 
   ffmpeg.setProcessInputStream(Files.newInputStream(Paths.get(Samples.big_buck_bunny_720p_1mb)));
-  FFmpegBuilder builder = ffmpeg.builder().addInput("pipe:").addOutput(Samples.output_mp4).done();
+  FFmpegBuilder builder = ffmpeg.builder().addInput("pipe:").done().addOutput(Samples.output_mp4).done();
   ffmpeg.run(builder);
 
   FFmpegProbeResult probeResult = probe.probe(Samples.output_mp4);

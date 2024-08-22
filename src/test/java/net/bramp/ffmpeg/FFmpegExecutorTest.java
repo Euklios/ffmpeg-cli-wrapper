@@ -19,6 +19,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import net.bramp.ffmpeg.builder.FFmpegBuilder;
+import net.bramp.ffmpeg.builder.Strict;
 import net.bramp.ffmpeg.fixtures.Samples;
 import net.bramp.ffmpeg.job.FFmpegJob;
 import net.bramp.ffmpeg.probe.FFmpegProbeResult;
@@ -86,6 +87,7 @@ public class FFmpegExecutorTest {
             .setInput(getWebserverRoot() + Samples.base_big_buck_bunny_720p_1mb)
             .addExtraArgs("-probesize", "1000000")
             // .setStartOffset(1500, TimeUnit.MILLISECONDS)
+            .done()
             .overrideOutputFiles(true)
             .addOutput(Samples.output_mp4)
             .setFrames(100)
@@ -104,7 +106,7 @@ public class FFmpegExecutorTest {
             // .setVideoPixelFormat("yuv420p")
             // .setVideoBitStreamFilter("noise")
             .setVideoQuality(2)
-            .setStrict(FFmpegBuilder.Strict.EXPERIMENTAL)
+            .setStrict(Strict.EXPERIMENTAL)
             .done();
 
     FFmpegJob job = ffExecutor.createJob(builder);
@@ -121,6 +123,7 @@ public class FFmpegExecutorTest {
     FFmpegBuilder builder =
         new FFmpegBuilder()
             .setInput(in)
+            .done()
             .overrideOutputFiles(true)
             .addOutput(Samples.output_mp4)
             .setFormat("mp4")
@@ -143,6 +146,7 @@ public class FFmpegExecutorTest {
     FFmpegBuilder builder =
         new FFmpegBuilder()
             .setInput(Samples.big_buck_bunny_720p_1mb)
+            .done()
             .overrideOutputFiles(true)
             .addOutput(Samples.output_mp4)
             .setFormat("mp4")
@@ -163,6 +167,7 @@ public class FFmpegExecutorTest {
     FFmpegBuilder builder =
         new FFmpegBuilder()
             .setInput(Samples.big_buck_bunny_720p_1mb)
+            .done()
             .overrideOutputFiles(true)
             .addOutput(Samples.output_mp4)
             .setFormat("mp4")
@@ -187,6 +192,7 @@ public class FFmpegExecutorTest {
     FFmpegBuilder builder =
         new FFmpegBuilder()
             .setInput(Samples.big_buck_bunny_720p_1mb)
+            .done()
             .addStdoutOutput()
             .setFormat("s8")
             .setAudioChannels(1)
@@ -215,8 +221,9 @@ public class FFmpegExecutorTest {
 
     FFmpegBuilder builder =
         new FFmpegBuilder()
-            .readAtNativeFrameRate() // Slows the test down
             .setInput(in)
+            .readAtNativeFrameRate() // Slows the test down
+            .done()
             .overrideOutputFiles(true)
             .addOutput(Samples.output_mp4)
             .done();
@@ -240,9 +247,11 @@ public class FFmpegExecutorTest {
   public void testIssue112() {
     FFmpegBuilder builder =
         new FFmpegBuilder()
-            .setInput(Samples.testscreen_jpg)
-            .addInput(Samples.test_mp3)
+            .addInput(Samples.testscreen_jpg)
             .addExtraArgs("-loop", "1")
+            .done()
+            .addInput(Samples.test_mp3)
+            .done()
             .overrideOutputFiles(true)
             .addOutput(Samples.output_mp4)
             .setFormat("mp4")
@@ -254,7 +263,7 @@ public class FFmpegExecutorTest {
             .setVideoCodec("libx264")
             .setVideoFrameRate(24, 1)
             .setVideoResolution(640, 480)
-            .setStrict(FFmpegBuilder.Strict.EXPERIMENTAL) // Allow FFmpeg to use experimental specs
+            .setStrict(Strict.EXPERIMENTAL) // Allow FFmpeg to use experimental specs
             .done();
 
     // Run a one-pass encode

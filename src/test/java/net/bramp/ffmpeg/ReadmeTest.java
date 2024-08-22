@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import net.bramp.ffmpeg.builder.FFmpegBuilder;
+import net.bramp.ffmpeg.builder.Strict;
 import net.bramp.ffmpeg.fixtures.Samples;
 import net.bramp.ffmpeg.job.FFmpegJob;
 import net.bramp.ffmpeg.probe.FFmpegFormat;
@@ -44,7 +45,9 @@ public class ReadmeTest {
     FFmpegBuilder builder =
         new FFmpegBuilder()
             .setInput(inFilename) // Filename, or a FFmpegProbeResult
+            .done()
             .setInput(in)
+            .done()
             .overrideOutputFiles(true) // Override the output if it exists
             .addOutput("output.mp4") // Filename for the destination
             .setFormat("mp4") // Format is inferred from filename, or can be set
@@ -57,7 +60,7 @@ public class ReadmeTest {
             .setVideoCodec("libx264") // Video using x264
             .setVideoFrameRate(24, 1) // at 24 frames per second
             .setVideoResolution(640, 480) // at 640x480 resolution
-            .setStrict(FFmpegBuilder.Strict.EXPERIMENTAL) // Allow FFmpeg to use experimental specs
+            .setStrict(Strict.EXPERIMENTAL) // Allow FFmpeg to use experimental specs
             .done();
 
     FFmpegExecutor executor = new FFmpegExecutor(ffmpeg, ffprobe);
@@ -109,6 +112,7 @@ public class ReadmeTest {
     FFmpegBuilder builder =
         new FFmpegBuilder()
             .setInput(in) // Or filename
+            .done()
             .addOutput("output.mp4")
             .done();
 
