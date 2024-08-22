@@ -253,11 +253,9 @@ abstract class FFcommon {
     });
 
     return future.whenComplete((result, throwable) -> {
-      if (future.isCancelled()) {
-        Process p = processRef.get();
-        p.destroy();
-        taskFuture.cancel(true);
-      }
+      Process p = processRef.get();
+      p.destroy();
+      taskFuture.cancel(true);
     });
   }
 

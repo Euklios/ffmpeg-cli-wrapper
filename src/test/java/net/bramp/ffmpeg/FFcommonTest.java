@@ -71,7 +71,7 @@ public abstract class FFcommonTest {
 
         assertFalse(future.isCancelled());
         assertTrue(future.isDone());
-        verify(mockProcess).destroy();
+        verify(mockProcess, atLeast(1)).destroy();
     }
 
     @Test
@@ -109,7 +109,7 @@ public abstract class FFcommonTest {
         Future<Void> future = asyncRunner.runAsync(args);
         future.get();
 
-        verify(mockProcess).destroy();
+        verify(mockProcess, atLeast(1)).destroy();
     }
 
     @Test
@@ -123,7 +123,7 @@ public abstract class FFcommonTest {
         Future<Void> future = asyncRunner.runAsync(args);
         future.get();
 
-        verify(mockProcess).destroy();
+        verify(mockProcess, atLeast(1)).destroy();
     }
 
     @Test
@@ -138,6 +138,6 @@ public abstract class FFcommonTest {
         ExecutionException executionException = assertThrows(ExecutionException.class, future::get);
         assertEquals(IOException.class, executionException.getCause().getClass());
 
-        verify(mockProcess).destroy();
+        verify(mockProcess, atLeast(1)).destroy();
     }
 }
