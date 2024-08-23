@@ -50,7 +50,7 @@ abstract class FFcommon {
   }
 
   protected FFcommon(@Nonnull String path, @Nonnull ProcessFunction runFunction) {
-    Preconditions.checkArgument(!Strings.isNullOrEmpty(path));  
+    Preconditions.checkArgument(!Strings.isNullOrEmpty(path));
     this.runFunc = checkNotNull(runFunction);
     this.path = path;
   }
@@ -254,7 +254,8 @@ abstract class FFcommon {
 
     // It seems like returning this future causes java to interrupt it as well
     // If we just attach it and return the original, it is
-    future.whenComplete((result, throwable) -> {
+    @SuppressWarnings("unused")
+    CompletableFuture<Void> unused = future.whenComplete((result, throwable) -> {
       Process p = processRef.get();
       p.destroy();
       taskFuture.cancel(true);
