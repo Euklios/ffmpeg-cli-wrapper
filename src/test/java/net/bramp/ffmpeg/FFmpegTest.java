@@ -1,5 +1,6 @@
 package net.bramp.ffmpeg;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.Matchers.hasItem;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -123,7 +124,7 @@ public class FFmpegTest extends FFcommonTest {
 
   @Test
   public void testReadProcessStreams() throws IOException {
-    OutputStream processInputStream = new ByteArrayOutputStream();
+    ByteArrayOutputStream processInputStream = new ByteArrayOutputStream();
     ffmpeg.setProcessOutputStream(processInputStream);
 
     Appendable processErrStream = mock(Appendable.class);
@@ -131,7 +132,7 @@ public class FFmpegTest extends FFcommonTest {
 
     ffmpeg.run(Lists.newArrayList("-i", "toto.mp4"));
 
-    assertFalse(processInputStream.toString().isEmpty());
+    assertTrue(processInputStream.toByteArray().length > 0);
     verify(processErrStream, times(1)).append(any(CharSequence.class));
   }
 
@@ -145,7 +146,7 @@ public class FFmpegTest extends FFcommonTest {
 
     ffmpeg.runAsync(Lists.newArrayList("-i", "toto.mp4")).get();
 
-    assertFalse(processInputStream.toString().isEmpty());
+    assertTrue(processInputStream.toByteArray().length > 0);
     verify(processErrStream, times(1)).append(any(CharSequence.class));
   }
 
