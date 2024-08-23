@@ -41,8 +41,8 @@ public abstract class FFcommonTest {
     public void setUp() throws IOException {
         executor = Executors.newCachedThreadPool();
         runFunc = mock(RunProcessFunction.class);
-        processOutputStream = new ByteArrayInputStream(new byte[32]);
-        processErrorStream = new ByteArrayInputStream(new byte[32]);
+        processOutputStream = new ByteArrayInputStream(new byte[0]);
+        processErrorStream = new ByteArrayInputStream(new byte[0]);
         args = Collections.emptyList();
 
         lenient().when(runFunc.run(argThatHasItem("-version")))
