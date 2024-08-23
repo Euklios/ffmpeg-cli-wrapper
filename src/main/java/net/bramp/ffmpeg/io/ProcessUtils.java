@@ -29,6 +29,7 @@ public final class ProcessUtils {
       p.waitFor(timeout, unit);
 
     } catch (InterruptedException e) {
+      p.destroy();
       Thread.currentThread().interrupt();
     }
 
